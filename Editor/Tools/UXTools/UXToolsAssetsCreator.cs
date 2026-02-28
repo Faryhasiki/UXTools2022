@@ -22,15 +22,10 @@ namespace ThunderFireUITool
             WidgetLabelsSettings.Create();
             WidgetListSetting.Create();
 
-            HierarchyManagementSetting.Create();
-            HierarchyManagementEditorData.Create();
-            HierarchyManagementData.Create();
-
             CreateLocationLinesData.Create();
             PrefabOpenedSetting.Create();
             RecentFilesSetting.Create();
 
-            QuickBackgroundData.Create();
             PrefabTabsData.Create();
 
             SwitchSetting.Create();

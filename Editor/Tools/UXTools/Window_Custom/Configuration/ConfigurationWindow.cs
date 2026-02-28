@@ -387,15 +387,12 @@ namespace ThunderFireUITool
                 }},
                 { "操作记录", new List<(string , int)> {
                     (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_最近打开面板记录), 0),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_最近选中面板记录), 11)
+                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_最近选中面板记录), 8)
                 }},
                 { "其他", new List<(string , int)> {
                     (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_Prefab多开), 5),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_Scene中分辨率调整), 6),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_Prefab资源检查), 7),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_参考背景图片), 8),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_自动将Texture转为Sprite), 9),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_手柄引导开关), 10)
+                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_自动将Texture转为Sprite), 6),
+                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_手柄引导开关), 7)
                 }}
             };
         }

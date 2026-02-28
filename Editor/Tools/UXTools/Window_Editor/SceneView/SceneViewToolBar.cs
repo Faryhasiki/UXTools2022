@@ -44,11 +44,6 @@ namespace ThunderFireUITool
             editorLogic = new EditorLogic();
             editorLogic.Init();
             PrefabTabs.InitPrefabTabs();
-            ResolutionController.InitResolutionController();
-            if (ResolutionController.loaded)
-            {
-                sceneView.rootVisualElement.Add(ResolutionController.Root);
-            }
             EditorApplication.update -= InitFunction;
         }
 
@@ -60,13 +55,6 @@ namespace ThunderFireUITool
             if (sceneView.rootVisualElement.Contains(PrefabTabs.prefabTabsPanel))
             {
                 sceneView.rootVisualElement.Remove(PrefabTabs.prefabTabsPanel);
-            }
-            if (ResolutionController.loaded)
-            {
-                if (sceneView.rootVisualElement.Contains(ResolutionController.Root))
-                {
-                    sceneView.rootVisualElement.Remove(ResolutionController.Root);
-                }
             }
             editorLogic.Close();
         }
@@ -99,7 +87,6 @@ namespace ThunderFireUITool
                 HaveToolbar = true;
             }
 
-            UXToolAnalysis.SendUXToolLog(UXToolAnalysisLog.ToolBar);
             UXSceneViewCursor.Instance.Init();
             SceneView.lastActiveSceneView.in2DMode = true;
         }
@@ -159,26 +146,6 @@ namespace ThunderFireUITool
             toolBarPanel = toolbarBg.Q<VisualElement>("toolbar");
             toolBarPanel.style.alignSelf = Align.Center;
 
-            VisualElement quickBgBtn = toolbarBg.Q<VisualElement>("qucikBg");
-            quickBgBtn.tooltip = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_参考背景图片);
-            quickBgBtn.RegisterCallback((MouseDownEvent e) =>
-            {
-                QuickBackground.CreateBackGround();
-                StopQuickCreate();
-            });
-            //quickBgBtn Hover时要换图, 因为图片线条只改颜色看的不清楚
-            //quickBgBtn.RegisterCallback((MouseEnterEvent e) =>
-            //{
-            //    SetButtonHoverState(quickBgBtn, true);
-            //    quickBgBtn.Q<VisualElement>("Icon").style.backgroundImage = (StyleBackground)ToolUtils.GetIcon("ToolBar/quickbackground_white");
-            //});
-            //quickBgBtn.RegisterCallback((MouseLeaveEvent e) =>
-            //{
-            //    SetButtonHoverState(quickBgBtn, false);
-            //    quickBgBtn.Q<VisualElement>("Icon").style.backgroundImage = (StyleBackground)ToolUtils.GetIcon("ToolBar/quickbackground_black");
-            //});
-            RegisterMouseHover(quickBgBtn);
-
             VisualElement recentOpenBtn = toolbarBg.Q<VisualElement>("clock");
             recentOpenBtn.tooltip = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_最近打开的模板);
             recentOpenBtn.RegisterCallback((MouseDownEvent e) =>
@@ -187,15 +154,6 @@ namespace ThunderFireUITool
                 StopQuickCreate();
             });
             RegisterMouseHover(recentOpenBtn);
-
-            VisualElement playBtn = toolbarBg.Q<VisualElement>("play");
-            playBtn.tooltip = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_预览);
-            playBtn.RegisterCallback((MouseDownEvent e) =>
-            {
-                PreviewLogic.Preview();
-                StopQuickCreate();
-            });
-            RegisterMouseHover(playBtn);
 
             createImageBtn = toolbarBg.Q<VisualElement>("createImage");
             createImageBtn.tooltip = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_创建图片);
@@ -335,14 +293,7 @@ namespace ThunderFireUITool
                 action = () => { ConfigurationWindow.OpenWindow(); }
             };
 
-            ToolbarPopupOption aboutOption = new ToolbarPopupOption()
-            {
-                text = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_关于),
-                iconPath = "ToolBar/about",
-                action = () => { AboutWindow.OpenWindow(); }
-            };
             list.Add(settingOption);
-            list.Add(aboutOption);
             popup.Init(pos, list);
         }
 

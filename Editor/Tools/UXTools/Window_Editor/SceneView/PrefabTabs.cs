@@ -33,14 +33,7 @@ namespace ThunderFireUITool
             VisualTreeAsset prefabTabsTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "PrefabTabs.uxml");
             prefabTabsPanel = prefabTabsTreeAsset.CloneTree().Children().First();
             TabsList = prefabTabsPanel.Q<ScrollView>("TabsList");
-#if UNITY_2021_3_OR_NEWER
-            if (!SwitchSetting.CheckValid(SwitchSetting.SwitchType.ResolutionAdjustment))
-            {
-                prefabTabsPanel.style.right = 0;
-            }
-#else
             prefabTabsPanel.style.right = 0;
-#endif
             prefabTabsPanel.contentContainer.RegisterCallback<MouseEnterEvent>((e) =>
             {
 #if UNITY_2021_2_OR_NEWER

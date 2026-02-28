@@ -31,7 +31,6 @@ namespace ThunderFireUITool
                     PrefabTabs.OpenTab(guid, false);
                     //SceneViewToolBar.BringToFront();
                 };
-                EditorApplication.delayCall += () => ResolutionController.RefreshResolution();
             });
             PrefabStageUtils.AddClosingEvent((p) =>
             {
@@ -41,11 +40,9 @@ namespace ThunderFireUITool
                 if (prefabStage == null)
                 {
                     PrefabTabs.CloseTab("", false);
-                    ResolutionController.RefreshResolution();
                 }
 #else
                 PrefabTabs.CloseTab("", false);
-                EditorApplication.delayCall += () => ResolutionController.RefreshResolution();
 #endif
             });
         }

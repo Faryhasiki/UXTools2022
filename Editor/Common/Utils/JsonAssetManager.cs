@@ -32,12 +32,8 @@ public class JsonAssetManager
             { "LocationLinesData",                      ThunderFireUIToolConfig.LocationLinesDataPath},
             { "PrefabOpenedSetting",                    ThunderFireUIToolConfig.PrefabRecentOpenedPath},
             { "SwitchSetting",                          ThunderFireUIToolConfig.SwitchSettingPath },
-            { "QuickBackgroundData",                    ThunderFireUIToolConfig.QuickBackgroundDataPath },
             { "WidgetLabelsSettings",                   ThunderFireUIToolConfig.WidgetLabelsPath },
             { "WidgetListSetting",                      ThunderFireUIToolConfig.WidgetListPath },
-            { "HierarchyManagementSetting",             ThunderFireUIToolConfig.HierarchyManagementSettingPath },
-            { "HierarchyManagementEditorData",          ThunderFireUIToolConfig.HierarchyManagemenEditorDataPath },
-            { "HierarchyManagementData",                ThunderFireUIToolConfig.HierarchyManagementDataPath },
             { "RecentFilesSetting",                     ThunderFireUIToolConfig.FilesRecentSelectedPath},
             { "ToolGlobalData",                         ThunderFireUIToolConfig.GlobalDataPath},
         };

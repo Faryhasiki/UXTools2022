@@ -18,9 +18,6 @@ namespace ThunderFireUITool
             QuickCopy,
             MovementShortcuts,
             PrefabMultiOpen,
-            ResolutionAdjustment,
-            PrefabResourceCheck,
-            QuickBackground,
             AutoConvertTex,
             EnableGamePadBeginnerGuide,
             RecentlySelected,
@@ -38,7 +35,6 @@ namespace ThunderFireUITool
             {
                 m_instance.m_values[i] = true;
             }
-            m_instance.m_values[(int)SwitchType.PrefabResourceCheck] = false;
             m_instance.m_values[(int)SwitchType.AutoConvertTex] = false;
             m_instance.m_values[(int)SwitchType.EnableGamePadBeginnerGuide] = false;
 
@@ -72,14 +68,6 @@ namespace ThunderFireUITool
 
             SceneViewToolBar.CloseFunction();
             SceneViewToolBar.InitFunction();
-#if ODIN_INSPECTOR
-            UIAtlasCheckUserData atlasData = AssetDatabase.LoadAssetAtPath<UIAtlasCheckUserData>(ThunderFireUIToolConfig.UICheckUserDataFullPath);
-            if (atlasData == null)
-            {
-                atlasData = UIAtlasCheckUserData.Create();
-            }
-            atlasData.Save(CheckValid(SwitchType.PrefabResourceCheck));
-#endif
         }
 
         public static bool CheckValid(int x)
