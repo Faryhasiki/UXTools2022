@@ -116,8 +116,14 @@ namespace ThunderFireUITool
         public static GameObject CreatePanel(string name)
         {
             Type MenuOptionsType = typeof(UnityEditor.UI.ImageEditor).Assembly.GetType("UnityEditor.UI.MenuOptions");
+            if (MenuOptionsType == null)
+            {
+                Debug.LogWarning("[UXTools] CreatePanel: UnityEditor.UI.MenuOptions type not found (Unity internals may have changed).");
+                return null;
+            }
             Utils.InvokeMethod(MenuOptionsType, "AddPanel", new object[] { });
             GameObject obj = Selection.activeGameObject;
+            if (obj == null) return null;
             obj.name = name;
             return obj;
         }

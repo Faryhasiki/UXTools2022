@@ -40,16 +40,19 @@ namespace ThunderFireUITool
 
         static WidgetRepositoryWindow()
         {
-            EditorApplication.playModeStateChanged += (obj) =>
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChangedStatic;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChangedStatic;
+        }
+
+        private static void OnPlayModeStateChangedStatic(PlayModeStateChange obj)
+        {
+            if (HasOpenInstances<WidgetRepositoryWindow>())
+                m_window = GetWindow<WidgetRepositoryWindow>();
+            if (!EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                if (HasOpenInstances<WidgetRepositoryWindow>())
-                    m_window = GetWindow<WidgetRepositoryWindow>();
-                if (!EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode)
-                {
-                    if (m_window)
-                        m_window.RefreshWindow();
-                }
-            };
+                if (m_window)
+                    m_window.RefreshWindow();
+            }
         }
 
         [UnityEditor.Callbacks.DidReloadScripts(0)]
@@ -83,18 +86,20 @@ namespace ThunderFireUITool
         private List<AssetItemPrefabRepository> fliterItems = new List<AssetItemPrefabRepository>();
         private bool _isSortByDict;
 
+        private void OnHierarchyWindowItemGUI(int instanceID, Rect selectionRect)
+        {
+            if (Event.current.type == EventType.MouseDrag)
+            {
+                UXCustomSceneView.ClearDelegate();
+                InitDragState();//因拖拽事件在层级面板发生重置组件库的拖拽状态
+            }
+        }
+
         private void OnEnable()
         {
             InitWindowUI();
             InitWindowData();
-            EditorApplication.hierarchyWindowItemOnGUI += (int instanceID, Rect selectionRect) =>
-            {
-                if (Event.current.type == EventType.MouseDrag)
-                {
-                    UXCustomSceneView.ClearDelegate();
-                    InitDragState();//因拖拽事件在层级面板发生重置组件库的拖拽状态
-                }
-            };
+            EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyWindowItemGUI;
             EditorApplication.delayCall += RefreshWindow;
 #if UNITY_2021_2_OR_NEWER
             DragAndDrop.AddDropHandler(OnHierarchyGUI);
@@ -102,6 +107,7 @@ namespace ThunderFireUITool
         }
         private void OnDisable()
         {
+            EditorApplication.hierarchyWindowItemOnGUI -= OnHierarchyWindowItemGUI;
 #if UNITY_2021_2_OR_NEWER
             DragAndDrop.RemoveDropHandler(OnHierarchyGUI);
 #endif

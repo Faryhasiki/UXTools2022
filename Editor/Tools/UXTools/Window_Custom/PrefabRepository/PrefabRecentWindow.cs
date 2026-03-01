@@ -31,16 +31,19 @@ namespace ThunderFireUITool
 
         static PrefabRecentWindow()
         {
-            EditorApplication.playModeStateChanged += (obj) =>
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChangedStatic;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChangedStatic;
+        }
+
+        private static void OnPlayModeStateChangedStatic(PlayModeStateChange obj)
+        {
+            if (HasOpenInstances<PrefabRecentWindow>())
+                r_window = GetWindow<PrefabRecentWindow>();
+            if (!EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                if (HasOpenInstances<PrefabRecentWindow>())
-                    r_window = GetWindow<PrefabRecentWindow>();
-                if (!EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode)
-                {
-                    if (r_window)
-                        r_window.RefreshWindow();
-                }
-            };
+                if (r_window)
+                    r_window.RefreshWindow();
+            }
         }
 
         private VisualElement leftContainer;
@@ -57,19 +60,26 @@ namespace ThunderFireUITool
         Texture texture = null;
         private UXToolCommonData commonData;
         private int maxRecentOpenedPrefab;
+        private void OnHierarchyWindowItemGUI(int instanceID, Rect selectionRect)
+        {
+            if (Event.current.type == EventType.MouseDrag)
+            {
+                UXCustomSceneView.ClearDelegate();
+            }
+        }
+
         private void OnEnable()
         {
             if (!SwitchSetting.CheckValid(SwitchSetting.SwitchType.RecentlyOpened)) return;
             InitWindowUI();
             InitWindowData();
             EditorApplication.delayCall += RefreshWindow;
-            EditorApplication.hierarchyWindowItemOnGUI += (int instanceID, Rect selectionRect) =>
-            {
-                if (Event.current.type == EventType.MouseDrag)
-                {
-                    UXCustomSceneView.ClearDelegate();
-                }
-            };
+            EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyWindowItemGUI;
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.hierarchyWindowItemOnGUI -= OnHierarchyWindowItemGUI;
         }
 
         private void InitWindowData()

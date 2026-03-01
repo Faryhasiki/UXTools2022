@@ -33,7 +33,7 @@
     background-image: url('/Assets/UXTools/Res/UX-GUI-Editor-Tools/Assets/Editor/Res/Icon/text.png');
     align-items: center;
     justify-content: center;
-    -unity-background-scale-mode: stretch-to-fill;
+    background-size: 100% 100%;
     width: auto;
     height: auto;
 }

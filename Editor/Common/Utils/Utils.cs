@@ -36,6 +36,7 @@ namespace ThunderFireUITool
         public static EditorWindow GetGameView()
         {
             var type = typeof(Editor).Assembly.GetType("UnityEditor.GameView");
+            if (type == null) return null;
             var gameview = EditorWindow.GetWindow(type);
             return gameview;
         }
@@ -46,10 +47,18 @@ namespace ThunderFireUITool
         public static object GetMainPlayModeView()
         {
             var playModeViewType = System.Type.GetType("UnityEditor.PlayModeView,UnityEditor");
-
-            var GetMainPlayModeView = playModeViewType.GetMethod("GetMainPlayModeView", BindingFlags.NonPublic | BindingFlags.Static);
-            var view = GetMainPlayModeView.Invoke(null, null);
-            return view;
+            if (playModeViewType == null)
+            {
+                Debug.LogWarning("[UXTools] GetMainPlayModeView: UnityEditor.PlayModeView type not found (Unity internals may have changed).");
+                return null;
+            }
+            var method = playModeViewType.GetMethod("GetMainPlayModeView", BindingFlags.NonPublic | BindingFlags.Static);
+            if (method == null)
+            {
+                Debug.LogWarning("[UXTools] GetMainPlayModeView: method not found (Unity internals may have changed).");
+                return null;
+            }
+            return method.Invoke(null, null);
         }
         /// <summary>
         /// 获取所有的GameView对象
@@ -59,21 +68,43 @@ namespace ThunderFireUITool
         {
             Assembly assembly = typeof(EditorWindow).Assembly;
             Type type = assembly.GetType("UnityEditor.GameView");
+            if (type == null)
+            {
+#if UNITY_6000_0_OR_NEWER
+                type = assembly.GetType("UnityEditor.PlayModeView");
+#endif
+            }
+            if (type == null) return new Object[0];
             return UnityEngine.Resources.FindObjectsOfTypeAll(type);
         }
 
         public static EditorWindow GetHierarchyWindow()
         {
-
             var HierarchyViewType = System.Type.GetType("UnityEditor.SceneHierarchyWindow,UnityEditor");
+            if (HierarchyViewType == null)
+            {
+                Debug.LogWarning("[UXTools] GetHierarchyWindow: UnityEditor.SceneHierarchyWindow type not found.");
+                return null;
+            }
 
-            //var GetSceneHierarchyWindow = HierarchyViewType.GetMethod("GetSceneHierarchyWindowToFocusForNewGameObjects", BindingFlags.NonPublic | BindingFlags.Static);
-            //var hierarchyWindow = GetSceneHierarchyWindow.Invoke(null, null);
-
-            object hierarchyWindow = GetPropertyValue(HierarchyViewType, "lastInteractedHierarchyWindow");
-            EditorWindow window = hierarchyWindow as EditorWindow;
-
-            return window;
+            try
+            {
+                object hierarchyWindow = GetPropertyValue(HierarchyViewType, "lastInteractedHierarchyWindow");
+                return hierarchyWindow as EditorWindow;
+            }
+            catch (Exception)
+            {
+                // lastInteractedHierarchyWindow 属性在 Unity 6 中可能已改名，降级为直接获取已打开窗口
+                try
+                {
+                    return EditorWindow.GetWindow(HierarchyViewType, false, null, false);
+                }
+                catch (Exception e2)
+                {
+                    Debug.LogWarning($"[UXTools] GetHierarchyWindow fallback failed: {e2.Message}");
+                    return null;
+                }
+            }
         }
 
         public static SceneView GetSceneView()
@@ -85,24 +116,36 @@ namespace ThunderFireUITool
         {
             var assembly = typeof(EditorWindow).Assembly;
             var type = assembly.GetType(EditorWindowClassName);
-            var editorWindow = EditorWindow.GetWindow(type);
-            return editorWindow;
+            if (type == null)
+            {
+                Debug.LogWarning($"[UXTools] GetEditorWindow: type '{EditorWindowClassName}' not found (Unity internals may have changed).");
+                return null;
+            }
+            return EditorWindow.GetWindow(type);
         }
 
         public static Editor GetEditor(Object[] targets, string EditorClassName)
         {
             var assembly = typeof(Editor).Assembly;
             var type = assembly.GetType(EditorClassName);
-            var editor = Editor.CreateEditor(targets, type);
-            return editor;
+            if (type == null)
+            {
+                Debug.LogWarning($"[UXTools] GetEditor: type '{EditorClassName}' not found (Unity internals may have changed).");
+                return null;
+            }
+            return Editor.CreateEditor(targets, type);
         }
 
         public static Editor GetEditor(Object target, string EditorClassName)
         {
             var assembly = typeof(Editor).Assembly;
             var type = assembly.GetType(EditorClassName);
-            var editor = Editor.CreateEditor(target, type);
-            return editor;
+            if (type == null)
+            {
+                Debug.LogWarning($"[UXTools] GetEditor: type '{EditorClassName}' not found (Unity internals may have changed).");
+                return null;
+            }
+            return Editor.CreateEditor(target, type);
         }
 
         /// <summary>
@@ -156,14 +199,15 @@ namespace ThunderFireUITool
         {
             if (parameters == null)
             {
-                return obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Invoke(obj, null);
+                var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                if (method == null) { Debug.LogWarning($"[UXTools] InvokeMethod: instance method '{methodName}' not found on {obj.GetType().Name}."); return null; }
+                return method.Invoke(obj, null);
             }
             Type[] types = new Type[parameters.Length];
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                types[i] = parameters[i].GetType();
-            }
-            return obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, types, null).Invoke(obj, parameters);
+            for (int i = 0; i < parameters.Length; i++) types[i] = parameters[i].GetType();
+            var methodWithParams = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, types, null);
+            if (methodWithParams == null) { Debug.LogWarning($"[UXTools] InvokeMethod: instance method '{methodName}' with {parameters.Length} params not found on {obj.GetType().Name}."); return null; }
+            return methodWithParams.Invoke(obj, parameters);
         }
         /// <summary>
         /// 通过反射调用静态方法
@@ -176,14 +220,15 @@ namespace ThunderFireUITool
         {
             if (parameters == null)
             {
-                return type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).Invoke(null, null);
+                var method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                if (method == null) { Debug.LogWarning($"[UXTools] InvokeMethod: static method '{methodName}' not found on {type.Name}."); return null; }
+                return method.Invoke(null, null);
             }
             Type[] types = new Type[parameters.Length];
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                types[i] = parameters[i].GetType();
-            }
-            return type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, null, types, null).Invoke(null, parameters);
+            for (int i = 0; i < parameters.Length; i++) types[i] = parameters[i].GetType();
+            var methodWithParams = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, null, types, null);
+            if (methodWithParams == null) { Debug.LogWarning($"[UXTools] InvokeMethod: static method '{methodName}' with {parameters.Length} params not found on {type.Name}."); return null; }
+            return methodWithParams.Invoke(null, parameters);
         }
 
         /// <summary>
@@ -197,14 +242,15 @@ namespace ThunderFireUITool
         {
             if (index == null)
             {
-                return obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(obj);
+                var prop = obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                if (prop == null) { Debug.LogWarning($"[UXTools] GetPropertyValue: instance property '{propertyName}' not found on {obj.GetType().Name}."); return null; }
+                return prop.GetValue(obj);
             }
             Type[] types = new Type[index.Length];
-            for (int i = 0; i < index.Length; i++)
-            {
-                types[i] = index[i].GetType();
-            }
-            return obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, types, null).GetValue(obj, index);
+            for (int i = 0; i < index.Length; i++) types[i] = index[i].GetType();
+            var propIndexed = obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, types, null);
+            if (propIndexed == null) { Debug.LogWarning($"[UXTools] GetPropertyValue: indexed instance property '{propertyName}' not found on {obj.GetType().Name}."); return null; }
+            return propIndexed.GetValue(obj, index);
         }
         /// <summary>
         /// 通过反射获取静态属性的值
@@ -217,14 +263,15 @@ namespace ThunderFireUITool
         {
             if (index == null)
             {
-                return type.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).GetValue(null);
+                var prop = type.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                if (prop == null) { Debug.LogWarning($"[UXTools] GetPropertyValue: static property '{propertyName}' not found on {type.Name}."); return null; }
+                return prop.GetValue(null);
             }
             Type[] types = new Type[index.Length];
-            for (int i = 0; i < index.Length; i++)
-            {
-                types[i] = index[i].GetType();
-            }
-            return type.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, null, null, types, null).GetValue(null, index);
+            for (int i = 0; i < index.Length; i++) types[i] = index[i].GetType();
+            var propIndexed = type.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, null, null, types, null);
+            if (propIndexed == null) { Debug.LogWarning($"[UXTools] GetPropertyValue: indexed static property '{propertyName}' not found on {type.Name}."); return null; }
+            return propIndexed.GetValue(null, index);
         }
 
         /// <summary>
@@ -235,7 +282,9 @@ namespace ThunderFireUITool
         /// <returns>非静态变量的值</returns>
         public static object GetFieldValue(object obj, string fieldName)
         {
-            return obj.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(obj);
+            var field = obj.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            if (field == null) { Debug.LogWarning($"[UXTools] GetFieldValue: instance field '{fieldName}' not found on {obj.GetType().Name}."); return null; }
+            return field.GetValue(obj);
         }
         /// <summary>
         /// 通过反射获取静态变量的值
@@ -245,16 +294,20 @@ namespace ThunderFireUITool
         /// <returns>静态变量的值</returns>
         public static object GetFieldValue(Type type, string fieldName)
         {
-            return type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            var field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+            if (field == null) { Debug.LogWarning($"[UXTools] GetFieldValue: static field '{fieldName}' not found on {type.Name}."); return null; }
+            return field.GetValue(null);
         }
 
         public static Rect GetSceneViewCameraRect()
         {
+            var sceneView = SceneView.lastActiveSceneView;
+            if (sceneView == null) return Rect.zero;
             var type = typeof(SceneView);
             PropertyInfo info = type.GetProperty("cameraRect", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            object r = info.GetValue(SceneView.lastActiveSceneView, null);
-            Rect rect = (Rect)r;
-            return rect;
+            if (info == null) return Rect.zero;
+            object r = info.GetValue(sceneView, null);
+            return r != null ? (Rect)r : Rect.zero;
         }
 
         public static float GetSceneViewOffest()
@@ -317,6 +370,11 @@ namespace ThunderFireUITool
         #region GameView
         public static Vector2 GetGameViewSize()
         {
+#if UNITY_6000_0_OR_NEWER
+            if (PlayModeWindow.GetRenderingResolution(out uint w, out uint h))
+                return new Vector2(w, h);
+            return Vector2.zero;
+#else
             MethodInfo GetSizeOfMainGameView = GetEditorMethod(Type.GetType("UnityEditor.GameView,UnityEditor"), "GetSizeOfMainGameView");
             if (GetSizeOfMainGameView != null)
             {
@@ -324,6 +382,7 @@ namespace ThunderFireUITool
                 return (Vector2)Res;
             }
             return Vector2.zero;
+#endif
         }
         #endregion
 
@@ -331,19 +390,48 @@ namespace ThunderFireUITool
         public static void OpenPrefab(string prefabPath)
         {
             List<MethodInfo> m = GetEditorMethod(typeof(PrefabStageUtility), "OpenPrefab", 1);
+            if (m == null || m.Count == 0)
+            {
+                Debug.LogWarning("[UXTools] OpenPrefab: PrefabStageUtility.OpenPrefab method not found (Unity internals may have changed).");
+                return;
+            }
             m[0].Invoke(null, new object[] { prefabPath });
         }
 
         public static void SetCursor(Texture2D texture)
         {
-            List<MethodInfo> m = GetEditorMethod(typeof(EditorGUIUtility), "SetCurrentViewCursor", 3);
-            m[0].Invoke(null, new object[] { texture, new Vector2(16, 16), MouseCursor.CustomCursor });
+            try
+            {
+                List<MethodInfo> m = GetEditorMethod(typeof(EditorGUIUtility), "SetCurrentViewCursor", 3);
+                if (m != null && m.Count > 0)
+                {
+                    m[0].Invoke(null, new object[] { texture, new Vector2(16, 16), MouseCursor.CustomCursor });
+                }
+                else
+                {
+                    EditorGUIUtility.AddCursorRect(new Rect(0, 0, Screen.width, Screen.height), MouseCursor.CustomCursor);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[UXTools] SetCursor failed (Unity internal API may have changed): {e.Message}");
+            }
         }
 
         public static void ClearCurrentViewCursor()
         {
-            List<MethodInfo> m = GetEditorMethod(typeof(EditorGUIUtility), "ClearCurrentViewCursor", 0);
-            m[0].Invoke(null, null);
+            try
+            {
+                List<MethodInfo> m = GetEditorMethod(typeof(EditorGUIUtility), "ClearCurrentViewCursor", 0);
+                if (m != null && m.Count > 0)
+                {
+                    m[0].Invoke(null, null);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[UXTools] ClearCurrentViewCursor failed (Unity internal API may have changed): {e.Message}");
+            }
         }
 
         #endregion

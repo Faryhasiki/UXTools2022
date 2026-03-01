@@ -28,17 +28,30 @@ public static class SceneHierarchyUtility
     /// </summary>
     public static List<GameObject> GetExpandedGameObjects()
     {
-        object sceneHierarchy = GetSceneHierarchy();
-
-        if (getExpandedGameObjects == null)
+        try
         {
-            getExpandedGameObjects = sceneHierarchy
-                .GetType()
-                .GetMethod("GetExpandedGameObjects");
-        }
-        object result = getExpandedGameObjects.Invoke(sceneHierarchy, new object[0]);
+            object sceneHierarchy = GetSceneHierarchy();
+            if (sceneHierarchy == null) return new List<GameObject>();
 
-        return (List<GameObject>)result;
+            if (getExpandedGameObjects == null)
+            {
+                getExpandedGameObjects = sceneHierarchy
+                    .GetType()
+                    .GetMethod("GetExpandedGameObjects");
+            }
+            if (getExpandedGameObjects == null)
+            {
+                Debug.LogWarning("[UXTools] SceneHierarchyUtility: GetExpandedGameObjects method not found (Unity internals may have changed).");
+                return new List<GameObject>();
+            }
+            object result = getExpandedGameObjects.Invoke(sceneHierarchy, new object[0]);
+            return result as List<GameObject> ?? new List<GameObject>();
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[UXTools] SceneHierarchyUtility.GetExpandedGameObjects failed: {e.Message}");
+            return new List<GameObject>();
+        }
     }
 
     /// <summary>
@@ -46,16 +59,28 @@ public static class SceneHierarchyUtility
     /// </summary>
     public static void SetExpanded(GameObject go, bool expand)
     {
-        object sceneHierarchy = GetSceneHierarchy();
-
-        if (expandTreeViewItem == null)
+        try
         {
+            object sceneHierarchy = GetSceneHierarchy();
+            if (sceneHierarchy == null) return;
 
-            expandTreeViewItem = sceneHierarchy
-                .GetType()
-                .GetMethod("ExpandTreeViewItem", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (expandTreeViewItem == null)
+            {
+                expandTreeViewItem = sceneHierarchy
+                    .GetType()
+                    .GetMethod("ExpandTreeViewItem", BindingFlags.NonPublic | BindingFlags.Instance);
+            }
+            if (expandTreeViewItem == null)
+            {
+                Debug.LogWarning("[UXTools] SceneHierarchyUtility: ExpandTreeViewItem method not found (Unity internals may have changed).");
+                return;
+            }
+            expandTreeViewItem.Invoke(sceneHierarchy, new object[] { go.GetInstanceID(), expand });
         }
-        expandTreeViewItem.Invoke(sceneHierarchy, new object[] { go.GetInstanceID(), expand });
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[UXTools] SceneHierarchyUtility.SetExpanded failed: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -63,28 +88,55 @@ public static class SceneHierarchyUtility
     /// </summary>
     public static void SetExpandedRecursive(GameObject go, bool expand)
     {
-        object sceneHierarchy = GetSceneHierarchy();
-        if (setExpandedRecursive == null)
+        try
         {
-            setExpandedRecursive = sceneHierarchy
-                .GetType()
-                .GetMethod("SetExpandedRecursive", BindingFlags.Public | BindingFlags.Instance);
+            object sceneHierarchy = GetSceneHierarchy();
+            if (sceneHierarchy == null) return;
+
+            if (setExpandedRecursive == null)
+            {
+                setExpandedRecursive = sceneHierarchy
+                    .GetType()
+                    .GetMethod("SetExpandedRecursive", BindingFlags.Public | BindingFlags.Instance);
+            }
+            if (setExpandedRecursive == null)
+            {
+                Debug.LogWarning("[UXTools] SceneHierarchyUtility: SetExpandedRecursive method not found (Unity internals may have changed).");
+                return;
+            }
+            setExpandedRecursive.Invoke(sceneHierarchy, new object[] { go.GetInstanceID(), expand });
         }
-        setExpandedRecursive.Invoke(sceneHierarchy, new object[] { go.GetInstanceID(), expand });
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[UXTools] SceneHierarchyUtility.SetExpandedRecursive failed: {e.Message}");
+        }
     }
 
     private static object GetSceneHierarchy()
     {
-        EditorWindow window = GetHierarchyWindow();
-
-        if (sceneHierarchyInfo == null)
+        try
         {
-            sceneHierarchyInfo = typeof(EditorWindow).Assembly
-                .GetType("UnityEditor.SceneHierarchyWindow")
-                .GetProperty("sceneHierarchy");
-            //.GetValue(window);
+            EditorWindow window = GetHierarchyWindow();
+            if (window == null) return null;
+
+            if (sceneHierarchyInfo == null)
+            {
+                sceneHierarchyInfo = typeof(EditorWindow).Assembly
+                    .GetType("UnityEditor.SceneHierarchyWindow")
+                    ?.GetProperty("sceneHierarchy");
+            }
+            if (sceneHierarchyInfo == null)
+            {
+                Debug.LogWarning("[UXTools] SceneHierarchyUtility: sceneHierarchy property not found (Unity internals may have changed).");
+                return null;
+            }
+            return sceneHierarchyInfo.GetValue(window);
         }
-        return sceneHierarchyInfo.GetValue(window);
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[UXTools] SceneHierarchyUtility.GetSceneHierarchy failed: {e.Message}");
+            return null;
+        }
     }
 
     private static EditorWindow GetHierarchyWindow()

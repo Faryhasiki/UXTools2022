@@ -1,9 +1,12 @@
-﻿.ux-button {
+.ux-button {
     cursor: link;
 }
 
 .ux-button:focus {
-    border-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
 }
 
 .ux-button-disabled {
@@ -85,48 +88,75 @@
 
 .ux-button-outline {
     background-color: rgba(0, 0, 0, 0);
-    border-color: #80a9ff;
+    border-left-color: #80a9ff;
+    border-right-color: #80a9ff;
+    border-top-color: #80a9ff;
+    border-bottom-color: #80a9ff;
     color: #80a9ff;
 }
 
 .ux-button-outline.ux-button-success{
-    border-color: #00b42a;
+    border-left-color: #00b42a;
+    border-right-color: #00b42a;
+    border-top-color: #00b42a;
+    border-bottom-color: #00b42a;
     color: #00b42a;
 }
 
 .ux-button-outline.ux-button-warning{
-    border-color: #ff7d00;
+    border-left-color: #ff7d00;
+    border-right-color: #ff7d00;
+    border-top-color: #ff7d00;
+    border-bottom-color: #ff7d00;
     color: #ff7d00;
 }
 
 .ux-button-outline.ux-button-danger{
-    border-color: #f53f3f;
+    border-left-color: #f53f3f;
+    border-right-color: #f53f3f;
+    border-top-color: #f53f3f;
+    border-bottom-color: #f53f3f;
     color: #f53f3f;
 }
 
 .ux-button-outline:active {
-    border-color: #165dff;
+    border-left-color: #165dff;
+    border-right-color: #165dff;
+    border-top-color: #165dff;
+    border-bottom-color: #165dff;
     color: #165dff;
 }
 
 .ux-button-outline.ux-button-success:active{
-    border-color: #009422;
+    border-left-color: #009422;
+    border-right-color: #009422;
+    border-top-color: #009422;
+    border-bottom-color: #009422;
     color: #009422;
 }
 
 .ux-button-outline.ux-button-warning:active{
-    border-color: #be5e00;
+    border-left-color: #be5e00;
+    border-right-color: #be5e00;
+    border-top-color: #be5e00;
+    border-bottom-color: #be5e00;
     color: #be5e00;
 }
 
 .ux-button-outline.ux-button-danger:active{
-    border-color: #ce2323;
+    border-left-color: #ce2323;
+    border-right-color: #ce2323;
+    border-top-color: #ce2323;
+    border-bottom-color: #ce2323;
     color: #ce2323;
 }
 
 .ux-button-text {
     background-color: rgba(0, 0, 0, 0);
-    border-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
     color: #80a9ff;
 }
 
@@ -148,7 +178,10 @@
 
 .ux-button-icon {
     background-color: #585858;
-    border-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
     color: #000000;
 }
 

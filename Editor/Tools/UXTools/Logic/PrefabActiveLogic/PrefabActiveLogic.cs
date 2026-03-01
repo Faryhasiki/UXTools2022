@@ -85,13 +85,15 @@ namespace ThunderFireUITool
             Dictionary<string, bool> changedGameObjects;
 
             var stage = PrefabStageUtils.GetCurrentPrefabStage();
+            if (stage == null) return;
 #if UNITY_2019_4
             var hasUnsavedChanges = Utils.InvokeMethod(stage, "HasSceneBeenModified");
 #else
             var hasUnsavedChanges = Utils.GetPropertyValue(stage, "hasUnsavedChanges");
 #endif
-            if ((bool)hasUnsavedChanges)
+            if (hasUnsavedChanges != null && (bool)hasUnsavedChanges)
             {
+                // 尝试调用内部保存确认方法；Unity 6 中该方法可能已改名，若找不到则静默跳过
                 Utils.InvokeMethod(stage, "AskUserToSaveDirtySceneBeforeDestroyingScene");
             }
 

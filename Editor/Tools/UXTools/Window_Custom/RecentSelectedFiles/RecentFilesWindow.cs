@@ -26,16 +26,19 @@ namespace ThunderFireUITool
 
         static RecentFilesWindow()
         {
-            EditorApplication.playModeStateChanged += (obj) =>
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChangedStatic;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChangedStatic;
+        }
+
+        private static void OnPlayModeStateChangedStatic(PlayModeStateChange obj)
+        {
+            if (HasOpenInstances<RecentFilesWindow>())
+                instance = GetWindow<RecentFilesWindow>();
+            if (!EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                if (HasOpenInstances<RecentFilesWindow>())
-                    instance = GetWindow<RecentFilesWindow>();
-                if (!EditorApplication.isPlaying && !EditorApplication.isPlayingOrWillChangePlaymode)
-                {
-                    if (instance)
-                        instance.RefreshWindow();
-                }
-            };
+                if (instance)
+                    instance.RefreshWindow();
+            }
         }
 
 

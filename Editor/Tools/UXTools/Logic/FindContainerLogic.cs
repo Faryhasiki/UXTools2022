@@ -46,11 +46,21 @@ namespace ThunderFireUITool
                 }
                 else
                 {
-                    if (Object.FindObjectsOfType<Canvas>().Length == 0)
+#if UNITY_2023_1_OR_NEWER
+                    var canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+#else
+                    var canvases = Object.FindObjectsOfType<Canvas>();
+#endif
+                    if (canvases.Length == 0)
                     {
                         new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+#if UNITY_2023_1_OR_NEWER
+                        canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+#else
+                        canvases = Object.FindObjectsOfType<Canvas>();
+#endif
                     }
-                    return Object.FindObjectsOfType<Canvas>()[0].transform;
+                    return canvases[0].transform;
                 }
             }
         }

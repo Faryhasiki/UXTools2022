@@ -73,22 +73,40 @@ namespace ThunderFireUITool
             // style.visibility = copiedStyle.visibility;
 
             Type type = typeof(IStyle);
+            Type uxStyleType = typeof(UXStyle);
             PropertyInfo[] properties = type.GetProperties();
             foreach (var property in properties)
             {
-                property.SetValue(style, property.GetValue(copiedStyle));
+                try
+                {
+                    var uxProp = uxStyleType.GetProperty(property.Name);
+                    if (uxProp == null || !uxProp.CanWrite) continue;
+                    property.SetValue(style, property.GetValue(copiedStyle));
+                }
+                catch (Exception)
+                {
+                    // IStyle 在不同 Unity 版本中属性不同，忽略不支持的属性
+                }
             }
         }
 
         public static void UXStyleToIStyle(IStyle style, UXStyle copiedStyle)
         {
             Type type = typeof(IStyle);
+            Type uxStyleType = typeof(UXStyle);
             PropertyInfo[] properties = type.GetProperties();
-            // Type uxType = typeof(UXStyle);
             foreach (var property in properties)
             {
-                // var uxProperty = uxType.GetProperty(property.Name);
-                property.SetValue(style, property.GetValue(copiedStyle));
+                try
+                {
+                    var uxProp = uxStyleType.GetProperty(property.Name);
+                    if (uxProp == null || !uxProp.CanRead) continue;
+                    property.SetValue(style, uxProp.GetValue(copiedStyle));
+                }
+                catch (Exception)
+                {
+                    // IStyle 在不同 Unity 版本中属性不同，忽略不支持的属性
+                }
             }
         }
     }

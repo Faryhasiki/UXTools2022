@@ -198,7 +198,11 @@ namespace ThunderFireUITool
             }
             else
             {
+#if UNITY_2023_1_OR_NEWER
+                allObjects = UnityEngine.Object.FindObjectsByType<RectTransform>(FindObjectsSortMode.None);
+#else
                 allObjects = UnityEngine.Object.FindObjectsOfType<RectTransform>();
+#endif
             }
             foreach (RectTransform item in allObjects)
             {

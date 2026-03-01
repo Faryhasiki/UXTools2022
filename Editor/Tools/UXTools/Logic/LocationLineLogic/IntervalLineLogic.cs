@@ -162,7 +162,7 @@ namespace ThunderFireUITool
             Selection.selectionChanged -= ResetAll;
             EditorApplication.update -= ListenMoving;
 
-            m_VisualManager?.RemoveAll();
+            m_VisualManager?.Close();
             m_VisualManager = null;
             Instance.Release();
         }
@@ -191,7 +191,11 @@ namespace ThunderFireUITool
             }
             else
             {
+#if UNITY_2023_1_OR_NEWER
+                allObjects = UnityEngine.Object.FindObjectsByType<RectTransform>(FindObjectsSortMode.None);
+#else
                 allObjects = UnityEngine.Object.FindObjectsOfType<RectTransform>();
+#endif
             }
             foreach (RectTransform item in allObjects)
             {
@@ -595,34 +599,39 @@ namespace ThunderFireUITool
             }
         }
 
+        private void OnIntervalSceneGui(SceneView sceneView)
+        {
+            if (Event.current.type == EventType.MouseDown)
+                m_MousePressed = true;
+            else if (Event.current.type == EventType.MouseUp)
+                m_MousePressed = false;
+        }
+
+        private void OnIntervalUpdate()
+        {
+            if (m_MousePressed)
+                DrawLines();
+            else
+                RemoveAll();
+        }
+
         public void Init()
         {
             m_HorizLines = new List<LineHoriz>();
             m_VertLines = new List<LineVert>();
             m_MousePressed = false;
 
-            SceneView.duringSceneGui += (SceneView sceneView) =>
-            {
-                if (Event.current.type == EventType.MouseDown)
-                {
-                    m_MousePressed = true;
-                }
-                else if (Event.current.type == EventType.MouseUp)
-                {
-                    m_MousePressed = false;
-                }
-            };
-            EditorApplication.update += () =>
-            {
-                if (m_MousePressed)
-                {
-                    DrawLines();
-                }
-                else
-                {
-                    RemoveAll();
-                }
-            };
+            SceneView.duringSceneGui -= OnIntervalSceneGui;
+            SceneView.duringSceneGui += OnIntervalSceneGui;
+            EditorApplication.update -= OnIntervalUpdate;
+            EditorApplication.update += OnIntervalUpdate;
+        }
+
+        public void Close()
+        {
+            SceneView.duringSceneGui -= OnIntervalSceneGui;
+            EditorApplication.update -= OnIntervalUpdate;
+            RemoveAll();
         }
 
         public void AddHorizLine(float u1, float u2, float u3, bool u4 = true)

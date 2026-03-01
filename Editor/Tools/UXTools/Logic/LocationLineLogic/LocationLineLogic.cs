@@ -99,6 +99,8 @@ namespace ThunderFireUITool
         {
             EditorApplication.update -= Judge3D;
             EditorApplication.update -= UpdateLinesScreenViewPos;
+            SceneView.duringSceneGui -= OnSceneGUI;
+            EditorApplication.update -= SnapToLocationLine;
             EditorSceneManager.sceneSaved -= SaveLocationLines;
             Selection.selectionChanged -= OnSelectionChanged;
 

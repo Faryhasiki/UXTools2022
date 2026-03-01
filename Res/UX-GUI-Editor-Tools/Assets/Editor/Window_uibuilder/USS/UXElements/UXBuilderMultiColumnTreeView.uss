@@ -1,7 +1,13 @@
 .ux-multi-column-treeview {
     margin: 2px;
-    border-width: 1px;
-    border-color: black;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: black;
+    border-right-color: black;
+    border-top-color: black;
+    border-bottom-color: black;
 }
 
 

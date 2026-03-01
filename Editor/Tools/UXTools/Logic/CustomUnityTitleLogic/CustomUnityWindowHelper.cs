@@ -8,7 +8,9 @@ using UnityEditor;
 using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEditorInternal;
+#if UNITY_INCLUDE_TESTS
 using UnityEngine.TestTools;
+#endif
 
 public partial class CustomUnityWindowHelper
 {
@@ -29,10 +31,10 @@ public partial class CustomUnityWindowHelper
     public static extern bool IsWindowVisible(HandleRef hWnd);
 
     [DllImport("user32.dll")]
-    private static extern bool GetWindowText(int hWnd, StringBuilder title, int maxBufSize);
+    private static extern bool GetWindowText(IntPtr hWnd, StringBuilder title, int maxBufSize);
 
     [DllImport("user32.dll", EntryPoint = "SetWindowText", CharSet = CharSet.Auto)]
-    public extern static int SetWindowText(int hwnd, string lpString);
+    public extern static int SetWindowText(IntPtr hwnd, string lpString);
 
     private bool haveMainWindow = false;
     public IntPtr hwnd = IntPtr.Zero;
@@ -70,11 +72,11 @@ public partial class CustomUnityWindowHelper
 
         if (string.IsNullOrEmpty(customTitle))
         {
-            SetWindowText(hwnd.ToInt32(), originTitle);
+            SetWindowText(hwnd, originTitle);
         }
         else
         {
-            SetWindowText(hwnd.ToInt32(), string.Format("{0} - {1}", customTitle, originTitle));
+            SetWindowText(hwnd, string.Format("{0} - {1}", customTitle, originTitle));
         }
         //UnityEngine.Debug.Log("Current Unity Title 2: " + customTitle);
     }
@@ -94,7 +96,11 @@ public partial class CustomUnityWindowHelper
             activeSceneName = Path.GetFileNameWithoutExtension(SceneManager.GetActiveScene().path);
         }
         string targetName = BuildPipeline.GetBuildTargetName(EditorUserBuildSettings.activeBuildTarget);
+#if UNITY_INCLUDE_TESTS
         bool codeCoverageEnabled = Coverage.enabled;
+#else
+        bool codeCoverageEnabled = false;
+#endif
 
         var title = Application.platform == RuntimePlatform.OSXEditor
         ? $"{activeSceneName} - {projectName}"
@@ -152,7 +158,7 @@ public partial class CustomUnityWindowHelper
         bool visible = IsWindowVisible(handleRef);
 
         //ĹĐ¶Ď´°żÚ±ęĚâĘÇ·ńş¬ÓĐ"Unity 20", mainWindowĘÇÓĐµÄ messageBoxÄżÇ°ż´¶ĽĂ»ÓĐ
-        GetWindowText(handle.ToInt32(), windowTitleBuffer, windowTitleBuffer.Capacity);
+        GetWindowText(handle, windowTitleBuffer, windowTitleBuffer.Capacity);
 
         string title = windowTitleBuffer.ToString();
 

@@ -47,12 +47,17 @@ public abstract class DecoratorEditor : Editor
     {
         decoratedEditorType = editorAssembly.GetTypes().Where(t => t.Name == editorTypeName).FirstOrDefault();
 
+        if (decoratedEditorType == null)
+        {
+            Debug.LogWarning($"[DecoratorEditor] Editor type '{editorTypeName}' not found in assembly. Unity internals may have changed.");
+            return;
+        }
+
         Init();
 
-        //确认 CustomEditor 的类型
         var originalEditedType = GetCustomEditorType(decoratedEditorType);
 
-        if (originalEditedType != editedObjectType)
+        if (originalEditedType != null && editedObjectType != null && originalEditedType != editedObjectType)
         {
             throw new System.ArgumentException(
                 string.Format("Type {0} does not match the editor {1} type {2}",
@@ -65,23 +70,43 @@ public abstract class DecoratorEditor : Editor
         editorInstance = CreateEditor(targets, decoratedEditorType);
     }
 
+    private static readonly string[] s_InspectedTypeFieldNames = { "m_InspectedType", "m_Type", "inspectedType" };
+
+    private static FieldInfo FindInspectedTypeField(BindingFlags flags, CustomEditor[] attributes)
+    {
+        foreach (var fieldName in s_InspectedTypeFieldNames)
+        {
+            var field = attributes
+                .Select(editor => editor.GetType().GetField(fieldName, flags))
+                .FirstOrDefault(f => f != null);
+            if (field != null) return field;
+        }
+        return null;
+    }
+
     private System.Type GetCustomEditorType(System.Type type)
     {
         var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-
         var attributes = type.GetCustomAttributes(typeof(CustomEditor), true) as CustomEditor[];
-        var field = attributes.Select(editor => editor.GetType().GetField("m_InspectedType", flags)).FirstOrDefault();
-
+        var field = FindInspectedTypeField(flags, attributes);
+        if (field == null)
+        {
+            Debug.LogWarning("[DecoratorEditor] Cannot find inspected type field on CustomEditor attribute. Unity internals may have changed.");
+            return null;
+        }
         return field.GetValue(attributes[0]) as System.Type;
     }
 
     private void Init()
     {
         var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-
         var attributes = this.GetType().GetCustomAttributes(typeof(CustomEditor), true) as CustomEditor[];
-        var field = attributes.Select(editor => editor.GetType().GetField("m_InspectedType", flags)).FirstOrDefault();
-
+        var field = FindInspectedTypeField(flags, attributes);
+        if (field == null)
+        {
+            Debug.LogWarning("[DecoratorEditor] Cannot find inspected type field on CustomEditor attribute. Unity internals may have changed.");
+            return;
+        }
         editedObjectType = field.GetValue(attributes[0]) as System.Type;
     }
 
@@ -99,6 +124,8 @@ public abstract class DecoratorEditor : Editor
     /// <param name="methodName">要调用的方法的名字</param>
     protected void CallInspectorMethod(string methodName)
     {
+        if (decoratedEditorType == null || EditorInstance == null) return;
+
         MethodInfo method = null;
 
         if (!decoratedMethods.ContainsKey(methodName))
@@ -139,6 +166,7 @@ public abstract class DecoratorEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        if (EditorInstance == null) { base.OnInspectorGUI(); return; }
         EditorInstance.OnInspectorGUI();
     }
 

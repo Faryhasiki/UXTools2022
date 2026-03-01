@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ThunderFireUITool
 {
@@ -94,11 +95,20 @@ namespace ThunderFireUITool
         {
             AddItem(EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_复制), false, () =>
             {
+#if UNITY_6000_0_OR_NEWER
+                EditorGUIUtility.systemCopyBuffer = string.Join("\n",
+                    Selection.gameObjects.Select(go => GlobalObjectId.GetGlobalObjectIdSlow(go).ToString()));
+#else
                 Unsupported.CopyGameObjectsToPasteboard();
+#endif
             });
             AddItem(EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_粘贴), false, () =>
             {
+#if UNITY_6000_0_OR_NEWER
+                EditorApplication.ExecuteMenuItem("Edit/Paste");
+#else
                 Unsupported.PasteGameObjectsFromPasteboard();
+#endif
             });
 
             var prefabStage = PrefabStageUtils.GetCurrentPrefabStage();
@@ -110,7 +120,15 @@ namespace ThunderFireUITool
             {
                 AddItem(EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_删除), false, () =>
                 {
+#if UNITY_6000_0_OR_NEWER
+                    var objs = Selection.gameObjects;
+                    foreach (var go in objs)
+                    {
+                        Undo.DestroyObjectImmediate(go);
+                    }
+#else
                     Unsupported.DeleteGameObjectSelection();
+#endif
                 });
             }
         }

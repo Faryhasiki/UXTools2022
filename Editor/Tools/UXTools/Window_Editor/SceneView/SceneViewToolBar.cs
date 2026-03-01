@@ -6,7 +6,9 @@ using UnityEngine.UIElements;
 using System.Linq;
 using System.Collections.Generic;
 using Cursor = UnityEngine.Cursor;
+#if TMP_PRESENT || UNITY_2023_2_OR_NEWER
 using TMPro;
+#endif
 
 namespace ThunderFireUITool
 {
@@ -462,7 +464,11 @@ namespace ThunderFireUITool
                         Undo.AddComponent<UnityEngine.UI.Image>(obj);
                         break;
                     case "Text":
+#if TMP_PRESENT || UNITY_2023_2_OR_NEWER
                         Undo.AddComponent<TextMeshProUGUI>(obj);
+#else
+                        Undo.AddComponent<UnityEngine.UI.Text>(obj);
+#endif
                         break;
                 }
             }
