@@ -355,9 +355,8 @@ namespace ThunderFireUITool
         public static Vector2 GetGameViewSize()
         {
 #if UNITY_6000_0_OR_NEWER
-            if (PlayModeWindow.GetRenderingResolution(out uint w, out uint h))
-                return new Vector2(w, h);
-            return Vector2.zero;
+            PlayModeWindow.GetRenderingResolution(out uint w, out uint h);
+            return new Vector2(w, h);
 #else
             MethodInfo GetSizeOfMainGameView = GetEditorMethod(Type.GetType("UnityEditor.GameView,UnityEditor"), "GetSizeOfMainGameView");
             if (GetSizeOfMainGameView != null)

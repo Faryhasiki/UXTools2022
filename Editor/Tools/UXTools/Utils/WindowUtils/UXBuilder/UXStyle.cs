@@ -17,9 +17,7 @@ namespace ThunderFireUITool
         public StyleEnum<FlexDirection> flexDirection { get; set; }
         public StyleEnum<Wrap> flexWrap { get; set; }
         public StyleEnum<Overflow> overflow { get; set; }
-#if !UNITY_6000_0_OR_NEWER
         public StyleEnum<OverflowClipBox> unityOverflowClipBox { get; set; }
-#endif
         public StyleLength left { get; set; }
         public StyleLength top { get; set; }
         public StyleLength right { get; set; }
@@ -45,8 +43,8 @@ namespace ThunderFireUITool
         public StyleColor unityBackgroundImageTintColor { get; set; }
 #if !UNITY_6000_0_OR_NEWER
         public StyleColor borderColor { get; set; }
-        public StyleEnum<ScaleMode> unityBackgroundScaleMode { get; set; }
 #endif
+        public StyleEnum<ScaleMode> unityBackgroundScaleMode { get; set; }
         public StyleEnum<Align> alignItems { get; set; }
         public StyleEnum<Align> alignContent { get; set; }
         public StyleEnum<Justify> justifyContent { get; set; }
@@ -100,7 +98,7 @@ namespace ThunderFireUITool
 #endif
 #if UNITY_6000_0_OR_NEWER
         public StyleRatio aspectRatio { get; set; }
-        public StyleList<StyleFilterFunction> filter { get; set; }
+        public StyleList<FilterFunction> filter { get; set; }
         public StyleEnum<EditorTextRenderingMode> unityEditorTextRenderingMode { get; set; }
         public StyleMaterialDefinition unityMaterial { get; set; }
         public StyleTextAutoSize unityTextAutoSize { get; set; }
