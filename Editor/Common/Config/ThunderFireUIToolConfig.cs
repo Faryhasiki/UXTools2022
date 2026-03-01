@@ -32,7 +32,11 @@ namespace ThunderFireUITool
         public static readonly string WidgetLibraryDefaultLabel = "All";
         #endregion
 
-
+        #region Design Library Setting (设计库，和组件库一样跟随包同步)
+        public static readonly string DesignLibrarySettingsPath = UXToolsPath + "Assets/Editor/Settings/DesignLibrary/";
+        public static readonly string TextPresetLibraryPath = DesignLibrarySettingsPath + "TextPresetLibrary.json";
+        public static readonly string ColorPresetLibraryPath = DesignLibrarySettingsPath + "ColorPresetLibrary.json";
+        #endregion
 
         #region Project Data (Git同步，固定在Assets下，不随包路径变化)
         public static readonly string ProjectDataPath = "Assets/UXToolsData/";
@@ -72,6 +76,8 @@ namespace ThunderFireUITool
         public const string Menu_Setting = MenuName + Setting;  //-100
         public const string Menu_CreateAssets = MenuName + CreateAssets;    //-99  -50到-1留给配置文件进行排序
 
+        public const string DesignLibrary = "设计库 (Design Library)";
+        public const string Menu_DesignLibrary = MenuName + DesignLibrary;
         public const string Menu_WidgetLibrary = MenuName + WidgetLibrary;  //51
         public const string Menu_Localization = MenuName + Localization;    //54
         public const string Menu_CreateBeginnerGuide = MenuName + CreateBeginnerGuide;  //55
