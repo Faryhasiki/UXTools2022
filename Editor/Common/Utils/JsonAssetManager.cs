@@ -36,6 +36,7 @@ public class JsonAssetManager
             { "WidgetListSetting",                      ThunderFireUIToolConfig.WidgetListPath },
             { "RecentFilesSetting",                     ThunderFireUIToolConfig.FilesRecentSelectedPath},
             { "ToolGlobalData",                         ThunderFireUIToolConfig.GlobalDataPath},
+            { "UXToolCommonData",                       ThunderFireUIToolConfig.UXToolCommonDataPath},
         };
     }
 

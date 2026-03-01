@@ -24,7 +24,7 @@ namespace ThunderFireUITool
             {
                 var recentSelected = JsonAssetManager.GetAssets<RecentFilesSetting>();
                 var recentList = recentSelected.List;
-                commonData = AssetDatabase.LoadAssetAtPath<UXToolCommonData>(ThunderFireUIToolConfig.UXToolCommonDataPath);
+                commonData = JsonAssetManager.GetAssets<UXToolCommonData>();
                 if (commonData != null)
                 {
                     maxRecentSelectedFiles = commonData.MaxRecentSelectedFiles;

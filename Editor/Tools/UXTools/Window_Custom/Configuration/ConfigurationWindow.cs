@@ -122,7 +122,6 @@ namespace ThunderFireUITool
         private VisualElement rightContainer;
         private VisualElement leftContainer;
         private Toggle[] switchToggles;
-        private TextField projectNameTextField;
         private IntegerField maxFilesField;
         private IntegerField maxPrefabsField;
         private TextElement errorLabel;
@@ -148,11 +147,7 @@ namespace ThunderFireUITool
                 switchToggles[i].value = SwitchSetting.CheckValid(i);
             }
 
-            commonData = AssetDatabase.LoadAssetAtPath<UXToolCommonData>(ThunderFireUIToolConfig.UXToolCommonDataPath);
-            if (commonData == null)
-            {
-                commonData = UXToolCommonData.Create();
-            }
+            commonData = JsonAssetManager.GetAssets<UXToolCommonData>();
         }
 
         private void InitWindowUI()
@@ -218,37 +213,6 @@ namespace ThunderFireUITool
                     color = Color.white,
                 }
             });
-
-            TextElement projectNameLabel = UXBuilder.Text(container, new UXBuilderTextStruct()
-            {
-                text = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_自定义项目名称),
-                style = new UXStyle()
-                {
-                    position = Position.Absolute,
-                    left = 0,
-                    fontSize = 13,
-                    top = 70,
-                    color = Color.white,
-                }
-            });
-
-            projectNameTextField = new TextField();
-            projectNameTextField.style.position = Position.Absolute;
-            projectNameTextField.style.width = 137;
-            projectNameTextField.style.height = 25;
-            projectNameTextField.style.top = 70;
-            projectNameTextField.style.right = 0;
-
-            if (commonData != null)
-            {
-                projectNameTextField.value = commonData.CustomUnityWindowTitle;
-            }
-
-            projectNameTextField.RegisterCallback<ChangeEvent<string>>((evt) =>
-            {
-                projectNameTextField.value = evt.newValue;
-            });
-            container.Add(projectNameTextField);
         }
 
 
@@ -262,7 +226,7 @@ namespace ThunderFireUITool
                     position = Position.Absolute,
                     left = -40,
                     fontSize = 16,
-                    top = 115,
+                    top = 40,
                     color = Color.white,
                 }
             });
@@ -275,7 +239,7 @@ namespace ThunderFireUITool
                     position = Position.Absolute,
                     left = 0,
                     fontSize = 13,
-                    top = 155,
+                    top = 80,
                     color = Color.white,
                     maxWidth = 270,
                 }
@@ -285,7 +249,7 @@ namespace ThunderFireUITool
             maxPrefabsField.style.position = Position.Absolute;
             maxPrefabsField.style.width = 137;
             maxPrefabsField.style.height = 25;
-            maxPrefabsField.style.top = 155;
+            maxPrefabsField.style.top = 80;
             maxPrefabsField.style.right = 0;
             if (commonData != null)
             {
@@ -304,7 +268,7 @@ namespace ThunderFireUITool
                     display = DisplayStyle.None,
                     fontSize = 13,
                     unityFontStyleAndWeight = FontStyle.Bold,
-                    top = 180,
+                    top = 105,
                     right = 1,
 
                 }
@@ -319,7 +283,7 @@ namespace ThunderFireUITool
                     position = Position.Absolute,
                     left = 0,
                     fontSize = 13,
-                    top = 210,
+                    top = 135,
                     color = Color.white,
                     maxWidth = 250,
                 }
@@ -329,7 +293,7 @@ namespace ThunderFireUITool
             maxFilesField.style.position = Position.Absolute;
             maxFilesField.style.width = 137;
             maxFilesField.style.height = 25;
-            maxFilesField.style.top = 210;
+            maxFilesField.style.top = 135;
             maxFilesField.style.right = 0;
             if (commonData != null)
             {
@@ -349,7 +313,7 @@ namespace ThunderFireUITool
                     display = DisplayStyle.None,
                     fontSize = 13,
                     unityFontStyleAndWeight = FontStyle.Bold,
-                    top = 235,
+                    top = 160,
                     right = 1,
 
                 }
@@ -458,7 +422,6 @@ namespace ThunderFireUITool
             }
             if (commonData != null)
             {
-                commonData.CustomUnityWindowTitle = projectNameTextField.value;
                 if (maxPrefabsField.value >= 1)
                 {
                     commonData.MaxRecentOpenedPrefabs = maxPrefabsField.value;

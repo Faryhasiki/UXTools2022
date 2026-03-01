@@ -34,22 +34,21 @@ namespace ThunderFireUITool
 
 
 
-        #region User Data
-        public static readonly string UserDataPath = UXToolsPath + "UserDatas/Editor/";
-        //Common数据 目前包括: 标题
-        public static readonly string UXToolCommonDataPath = UserDataPath + "UXToolCommonData.asset";
-        //辅助线数据
-        public static readonly string LocationLinesDataPath = UserDataPath + "LocationLinesData.json";
-        //最近打开的Prefab数据
-        public static readonly string PrefabRecentOpenedPath = UserDataPath + "PrefabRecentlyOpenedData.json";
-        //Scene窗口Tab页签数据
-        public static readonly string PrefabTabsPath = UserDataPath + "PrefabTabsData.json";
-        //快速背景图数据
-        //功能开关数据
-        public static readonly string SwitchSettingPath = UserDataPath + "SwitchSetting.json";
-        //最近选中文件数据
-        public static readonly string FilesRecentSelectedPath = UserDataPath + "FilesRecentlySelectedData.json";
-        //工具全局数据
+        #region Project Data (Git同步，固定在Assets下，不随包路径变化)
+        public static readonly string ProjectDataPath = "Assets/UXToolsData/";
+        public static readonly string UXToolCommonDataPath = ProjectDataPath + "UXToolCommonData.json";
+        public static readonly string LocationLinesDataPath = ProjectDataPath + "LocationLinesData.json";
+        public static readonly string PrefabTabsPath = ProjectDataPath + "PrefabTabsData.json";
+        public static readonly string SwitchSettingPath = ProjectDataPath + "SwitchSetting.json";
+        #endregion
+
+        #region User Local Data (不入Git，存储在Library中)
+        public static readonly string LibraryDataPath = "Library/UXTools/";
+        public static readonly string PrefabRecentOpenedPath = LibraryDataPath + "PrefabRecentlyOpenedData.json";
+        public static readonly string FilesRecentSelectedPath = LibraryDataPath + "FilesRecentlySelectedData.json";
+        #endregion
+
+        #region Package Internal Data (包内只读资源)
         public static readonly string GlobalDataPath = $"{UXCommonPath}Assets/Editor/ToolGlobalData/ToolGlobalData.json";
         #endregion
 

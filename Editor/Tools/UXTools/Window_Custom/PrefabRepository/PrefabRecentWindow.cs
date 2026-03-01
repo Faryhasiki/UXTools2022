@@ -88,7 +88,7 @@ namespace ThunderFireUITool
 
             List = list.List;
 
-            commonData = AssetDatabase.LoadAssetAtPath<UXToolCommonData>(ThunderFireUIToolConfig.UXToolCommonDataPath);
+            commonData = JsonAssetManager.GetAssets<UXToolCommonData>();
             if (commonData != null)
             {
                 maxRecentOpenedPrefab = commonData.MaxRecentOpenedPrefabs;

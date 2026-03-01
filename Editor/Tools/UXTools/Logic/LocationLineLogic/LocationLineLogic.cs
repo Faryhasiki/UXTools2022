@@ -404,9 +404,9 @@ namespace ThunderFireUITool
         /// </summary>
         private void LoadLocationLines()
         {
-            if (!Directory.Exists(ThunderFireUIToolConfig.UserDataPath))
+            if (!Directory.Exists(ThunderFireUIToolConfig.ProjectDataPath))
             {
-                Directory.CreateDirectory(ThunderFireUIToolConfig.UserDataPath);
+                Directory.CreateDirectory(ThunderFireUIToolConfig.ProjectDataPath);
             }
 
             m_LinesData = JsonAssetManager.GetAssets<LocationLinesData>();
