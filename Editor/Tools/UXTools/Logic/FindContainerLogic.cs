@@ -46,7 +46,7 @@ namespace ThunderFireUITool
                 }
                 else
                 {
-#if UNITY_2023_1_OR_NEWER
+#if UNITY_2023_1_OR_NEWER || UNITY_6000_0_OR_NEWER
                     var canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
 #else
                     var canvases = Object.FindObjectsOfType<Canvas>();
@@ -54,7 +54,7 @@ namespace ThunderFireUITool
                     if (canvases.Length == 0)
                     {
                         new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-#if UNITY_2023_1_OR_NEWER
+#if UNITY_2023_1_OR_NEWER || UNITY_6000_0_OR_NEWER
                         canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
 #else
                         canvases = Object.FindObjectsOfType<Canvas>();
