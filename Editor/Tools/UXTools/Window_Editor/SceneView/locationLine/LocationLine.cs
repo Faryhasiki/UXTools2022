@@ -348,12 +348,12 @@ namespace ThunderFireUITool
         }
         protected override void OnDrag(Vector2 mousePosition)
         {
+            float ppp = EditorGUIUtility.pixelsPerPoint;
             mousePosition.y = mousePosition.y - LocationLineLogic.sceneviewOffset;
 
-            //SceneView的(0,0)在左上角, 所以用SceneView的高减去mousePosition.y 才是距离底部的高度
-            float y = SceneView.lastActiveSceneView.camera.pixelHeight - mousePosition.y;
+            float y = SceneView.lastActiveSceneView.camera.pixelHeight - mousePosition.y * ppp;
 
-            style.bottom = y - style.height.value.value / 2;
+            style.bottom = y / ppp - style.height.value.value / 2;
 
             Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(0, y, 0));
             float minDis = Mathf.Infinity;
@@ -371,7 +371,7 @@ namespace ThunderFireUITool
             if (Mathf.Abs(minDis) < SnapLogic.SnapWorldDistance)
             {
                 worldPostion = mousePos + new Vector3(0, minDis, 0);
-                style.bottom = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(worldPostion).y - style.height.value.value / 2;
+                style.bottom = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(worldPostion).y / ppp - style.height.value.value / 2;
             }
             else
             {
@@ -383,7 +383,8 @@ namespace ThunderFireUITool
         {
             if (!m_Selected)
             {
-                style.bottom = sceneView.camera.WorldToScreenPoint(worldPostion).y - style.height.value.value / 2;
+                float ppp = EditorGUIUtility.pixelsPerPoint;
+                style.bottom = sceneView.camera.WorldToScreenPoint(worldPostion).y / ppp - style.height.value.value / 2;
             }
         }
     }
@@ -412,10 +413,10 @@ namespace ThunderFireUITool
 
         protected override void OnDrag(Vector2 mousePosition)
         {
+            float ppp = EditorGUIUtility.pixelsPerPoint;
             style.left = mousePosition.x - style.width.value.value / 2;
 
-            float screenLeft = style.left.value.value + style.width.value.value / 2;
-            Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(mousePosition.x, 0, 0));
+            Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(mousePosition.x * ppp, 0, 0));
 
             float minDis = Mathf.Infinity;
             foreach (var rect in m_Rects)
@@ -432,7 +433,7 @@ namespace ThunderFireUITool
             if (Mathf.Abs(minDis) < SnapLogic.SnapWorldDistance)
             {
                 worldPostion = mousePos + new Vector3(minDis, 0, 0);
-                style.left = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(worldPostion).x - style.width.value.value / 2;
+                style.left = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(worldPostion).x / ppp - style.width.value.value / 2;
             }
             else
             {
@@ -446,7 +447,8 @@ namespace ThunderFireUITool
         {
             if (!m_Selected)
             {
-                style.left = sceneView.camera.WorldToScreenPoint(worldPostion).x - style.width.value.value / 2;
+                float ppp = EditorGUIUtility.pixelsPerPoint;
+                style.left = sceneView.camera.WorldToScreenPoint(worldPostion).x / ppp - style.width.value.value / 2;
             }
         }
     }

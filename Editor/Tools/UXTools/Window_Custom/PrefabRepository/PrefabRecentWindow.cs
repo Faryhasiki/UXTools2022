@@ -330,15 +330,13 @@ namespace ThunderFireUITool
                 UXCustomSceneView.RemoveDelegate(DrawTexture);
                 UXCustomSceneView.AddDelegate(DrawTexture);
                 Transform container = FindContainerLogic.GetObjectParent(Selection.gameObjects);
-                Vector2 mousePos = Event.current.mousePosition;
-                mousePos.y = sceneView.camera.pixelHeight - mousePos.y;
                 if (Event.current.type == EventType.DragPerform)
                 {
                     if (container != null)
                     {
                         GameObject currentPrefab = PrefabUtility.InstantiatePrefab(LoadPrefab) as GameObject;
                         currentPrefab.transform.SetParent(container);
-                        Vector3 WorldPos = sceneView.camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 0));
+                        Vector3 WorldPos = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
                         Vector3 localPos = container.InverseTransformPoint(new Vector3(WorldPos.x, WorldPos.y, 0));
                         currentPrefab.transform.localPosition = localPos;
                         Selection.activeObject = currentPrefab;

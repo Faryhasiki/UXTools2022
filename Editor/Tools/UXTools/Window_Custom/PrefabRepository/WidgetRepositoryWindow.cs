@@ -607,13 +607,11 @@ namespace ThunderFireUITool
 
                 if (Event.current.type == EventType.DragPerform)
                 {
-                    Vector2 mousePos = Event.current.mousePosition;
                     Transform container = FindContainerLogic.GetObjectParent(Selection.gameObjects);
 
                     if (container != null)
                     {
-                        mousePos.y = sceneView.camera.pixelHeight - mousePos.y;
-                        Vector3 WorldPos = sceneView.camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 0));
+                        Vector3 WorldPos = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
                         Vector3 localPos = container.InverseTransformPoint(new Vector3(WorldPos.x, WorldPos.y, 0));
                         bool unpack = AssetDatabase.GetLabels(LoadPrefab).Contains(WidgetRepositoryConfig.UnpackText);
                         if (unpack)
@@ -665,7 +663,8 @@ namespace ThunderFireUITool
 
         private bool OutBounds(SceneView sceneView, float offset = 0f)
         {
-            if (Event.current.mousePosition.y < sceneView.camera.pixelHeight + offset && Event.current.mousePosition.y > 0 && Event.current.mousePosition.x < sceneView.camera.pixelWidth && Event.current.mousePosition.x > 0)
+            float ppp = EditorGUIUtility.pixelsPerPoint;
+            if (Event.current.mousePosition.y * ppp < sceneView.camera.pixelHeight + offset * ppp && Event.current.mousePosition.y > 0 && Event.current.mousePosition.x * ppp < sceneView.camera.pixelWidth && Event.current.mousePosition.x > 0)
             {
                 return false;
             }

@@ -425,7 +425,8 @@ namespace ThunderFireUITool
                 if (Event.current.type == EventType.MouseUp || OutSceneViewBounds(sceneView))
                     EndCreateDarg(sceneView);
             }
-            HandleUtility.AddDefaultControl(0);
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(controlID);
             sceneView.Repaint();
         }
 
@@ -443,10 +444,8 @@ namespace ThunderFireUITool
             InCreateDrag = false;
 
             Transform parent = FindContainerLogic.GetObjectParent(selection);
-            Vector2 startScreenPos = new Vector2(mouseDownPos.x, sceneView.camera.pixelHeight - mouseDownPos.y);
-            Vector2 endScreenPos = new Vector2(Event.current.mousePosition.x, sceneView.camera.pixelHeight - Event.current.mousePosition.y);
-            Vector3 startWorldPos = sceneView.camera.ScreenToWorldPoint(startScreenPos);
-            Vector3 endWorldPos = sceneView.camera.ScreenToWorldPoint(endScreenPos);
+            Vector3 startWorldPos = HandleUtility.GUIPointToWorldRay(mouseDownPos).GetPoint(0);
+            Vector3 endWorldPos = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
             Vector2 startPos = parent.InverseTransformPoint(startWorldPos);
             Vector2 endPos = parent.InverseTransformPoint(endWorldPos);
 
@@ -487,8 +486,9 @@ namespace ThunderFireUITool
         //当前鼠标是否离开SceneView中的合法位置
         public static bool OutSceneViewBounds(SceneView sceneView)
         {
-            bool OutOfSceneViewBounds = Event.current.mousePosition.y > sceneView.camera.pixelHeight ||
-                                        Event.current.mousePosition.x > sceneView.camera.pixelWidth ||
+            float ppp = EditorGUIUtility.pixelsPerPoint;
+            bool OutOfSceneViewBounds = Event.current.mousePosition.y * ppp > sceneView.camera.pixelHeight ||
+                                        Event.current.mousePosition.x * ppp > sceneView.camera.pixelWidth ||
                                         Event.current.mousePosition.y < 0 ||
                                         Event.current.mousePosition.x < 0;
 

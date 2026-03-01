@@ -601,9 +601,9 @@ namespace ThunderFireUITool
 
         private void OnIntervalSceneGui(SceneView sceneView)
         {
-            if (Event.current.type == EventType.MouseDown)
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
                 m_MousePressed = true;
-            else if (Event.current.type == EventType.MouseUp)
+            else if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
                 m_MousePressed = false;
         }
 
@@ -646,16 +646,17 @@ namespace ThunderFireUITool
         private void DrawLines()
         {
             SceneView sceneView = SceneView.lastActiveSceneView;
+            float ppp = EditorGUIUtility.pixelsPerPoint;
             if (m_HorizLines != null)
             {
                 foreach (var line in m_HorizLines)
                 {
                     Vector3 vec1 = sceneView.camera.WorldToScreenPoint(new Vector3(line.x1, line.y, 0));
                     Vector3 vec2 = sceneView.camera.WorldToScreenPoint(new Vector3(line.x2, line.y, 0));
-                    line.visual.style.left = vec1.x;
-                    line.visual.style.bottom = vec1.y;
+                    line.visual.style.left = vec1.x / ppp;
+                    line.visual.style.bottom = vec1.y / ppp;
                     line.visual.style.height = 1;
-                    line.visual.style.right = sceneView.camera.pixelWidth - vec2.x;
+                    line.visual.style.right = (sceneView.camera.pixelWidth - vec2.x) / ppp;
                     line.visual.style.justifyContent = Justify.Center;
                     if (line.needNum)
                     {
@@ -672,10 +673,10 @@ namespace ThunderFireUITool
                 {
                     Vector3 vec1 = sceneView.camera.WorldToScreenPoint(new Vector3(line.x, line.y1, 0));
                     Vector3 vec2 = sceneView.camera.WorldToScreenPoint(new Vector3(line.x, line.y2, 0));
-                    line.visual.style.bottom = vec1.y;
-                    line.visual.style.left = vec2.x;
+                    line.visual.style.bottom = vec1.y / ppp;
+                    line.visual.style.left = vec2.x / ppp;
                     line.visual.style.width = 1;
-                    line.visual.style.height = vec2.y - vec1.y;
+                    line.visual.style.height = (vec2.y - vec1.y) / ppp;
                     if (line.needNum)
                     {
                         Label label = line.visual.Q<Label>("lengthLabel");

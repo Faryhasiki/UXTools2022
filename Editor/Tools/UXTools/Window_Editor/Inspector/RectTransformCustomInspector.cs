@@ -137,9 +137,8 @@ namespace ThunderFireUITool
                 LocationLineLogic.Instance.EnableSnap = true;
                 if (SwitchSetting.CheckValid(SwitchSetting.SwitchType.QuickCopy) && OnAltPress == 2)
                 {
-                    Vector2 vec = Event.current.mousePosition;
-                    vec.y = Camera.current.pixelHeight - vec.y;
-                    vec = Camera.current.ScreenToWorldPoint(vec);
+                    Vector3 worldRayOrigin = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
+                    Vector2 vec = new Vector2(worldRayOrigin.x, worldRayOrigin.y);
                     if (!OnShiftPress)
                     {
                         for (int i = 0; i < origin_position.Length; i++)
@@ -274,9 +273,8 @@ namespace ThunderFireUITool
                     origin_rotation[i] = Selection.transforms[i].rotation;
                     origin_scale[i] = Selection.transforms[i].localScale;
                 }
-                origin_mouse = Event.current.mousePosition;
-                origin_mouse.y = Camera.current.pixelHeight - origin_mouse.y;
-                origin_mouse = Camera.current.ScreenToWorldPoint(origin_mouse);
+                Vector3 originWorldRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
+                origin_mouse = new Vector2(originWorldRay.x, originWorldRay.y);
                 OnDrag = true;
             }
         }
@@ -308,7 +306,8 @@ namespace ThunderFireUITool
 
         private bool IsClickIn(Vector2 mousePosition)
         {
-            Vector2 position = new Vector2(mousePosition.x, SceneView.lastActiveSceneView.camera.pixelHeight - mousePosition.y);
+            float ppp = EditorGUIUtility.pixelsPerPoint;
+            Vector2 position = new Vector2(mousePosition.x * ppp, SceneView.lastActiveSceneView.camera.pixelHeight - mousePosition.y * ppp);
             RectTransform rect = target as RectTransform;
             if (rect != null)
             {

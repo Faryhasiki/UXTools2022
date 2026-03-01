@@ -161,10 +161,10 @@ namespace ThunderFireUITool
                     }
                 }
 
-                //计算鼠标点击实际位置
-                Camera camera = SceneView.currentDrawingSceneView.camera; //获取到编辑器模式下的相机，这个相机是看不到的，但是可以拿到
-                Vector3 pos = Event.current.mousePosition; //低版本可能要×2
-                pos = new Vector3(pos.x, camera.pixelHeight - pos.y);
+                Camera camera = SceneView.currentDrawingSceneView.camera;
+                float ppp = EditorGUIUtility.pixelsPerPoint;
+                Vector3 guiPos = Event.current.mousePosition;
+                Vector3 pos = new Vector3(guiPos.x * ppp, camera.pixelHeight - guiPos.y * ppp);
 
                 //UI节点排序
                 List<string> liststr = new List<string>();

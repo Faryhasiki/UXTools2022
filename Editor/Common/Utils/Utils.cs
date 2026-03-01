@@ -312,25 +312,9 @@ namespace ThunderFireUITool
 
         public static float GetSceneViewOffest()
         {
-#if !UNITY_2021_3_OR_NEWER
-            //if (SceneView.sceneViews.Count == 0)
-            //{
-            //    return 19 + 25;
-            //}
-            //
-            //SceneView sceneView = (SceneView)SceneView.sceneViews[0];
-            ////SceneView sceneView = SceneView.currentDrawingSceneView;
-            //
-            //var sceneviewtype = typeof(SceneView);
-            //PropertyInfo toolbarHeightInfo = sceneviewtype.GetProperty("toolbarHeight", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            //float toolbarHeight = (float)toolbarHeightInfo.GetValue(sceneView, null);
-            //
-            //
-            //var dockareaType = typeof(Editor).Assembly.GetType("UnityEditor.DockArea");
-            //FieldInfo kTabHeightInfo = dockareaType.GetField("kTabHeight", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            //float kTabHeight = (float)kTabHeightInfo.GetValue(null);
-            //
-            //return kTabHeight + toolbarHeight;
+#if UNITY_6000_0_OR_NEWER
+            return 0;
+#elif !UNITY_2021_3_OR_NEWER
             return m_TabHeight + GetSceneViewToolbarHeight();
 #else
             var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();

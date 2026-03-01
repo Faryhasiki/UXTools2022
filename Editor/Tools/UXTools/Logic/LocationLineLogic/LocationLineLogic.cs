@@ -181,7 +181,7 @@ namespace ThunderFireUITool
             SceneView sceneView = SceneView.lastActiveSceneView;
             if (sceneView == null) return;
 
-            var h = sceneView.camera.pixelHeight;
+            var h = sceneView.camera.pixelHeight / EditorGUIUtility.pixelsPerPoint;
             foreach (LocationLine line in m_LinesList)
             {
                 line.UpdateLineScreenViewPos(sceneView);

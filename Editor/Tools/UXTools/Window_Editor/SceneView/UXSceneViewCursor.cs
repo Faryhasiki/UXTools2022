@@ -67,7 +67,8 @@ namespace ThunderFireUITool
             {
                 Utils.SetCursor(CurCursorTexture);
                 //Cursor.SetCursor(CurCursorTexture, new Vector2(16, 16), CursorMode.Auto);
-                HandleUtility.AddDefaultControl(0);
+                int controlID = GUIUtility.GetControlID(FocusType.Passive);
+                HandleUtility.AddDefaultControl(controlID);
             }
         }
     }

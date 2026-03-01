@@ -62,7 +62,7 @@ namespace ThunderFireUITool
             Selection.selectionChanged -= ResetAll;
             EditorApplication.update -= ListenMoving;
 
-            m_VisualManager?.RemoveAll();
+            m_VisualManager?.Close();
             m_VisualManager = null;
             Instance.Release();
         }
