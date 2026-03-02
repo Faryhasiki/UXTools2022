@@ -37,6 +37,26 @@ namespace ThunderFireUITool
             if (packagesIdx >= 0)
                 return fullRoot.Substring(packagesIdx + 1);
 
+            // UPM 通过 Git/tarball 安装时，物理路径在 Library/PackageCache/
+            // 例如: .../Library/PackageCache/com.leihuo.uxtools@hash/Editor/...
+            // Unity 统一用 Packages/{包名}/ 访问
+            const string cacheMarker = "/Library/PackageCache/";
+            int cacheIdx = fullRoot.LastIndexOf(cacheMarker);
+            if (cacheIdx >= 0)
+            {
+                string afterCache = fullRoot.Substring(cacheIdx + cacheMarker.Length);
+                int atIdx = afterCache.IndexOf('@');
+                int slashIdx = afterCache.IndexOf('/');
+                string packageName;
+                if (atIdx >= 0 && (slashIdx < 0 || atIdx < slashIdx))
+                    packageName = afterCache.Substring(0, atIdx);
+                else if (slashIdx >= 0)
+                    packageName = afterCache.Substring(0, slashIdx);
+                else
+                    packageName = afterCache;
+                return "Packages/" + packageName + "/";
+            }
+
             return "Assets/UXTools/";
         }
     }
