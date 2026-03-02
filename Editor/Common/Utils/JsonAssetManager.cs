@@ -35,7 +35,6 @@ public class JsonAssetManager
             { "WidgetLabelsSettings",                   ThunderFireUIToolConfig.WidgetLabelsPath },
             { "WidgetListSetting",                      ThunderFireUIToolConfig.WidgetListPath },
             { "RecentFilesSetting",                     ThunderFireUIToolConfig.FilesRecentSelectedPath},
-            { "ToolGlobalData",                         ThunderFireUIToolConfig.GlobalDataPath},
             { "UXToolCommonData",                       ThunderFireUIToolConfig.UXToolCommonDataPath},
             { "TextPresetLibrary",                      ThunderFireUIToolConfig.TextPresetLibraryPath},
             { "ColorPresetLibrary",                     ThunderFireUIToolConfig.ColorPresetLibraryPath},

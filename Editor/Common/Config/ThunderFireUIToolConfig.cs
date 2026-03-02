@@ -19,7 +19,6 @@ namespace ThunderFireUITool
         public static readonly string IconPath = UXToolsPath + "Assets/Editor/Res/Icon/";
         public static readonly string IconCursorPath = UXToolsPath + "Assets/Editor/Res/Cursor/";
         public static readonly string UIBuilderPath = UXToolsPath + "Assets/Editor/Window_uibuilder/";
-        public static readonly string ScenePath = UXToolsPath + "Assets/Editor/Scene/";
         #endregion
 
         #region Package Default Templates (包内只读，仅作为默认模板参考)
@@ -51,10 +50,6 @@ namespace ThunderFireUITool
         public static readonly string LibraryDataPath = "Library/UXTools/";
         public static readonly string PrefabRecentOpenedPath = LibraryDataPath + "PrefabRecentlyOpenedData.json";
         public static readonly string FilesRecentSelectedPath = LibraryDataPath + "FilesRecentlySelectedData.json";
-        #endregion
-
-        #region Package Internal Data (包内只读资源)
-        public static readonly string GlobalDataPath = $"{UXCommonPath}Assets/Editor/ToolGlobalData/ToolGlobalData.json";
         #endregion
 
         #region MenuItem Name

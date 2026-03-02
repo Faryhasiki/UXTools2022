@@ -450,7 +450,10 @@ namespace ThunderFireUITool
             Vector2 endPos = parent.InverseTransformPoint(endWorldPos);
 
             Vector2 size = new Vector2(Mathf.Abs(startPos.x - endPos.x), Mathf.Abs(startPos.y - endPos.y));
-            if (size.x == 0 || size.y == 0) { size.x = 100; size.y = 100; }
+            if (size.x == 0 || size.y == 0)
+            {
+                size = QuickCreateType == "Text" ? new Vector2(200, 50) : new Vector2(100, 100);
+            }
 
             Vector3 localPosition = new Vector3((startPos.x + endPos.x) / 2, (startPos.y + endPos.y) / 2, 0);
 
