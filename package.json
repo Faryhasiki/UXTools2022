@@ -1,0 +1,18 @@
+{
+  "name": "com.leihuo.uxtools",
+  "version": "1.0.0",
+  "displayName": "UXTools",
+  "description": "ThunderFire UX Tools - Unity 编辑器扩展工具集，包含组件库、设计库、辅助线、快捷创建等功能。",
+  "unity": "6000.0",
+  "author": {
+    "name": "Leihuo"
+  },
+  "keywords": [
+    "ux",
+    "ui",
+    "editor",
+    "tools",
+    "design"
+  ],
+  "type": "tool"
+}
