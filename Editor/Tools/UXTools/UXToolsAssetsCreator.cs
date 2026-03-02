@@ -29,6 +29,10 @@ namespace ThunderFireUITool
             PrefabTabsData.Create();
 
             SwitchSetting.Create();
+
+            JsonAssetManager.CreateAssets<UXToolCommonData>(ThunderFireUIToolConfig.UXToolCommonDataPath);
+            JsonAssetManager.CreateAssets<TextPresetLibrary>(ThunderFireUIToolConfig.TextPresetLibraryPath);
+            JsonAssetManager.CreateAssets<ColorPresetLibrary>(ThunderFireUIToolConfig.ColorPresetLibraryPath);
         }
     }
 }

@@ -67,10 +67,10 @@ namespace ThunderFireUITool
             if (settings == null)
                 Debug.LogError("Create PrefabLabelsSetting Failed!");
 
-            if (!Directory.Exists(ThunderFireUIToolConfig.WidgetLibrarySettingsPath))
-                Directory.CreateDirectory(ThunderFireUIToolConfig.WidgetLibrarySettingsPath);
+            if (!Directory.Exists(ThunderFireUIToolConfig.WidgetDefaultTemplatePath))
+                Directory.CreateDirectory(ThunderFireUIToolConfig.WidgetDefaultTemplatePath);
 
-            var assetPath = ThunderFireUIToolConfig.WidgetLibrarySettingsPath + "UXBuilderFormSetting.asset";
+            var assetPath = ThunderFireUIToolConfig.WidgetDefaultTemplatePath + "UXBuilderFormSetting.asset";
             AssetDatabase.CreateAsset(settings, assetPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

@@ -22,28 +22,29 @@ namespace ThunderFireUITool
         public static readonly string ScenePath = UXToolsPath + "Assets/Editor/Scene/";
         #endregion
 
-        #region Widget Setting
-        public static readonly string WidgetLibrarySettingsPath = UXToolsPath + "Assets/Editor/Settings/Widget/";
-        //组件库-组件类型数据
-        public static readonly string WidgetLabelsPath = WidgetLibrarySettingsPath + "WidgetLabels.json";
-        //组件库-被认定为组件的Prefab信息
-        public static readonly string WidgetListPath = WidgetLibrarySettingsPath + "WidgetList.json";
-
+        #region Package Default Templates (包内只读，仅作为默认模板参考)
+        public static readonly string WidgetDefaultTemplatePath = UXToolsPath + "Assets/Editor/Settings/Widget/";
         public static readonly string WidgetLibraryDefaultLabel = "All";
         #endregion
 
-        #region Design Library Setting (设计库，和组件库一样跟随包同步)
-        public static readonly string DesignLibrarySettingsPath = UXToolsPath + "Assets/Editor/Settings/DesignLibrary/";
-        public static readonly string TextPresetLibraryPath = DesignLibrarySettingsPath + "TextPresetLibrary.json";
-        public static readonly string ColorPresetLibraryPath = DesignLibrarySettingsPath + "ColorPresetLibrary.json";
-        #endregion
-
-        #region Project Data (Git同步，固定在Assets下，不随包路径变化)
+        #region Project Data (Git同步，固定在Assets下，用户操作产生的所有配置)
         public static readonly string ProjectDataPath = "Assets/UXToolsData/";
+        //通用设置
         public static readonly string UXToolCommonDataPath = ProjectDataPath + "UXToolCommonData.json";
+        //辅助线数据
         public static readonly string LocationLinesDataPath = ProjectDataPath + "LocationLinesData.json";
+        //Scene窗口Tab页签数据
         public static readonly string PrefabTabsPath = ProjectDataPath + "PrefabTabsData.json";
+        //功能开关数据
         public static readonly string SwitchSettingPath = ProjectDataPath + "SwitchSetting.json";
+        //组件库-组件类型数据
+        public static readonly string WidgetLabelsPath = ProjectDataPath + "WidgetLabels.json";
+        //组件库-被认定为组件的Prefab信息
+        public static readonly string WidgetListPath = ProjectDataPath + "WidgetList.json";
+        //设计库-文字预设
+        public static readonly string TextPresetLibraryPath = ProjectDataPath + "TextPresetLibrary.json";
+        //设计库-颜色预设
+        public static readonly string ColorPresetLibraryPath = ProjectDataPath + "ColorPresetLibrary.json";
         #endregion
 
         #region User Local Data (不入Git，存储在Library中)
