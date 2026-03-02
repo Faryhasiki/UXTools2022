@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
 
     public class UXBuilderRadioGroupStruct
@@ -65,7 +65,7 @@ namespace ThunderFireUITool
             _mUXRadioGroup = new UXBuilderRadioGroup(component.options);
 
             var styleSheet =
-                AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath +
+                AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath +
                                                           "USS/UXElements/UXRadioGroup.uss");
             _mUXRadioGroup.styleSheets.Add(styleSheet);
 

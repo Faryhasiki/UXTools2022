@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class AssetItemPrefab : AssetItemBase
     {

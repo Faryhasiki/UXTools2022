@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-namespace ThunderFireUITool
+namespace UITool
 {
     public class EditorLocalization
     {

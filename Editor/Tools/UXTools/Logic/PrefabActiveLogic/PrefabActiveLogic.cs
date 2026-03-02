@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [UXInitialize(100)]
     public class PrefabActiveLogic

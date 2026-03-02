@@ -8,7 +8,7 @@ using System.Reflection;
 using UnityEngine.UIElements;
 using System;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     /// <summary>
     /// Snap相关的逻辑和全局变量

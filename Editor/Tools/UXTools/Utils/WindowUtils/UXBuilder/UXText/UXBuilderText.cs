@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderTextStruct
     {
@@ -43,7 +43,7 @@ namespace ThunderFireUITool
 
             _mUXText = new UXBuilderText();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXText.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXText.uss");
             _mUXText.styleSheets.Add(styleSheet);
 
             _mUXText.AddToClassList("ux-text");

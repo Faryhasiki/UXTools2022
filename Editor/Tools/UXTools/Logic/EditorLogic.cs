@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //UXTools中负责管理常驻Logic的manager,生命周期和SceneViewToolBar相同
     //常驻Logic: 拥有Update功能或者需要存储内存数据的Logic

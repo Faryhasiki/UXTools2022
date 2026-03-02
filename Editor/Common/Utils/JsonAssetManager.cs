@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using ThunderFireUITool;
+using UITool;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ public class JsonAssetManager
     }
 
 
-    private static string metapath = ThunderFireUIToolConfig.AssetsRootPath + "JsonAssetManager.json";
+    private static string metapath = UIToolConfig.AssetsRootPath + "JsonAssetManager.json";
 
     [SerializeField]
     private static Dictionary<string, string> AssetPathDic = new Dictionary<string, string> { };
@@ -28,16 +28,16 @@ public class JsonAssetManager
             { "EditorLocalizationData",                 EditorLocalizationConfig.LocalizationJsonPath},
             { "EditorLocalizationUIInspectorData",      EditorLocalizationConfig.LocalizationUIInspectorJsonPath},
 
-            { "PrefabTabsData",                         ThunderFireUIToolConfig.PrefabTabsPath},
-            { "LocationLinesData",                      ThunderFireUIToolConfig.LocationLinesDataPath},
-            { "PrefabOpenedSetting",                    ThunderFireUIToolConfig.PrefabRecentOpenedPath},
-            { "SwitchSetting",                          ThunderFireUIToolConfig.SwitchSettingPath },
-            { "WidgetLabelsSettings",                   ThunderFireUIToolConfig.WidgetLabelsPath },
-            { "WidgetListSetting",                      ThunderFireUIToolConfig.WidgetListPath },
-            { "RecentFilesSetting",                     ThunderFireUIToolConfig.FilesRecentSelectedPath},
-            { "UXToolCommonData",                       ThunderFireUIToolConfig.UXToolCommonDataPath},
-            { "TextPresetLibrary",                      ThunderFireUIToolConfig.TextPresetLibraryPath},
-            { "ColorPresetLibrary",                     ThunderFireUIToolConfig.ColorPresetLibraryPath},
+            { "PrefabTabsData",                         UIToolConfig.PrefabTabsPath},
+            { "LocationLinesData",                      UIToolConfig.LocationLinesDataPath},
+            { "PrefabOpenedSetting",                    UIToolConfig.PrefabRecentOpenedPath},
+            { "SwitchSetting",                          UIToolConfig.SwitchSettingPath },
+            { "WidgetLabelsSettings",                   UIToolConfig.WidgetLabelsPath },
+            { "WidgetListSetting",                      UIToolConfig.WidgetListPath },
+            { "RecentFilesSetting",                     UIToolConfig.FilesRecentSelectedPath},
+            { "UXToolCommonData",                       UIToolConfig.UXToolCommonDataPath},
+            { "TextPresetLibrary",                      UIToolConfig.TextPresetLibraryPath},
+            { "ColorPresetLibrary",                     UIToolConfig.ColorPresetLibraryPath},
         };
     }
 

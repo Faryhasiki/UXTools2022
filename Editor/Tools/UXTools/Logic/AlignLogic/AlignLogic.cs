@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public enum AlignType
     {

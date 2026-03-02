@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UXScroller = UnityEngine.UIElements.Scroller;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class PrefabTabs
     {
@@ -16,8 +16,8 @@ namespace ThunderFireUITool
         private static ScrollView TabsList;
         private static List<string> m_tabs;
         private static string m_selectedTab;
-        private static int m_maxwidth = ThunderFireUIToolConfig.m_maxWidth;
-        private static int m_minwidth = ThunderFireUIToolConfig.m_minWidth;
+        private static int m_maxwidth = UIToolConfig.m_maxWidth;
+        private static int m_minwidth = UIToolConfig.m_minWidth;
         private static SceneView sceneView = SceneView.lastActiveSceneView;
         public static int width;
         public static string SelectedGuid
@@ -30,7 +30,7 @@ namespace ThunderFireUITool
 
             if (sceneView == null) return;
 
-            VisualTreeAsset prefabTabsTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "PrefabTabs.uxml");
+            VisualTreeAsset prefabTabsTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "PrefabTabs.uxml");
             prefabTabsPanel = prefabTabsTreeAsset.CloneTree().Children().First();
             TabsList = prefabTabsPanel.Q<ScrollView>("TabsList");
             prefabTabsPanel.style.right = 0;

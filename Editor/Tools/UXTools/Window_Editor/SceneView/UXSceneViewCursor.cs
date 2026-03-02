@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //统一控制UXTools中鼠标样式
 

@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Object = System.Object;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class AssetsItem : VisualElement
     {
@@ -22,7 +22,7 @@ namespace ThunderFireUITool
         public GameObject assetsObj;
         public string path;
         public string[] labels;
-        //public int size = ThunderFireUIToolConfig.DefaultAssetsItemSize;
+        //public int size = UIToolConfig.DefaultAssetsItemSize;
 
         public static int maxCharactersNum = 20;
         public Image thumbnail;

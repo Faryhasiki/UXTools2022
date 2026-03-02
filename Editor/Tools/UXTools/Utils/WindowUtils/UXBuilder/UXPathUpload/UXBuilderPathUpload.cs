@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderPathUploadStruct
     {
@@ -90,7 +90,7 @@ namespace ThunderFireUITool
             });
 
             var styleSheet =
-                AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath +
+                AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath +
                                                           "USS/UXElements/UXPathUpload.uss");
             _mUXPathUpload.styleSheets.Add(styleSheet);
 

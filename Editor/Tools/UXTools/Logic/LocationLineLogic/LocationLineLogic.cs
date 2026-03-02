@@ -7,7 +7,7 @@ using System.IO;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using ThunderFireUnityEx;
+using UnityEx;
 using System.Linq;
 #if UNITY_2021_3_OR_NEWER
 using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
@@ -17,7 +17,7 @@ using PrefabStageUtility = UnityEditor.Experimental.SceneManagement.PrefabStageU
 using PrefabStage = UnityEditor.Experimental.SceneManagement.PrefabStage;
 #endif
 
-namespace ThunderFireUITool
+namespace UITool
 {
 
     public enum CreateLineType
@@ -404,9 +404,9 @@ namespace ThunderFireUITool
         /// </summary>
         private void LoadLocationLines()
         {
-            if (!Directory.Exists(ThunderFireUIToolConfig.ProjectDataPath))
+            if (!Directory.Exists(UIToolConfig.ProjectDataPath))
             {
-                Directory.CreateDirectory(ThunderFireUIToolConfig.ProjectDataPath);
+                Directory.CreateDirectory(UIToolConfig.ProjectDataPath);
             }
 
             m_LinesData = JsonAssetManager.GetAssets<LocationLinesData>();

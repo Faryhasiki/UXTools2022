@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace ThunderFireUITool
+namespace UITool
 {
 
     /// <summary>

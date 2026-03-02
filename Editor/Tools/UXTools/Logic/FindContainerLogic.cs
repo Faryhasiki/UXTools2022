@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class FindContainerLogic
     {

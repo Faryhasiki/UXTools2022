@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System;
 using System.Collections.Generic;
-using ThunderFireUnityEx;
+using UnityEx;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     /// <summary>
     /// 处理间距吸附

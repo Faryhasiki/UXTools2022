@@ -6,7 +6,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderButtonStruct
     {
@@ -51,7 +51,7 @@ namespace ThunderFireUITool
 
             _mUXButton = new UXBuilderButton();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXButton.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXButton.uss");
             _mUXButton.styleSheets.Add(styleSheet);
 
             _mUXButton.AddToClassList("ux-button");

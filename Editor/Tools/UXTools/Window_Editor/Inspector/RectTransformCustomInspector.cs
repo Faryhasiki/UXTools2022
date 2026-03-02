@@ -11,7 +11,7 @@ using UnityEditor.UIElements;
 
 using Object = UnityEngine.Object;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [CustomEditor(typeof(RectTransform))]
     [CanEditMultipleObjects]
@@ -42,7 +42,7 @@ namespace ThunderFireUITool
 
             if (SwitchSetting.CheckValid(SwitchSetting.SwitchType.AlignSnap))
             {
-                VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "rectTransformButton.uxml");
+                VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "rectTransformButton.uxml");
                 BarFromUXML = visualTree.CloneTree();
                 container.Add(BarFromUXML);
 
@@ -60,7 +60,7 @@ namespace ThunderFireUITool
                     button.SetEnabled(canAlign);
                     if (!canAlign)
                     {
-                        button.style.backgroundColor = ThunderFireUIToolConfig.disableColor;
+                        button.style.backgroundColor = UIToolConfig.disableColor;
                     }
 
                     button.RegisterCallback((MouseDownEvent e) =>
@@ -80,7 +80,7 @@ namespace ThunderFireUITool
                     button.SetEnabled(canGrid);
                     if (!canGrid)
                     {
-                        button.style.backgroundColor = ThunderFireUIToolConfig.disableColor;
+                        button.style.backgroundColor = UIToolConfig.disableColor;
                     }
                     button.RegisterCallback((MouseDownEvent e) =>
                     {
@@ -106,14 +106,14 @@ namespace ThunderFireUITool
             {
                 if (button.enabledSelf)
                 {
-                    button.style.backgroundColor = ThunderFireUIToolConfig.hoverColor;
+                    button.style.backgroundColor = UIToolConfig.hoverColor;
                 }
             });
             button.RegisterCallback((PointerOutEvent e) =>
             {
                 if (button.enabledSelf)
                 {
-                    button.style.backgroundColor = ThunderFireUIToolConfig.normalColor;
+                    button.style.backgroundColor = UIToolConfig.normalColor;
                 }
             });
         }
@@ -386,7 +386,7 @@ namespace ThunderFireUITool
             //}
 
             var container = new VisualElement();
-            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "rectTransformButton.uxml");
+            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "rectTransformButton.uxml");
             BarFromUXML = visualTree.CloneTree();
             container.Add(BarFromUXML);
 

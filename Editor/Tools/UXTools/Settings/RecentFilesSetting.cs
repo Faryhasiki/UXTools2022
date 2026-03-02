@@ -6,16 +6,16 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [Serializable]
     public class RecentFilesSetting
     {
         public List<string> List = new List<string>();
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.RecentlySelected + "/RecentFilesSetting", false, -45)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.RecentlySelected + "/RecentFilesSetting", false, -45)]
         public static void Create()
         {
-            JsonAssetManager.CreateAssets<RecentFilesSetting>(ThunderFireUIToolConfig.FilesRecentSelectedPath);
+            JsonAssetManager.CreateAssets<RecentFilesSetting>(UIToolConfig.FilesRecentSelectedPath);
         }
 
         public void Add(string guid)

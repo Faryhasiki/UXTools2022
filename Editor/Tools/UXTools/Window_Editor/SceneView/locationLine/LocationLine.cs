@@ -4,9 +4,9 @@ using UnityEngine;
 using System;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-using ThunderFireUnityEx;
+using UnityEx;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public enum LocationLineDirection
     {

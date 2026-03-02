@@ -1,5 +1,5 @@
 {
-    "name": "Leihuo.UXTools.Editor.Common",
+    "name": "UXTools.Editor.Common",
     "references": [],
     "includePlatforms": [
         "Editor"

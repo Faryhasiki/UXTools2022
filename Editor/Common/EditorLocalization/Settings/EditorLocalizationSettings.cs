@@ -5,7 +5,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //增加支持的语言
     public enum EditorLocalName
@@ -21,7 +21,7 @@ namespace ThunderFireUITool
     public class EditorLocalizationSettings
     {
 #if UXTOOLS_DEV
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.Menu_UXToolLocalization + "/EditorLocalizationSettings", false, -97)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.Menu_UXToolLocalization + "/EditorLocalizationSettings", false, -97)]
 #endif
         public static void Create()
         {

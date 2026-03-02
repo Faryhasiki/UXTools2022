@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [Serializable]
     public class LocationLineData
@@ -69,7 +69,7 @@ namespace ThunderFireUITool
 
         public static LocationLinesData Create()
         {
-            var assetPath = ThunderFireUIToolConfig.LocationLinesDataPath;
+            var assetPath = UIToolConfig.LocationLinesDataPath;
             var data = JsonAssetManager.CreateAssets<LocationLinesData>(assetPath);
             if (data == null)
                 Debug.LogError("Create LocationLinesData Failed!");
@@ -83,10 +83,10 @@ namespace ThunderFireUITool
 
     public class CreateLocationLinesData : Editor
     {
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.Menu_ReferenceLine + "/ReferenceLinesData", false, -46)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.Menu_ReferenceLine + "/ReferenceLinesData", false, -46)]
         public static void Create()
         {
-            var assetPath = ThunderFireUIToolConfig.LocationLinesDataPath;
+            var assetPath = UIToolConfig.LocationLinesDataPath;
             JsonAssetManager.CreateAssets<LocationLinesData>(assetPath);
         }
     }

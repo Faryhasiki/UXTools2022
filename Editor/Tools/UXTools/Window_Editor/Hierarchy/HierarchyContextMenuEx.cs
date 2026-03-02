@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static class HierarchyContextMenuEx
     {

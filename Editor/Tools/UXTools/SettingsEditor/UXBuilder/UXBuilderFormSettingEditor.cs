@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ThunderFireUITool;
+using UITool;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;

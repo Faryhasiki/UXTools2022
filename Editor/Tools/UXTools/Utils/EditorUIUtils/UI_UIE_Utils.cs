@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static partial class EditorUIUtils
     {

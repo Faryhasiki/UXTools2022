@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderScrollViewStruct
     {
@@ -44,7 +44,7 @@ namespace ThunderFireUITool
 
             _mUXScrollView = new UXBuilderScrollView();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXScrollView.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXScrollView.uss");
             _mUXScrollView.styleSheets.Add(styleSheet);
 
             _mUXScrollView.AddToClassList("ux-scroll-view");

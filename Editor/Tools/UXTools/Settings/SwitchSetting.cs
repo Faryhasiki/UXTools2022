@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class SwitchSetting
     {
@@ -23,10 +23,10 @@ namespace ThunderFireUITool
 
         private static SwitchSetting m_instance;
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.Setting + "/SettingData", false, -41)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.Setting + "/SettingData", false, -41)]
         public static void Create()
         {
-            m_instance = JsonAssetManager.CreateAssets<SwitchSetting>(ThunderFireUIToolConfig.SwitchSettingPath);
+            m_instance = JsonAssetManager.CreateAssets<SwitchSetting>(UIToolConfig.SwitchSettingPath);
             int count = Enum.GetValues(typeof(SwitchType)).Length;
             m_instance.m_values = new bool[count];
             for (int i = 0; i < count; i++)
@@ -42,7 +42,7 @@ namespace ThunderFireUITool
             m_instance = JsonAssetManager.GetAssets<SwitchSetting>();
             if (m_instance == null)
             {
-                m_instance = JsonAssetManager.CreateAssets<SwitchSetting>(ThunderFireUIToolConfig.SwitchSettingPath);
+                m_instance = JsonAssetManager.CreateAssets<SwitchSetting>(UIToolConfig.SwitchSettingPath);
             }
             m_instance.m_values = new bool[toggles.Length];
             for (int i = 0; i < toggles.Length; i++)

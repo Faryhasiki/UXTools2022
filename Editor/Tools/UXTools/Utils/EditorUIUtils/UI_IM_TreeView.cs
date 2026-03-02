@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static partial class EditorUIUtils
     {

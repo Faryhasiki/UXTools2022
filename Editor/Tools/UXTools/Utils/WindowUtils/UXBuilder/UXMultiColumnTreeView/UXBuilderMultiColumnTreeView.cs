@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderMultiColumnTreeViewStruct
     {
@@ -45,7 +45,7 @@ namespace ThunderFireUITool
 
             _mUXMultiColumnTreeView = new UXBuilderMultiColumnTreeView();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXBuilderMultiColumnTreeView.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXBuilderMultiColumnTreeView.uss");
             _mUXMultiColumnTreeView.styleSheets.Add(styleSheet);
             _mUXMultiColumnTreeView.AddToClassList("ux-multi-column-treeview");
             _mUXMultiColumnTreeView.name = UXBuilderMultiColumnTreeViewStruct.ClassName;

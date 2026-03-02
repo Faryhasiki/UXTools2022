@@ -3,9 +3,9 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using ThunderFireUnityEx;
+using UnityEx;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     /// <summary>
     /// 处理边缘吸附

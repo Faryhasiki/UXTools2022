@@ -4,7 +4,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [UXInitialize(100)]
     public class RecentSelectRecord

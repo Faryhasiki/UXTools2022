@@ -6,7 +6,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //最近打开Prefab列表
     [Serializable]
@@ -14,10 +14,10 @@ namespace ThunderFireUITool
     {
         public List<string> List = new List<string>();
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.RecentlyOpened + "/PrefabRecentlyOpenedData", false, -45)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.RecentlyOpened + "/PrefabRecentlyOpenedData", false, -45)]
         public static void Create()
         {
-            JsonAssetManager.CreateAssets<PrefabOpenedSetting>(ThunderFireUIToolConfig.PrefabRecentOpenedPath);
+            JsonAssetManager.CreateAssets<PrefabOpenedSetting>(UIToolConfig.PrefabRecentOpenedPath);
         }
 
         //参数：GUID

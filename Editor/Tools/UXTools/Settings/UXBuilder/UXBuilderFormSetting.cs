@@ -4,7 +4,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [Serializable]
     public class UXBuilderFormSetting : ScriptableObject
@@ -60,17 +60,17 @@ namespace ThunderFireUITool
 
     public class SettledSettings : Editor
     {
-        // [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/UXBuilderFormSetting")]
+        // [MenuItem(UIToolConfig.Menu_CreateAssets + "/UXBuilderFormSetting")]
         public static void Create()
         {
             var settings = ScriptableObject.CreateInstance<UXBuilderFormSetting>();
             if (settings == null)
                 Debug.LogError("Create PrefabLabelsSetting Failed!");
 
-            if (!Directory.Exists(ThunderFireUIToolConfig.WidgetDefaultTemplatePath))
-                Directory.CreateDirectory(ThunderFireUIToolConfig.WidgetDefaultTemplatePath);
+            if (!Directory.Exists(UIToolConfig.WidgetDefaultTemplatePath))
+                Directory.CreateDirectory(UIToolConfig.WidgetDefaultTemplatePath);
 
-            var assetPath = ThunderFireUIToolConfig.WidgetDefaultTemplatePath + "UXBuilderFormSetting.asset";
+            var assetPath = UIToolConfig.WidgetDefaultTemplatePath + "UXBuilderFormSetting.asset";
             AssetDatabase.CreateAsset(settings, assetPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

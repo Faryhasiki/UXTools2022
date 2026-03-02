@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //CustomTextElement is a custom-built TextElement class with SetTextWithEllipsis
     public class CustomTextElement : TextElement

@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-namespace ThunderFireUITool
+namespace UITool
 {
     //UXTools中的路径和常量
-    public partial class ThunderFireUIToolConfig
+    public partial class UIToolConfig
     {
         public static readonly string UXCommonPath = $"{AssetsRootPath}UX-GUI-Editor-Common/";
         public static readonly string UXToolsPath = $"{AssetsRootPath}UX-GUI-Editor-Tools/";
@@ -53,7 +53,7 @@ namespace ThunderFireUITool
         #endregion
 
         #region MenuItem Name
-        public const string MenuName = "ThunderFireUXTool/";
+        public const string MenuName = "UXTool/";
         public const string ToolBar = "工具栏 (Toolbar)";
 
         public const string Setting = "设置 (Setting)";

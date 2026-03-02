@@ -2,13 +2,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderDisplayWindow : EditorWindow
     {
         private static UXBuilderDisplayWindow _mWindow;
 
-        // [MenuItem("ThunderFireUXTool/UXBuilder展示(UXBuilder Display)", false, 56)]
+        // [MenuItem("UXTool/UXBuilder展示(UXBuilder Display)", false, 56)]
         public static void OpenWindow()
         {
             _mWindow = GetWindow<UXBuilderDisplayWindow>();

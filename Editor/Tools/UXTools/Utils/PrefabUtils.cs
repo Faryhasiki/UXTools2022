@@ -6,13 +6,13 @@ using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static class PrefabUtils
     {
         public static List<FileInfo> GetWidgetList()
         {
-            // string componentPath = AssetDatabase.LoadAssetAtPath<DefaultPrefabPathSetting>(ThunderFireUIToolConfig.DefaultPrefabPathSettingFullPath).PathList[(int)PrefabPath.Component];
+            // string componentPath = AssetDatabase.LoadAssetAtPath<DefaultPrefabPathSetting>(UIToolConfig.DefaultPrefabPathSettingFullPath).PathList[(int)PrefabPath.Component];
             // List<FileInfo> prefabList = new List<FileInfo>();
             // if (Directory.Exists(componentPath))
             // {

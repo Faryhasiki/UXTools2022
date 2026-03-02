@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class ConfigurationOption : VisualElement
     {
@@ -85,7 +85,7 @@ namespace ThunderFireUITool
     {
         private static ConfigurationWindow c_window;
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_Setting, false, -148)]
+        [MenuItem(UIToolConfig.Menu_Setting, false, -148)]
         public static void OpenWindow()
         {
             int width = 650;
@@ -152,7 +152,7 @@ namespace ThunderFireUITool
 
         private void InitWindowUI()
         {
-            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "SettingWindow.uxml");
+            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "SettingWindow.uxml");
             Root = visualTree.CloneTree();
             rootVisualElement.Add(Root);
             Root.style.alignSelf = Align.Center;

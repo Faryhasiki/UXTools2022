@@ -10,7 +10,7 @@ using Cursor = UnityEngine.Cursor;
 using TMPro;
 #endif
 
-namespace ThunderFireUITool
+namespace UITool
 {
 
     [UXInitialize]
@@ -93,11 +93,11 @@ namespace ThunderFireUITool
             SceneView.lastActiveSceneView.in2DMode = true;
         }
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_ToolBar, false, 101)]
+        [MenuItem(UIToolConfig.Menu_ToolBar, false, 101)]
         public static void SwitchEditor()
         {
-            bool flag = Menu.GetChecked(ThunderFireUIToolConfig.Menu_ToolBar);
-            Menu.SetChecked(ThunderFireUIToolConfig.Menu_ToolBar, !flag);
+            bool flag = Menu.GetChecked(UIToolConfig.Menu_ToolBar);
+            Menu.SetChecked(UIToolConfig.Menu_ToolBar, !flag);
             EditorPrefs.SetBool("EditorOpen", !flag);
 
             if (!flag)
@@ -112,10 +112,10 @@ namespace ThunderFireUITool
             }
         }
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_ToolBar, true)]
+        [MenuItem(UIToolConfig.Menu_ToolBar, true)]
         public static bool CheckToolBarState()
         {
-            Menu.SetChecked(ThunderFireUIToolConfig.Menu_ToolBar, HaveToolbar);
+            Menu.SetChecked(UIToolConfig.Menu_ToolBar, HaveToolbar);
             return true;
         }
 
@@ -136,8 +136,8 @@ namespace ThunderFireUITool
             SceneView sceneView = SceneView.lastActiveSceneView;
             if (sceneView == null) return;
 
-            VisualTreeAsset toolbarTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "toolbar.uxml");
-            VisualTreeAsset toolbarPopUpTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "toolbar_secondPopup.uxml");
+            VisualTreeAsset toolbarTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "toolbar.uxml");
+            VisualTreeAsset toolbarPopUpTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "toolbar_secondPopup.uxml");
 
             toolbarBg = toolbarTreeAsset.CloneTree().Children().First();
             sceneView.rootVisualElement.Add(toolbarBg);
@@ -340,7 +340,7 @@ namespace ThunderFireUITool
 
             if (isHover)
             {
-                button.style.backgroundColor = ThunderFireUIToolConfig.hoverColor;
+                button.style.backgroundColor = UIToolConfig.hoverColor;
 
                 //var icon = button.Q<VisualElement>("icon");
                 //if (icon != null)
@@ -351,7 +351,7 @@ namespace ThunderFireUITool
             }
             else
             {
-                button.style.backgroundColor = ThunderFireUIToolConfig.normalColor;
+                button.style.backgroundColor = UIToolConfig.normalColor;
 
                 //var icon = button.Q<VisualElement>("icon");
                 //if (icon != null)

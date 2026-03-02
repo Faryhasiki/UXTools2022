@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //弹窗和PrefabCreateWindow样式相同,只是不允许修改路径
     public class PrefabModifyWindow : PrefabCreateWindow

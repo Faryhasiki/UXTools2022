@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [Serializable]
     public class ColorPresetItem

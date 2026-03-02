@@ -4,10 +4,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
-namespace ThunderFireUITool
+namespace UITool
 {
     //UXTools中的路径和常量
-    public partial class ThunderFireUIToolConfig
+    public partial class UIToolConfig
     {
         public static readonly string RootPath = "Assets/";
 
@@ -38,7 +38,7 @@ namespace ThunderFireUITool
                 return fullRoot.Substring(packagesIdx + 1);
 
             // UPM 通过 Git/tarball 安装时，物理路径在 Library/PackageCache/
-            // 例如: .../Library/PackageCache/com.leihuo.uxtools@hash/Editor/...
+            // 例如: .../Library/PackageCache/com.ys4fun.uxtools@hash/Editor/...
             // Unity 统一用 Packages/{包名}/ 访问
             const string cacheMarker = "/Library/PackageCache/";
             int cacheIdx = fullRoot.LastIndexOf(cacheMarker);

@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderRadioStruct
     {
@@ -47,7 +47,7 @@ namespace ThunderFireUITool
 
             _mUXRadio = new UXBuilderRadio();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXRadio.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXRadio.uss");
             _mUXRadio.styleSheets.Add(styleSheet);
 
             _mUXRadioField = _mUXRadio.Q<VisualElement>(null, "unity-radio-button__input");

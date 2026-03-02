@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderDividerStruct
     {
@@ -58,7 +58,7 @@ namespace ThunderFireUITool
 
             _mUXDivider = new UXBuilderDivider();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXDivider.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXDivider.uss");
             _mUXDivider.styleSheets.Add(styleSheet);
 
             _mUXDivider.AddToClassList("ux-divider");

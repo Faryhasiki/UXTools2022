@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class ToolbarPopupOption
     {
@@ -24,7 +24,7 @@ namespace ThunderFireUITool
             SceneView sceneView = SceneView.lastActiveSceneView;
             if (sceneView == null) return;
 
-            VisualTreeAsset toolbarPopUpTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "toolbar_secondPopup.uxml");
+            VisualTreeAsset toolbarPopUpTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "toolbar_secondPopup.uxml");
             root = toolbarPopUpTreeAsset.CloneTree().Children().First();
             sceneView.rootVisualElement.Add(root);
 
@@ -38,7 +38,7 @@ namespace ThunderFireUITool
 
         public void Init(Vector2 position, List<ToolbarPopupOption> options, float width = 140)
         {
-            VisualTreeAsset optionTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "toolbar_secondOption.uxml");
+            VisualTreeAsset optionTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "toolbar_secondOption.uxml");
             root.style.height = options.Count * 40 + 20;
             root.style.width = width;
 
@@ -78,11 +78,11 @@ namespace ThunderFireUITool
         {
             if (isHover)
             {
-                optionRoot.style.backgroundColor = ThunderFireUIToolConfig.hoverColor;
+                optionRoot.style.backgroundColor = UIToolConfig.hoverColor;
             }
             else
             {
-                optionRoot.style.backgroundColor = ThunderFireUIToolConfig.normalColor;
+                optionRoot.style.backgroundColor = UIToolConfig.normalColor;
             }
         }
     }

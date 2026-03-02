@@ -9,7 +9,7 @@ using System;
 using Object = UnityEngine.Object;
 using System.Linq;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static class ToolUtils
     {
@@ -135,10 +135,10 @@ namespace ThunderFireUITool
         {
             if (!m_IconDict.TryGetValue(name, out var tex))
             {
-                tex = AssetDatabase.LoadAssetAtPath<Texture>($"{ThunderFireUIToolConfig.IconPath}{name}.png");
+                tex = AssetDatabase.LoadAssetAtPath<Texture>($"{UIToolConfig.IconPath}{name}.png");
                 if (tex == null)
                 {
-                    tex = AssetDatabase.LoadAssetAtPath<Texture>($"{ThunderFireUIToolConfig.IconCursorPath}{name}.png");
+                    tex = AssetDatabase.LoadAssetAtPath<Texture>($"{UIToolConfig.IconCursorPath}{name}.png");
                 }
                 m_IconDict[name] = tex;
             }

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using ThunderFireUnityEx;
+using UnityEx;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class LocalizationDecode : Editor
     {
 #if UXTOOLS_DEV
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.Menu_UXToolLocalization + "/EditorLocalizationDecode", false, -97)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.Menu_UXToolLocalization + "/EditorLocalizationDecode", false, -97)]
 #endif
         public static void Decode()
         {
@@ -19,7 +19,7 @@ namespace ThunderFireUITool
             GenData(data);
         }
 #if UXTOOLS_DEV
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.Menu_UXToolLocalization + "/EditorLocalizationStorage", false, -97)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.Menu_UXToolLocalization + "/EditorLocalizationStorage", false, -97)]
 #endif
         public static void BuildUIScript()
         {

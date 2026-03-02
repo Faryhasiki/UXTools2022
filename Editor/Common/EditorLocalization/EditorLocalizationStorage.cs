@@ -1,6 +1,6 @@
 using System;
 using UnityEditor;
-namespace ThunderFireUITool
+namespace UITool
 {
     public class EditorLocalizationStorage
     {

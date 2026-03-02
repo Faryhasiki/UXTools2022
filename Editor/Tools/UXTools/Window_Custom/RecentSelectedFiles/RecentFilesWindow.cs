@@ -8,14 +8,14 @@ using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class RecentFilesWindow : EditorWindow
     {
         private static RecentFilesWindow instance;
         public static bool clickFlag = false;
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_RecentlySelected, false, 154)]
+        [MenuItem(UIToolConfig.Menu_RecentlySelected, false, 154)]
         public static void ShowWindow()
         {
             instance = GetWindow<RecentFilesWindow>();

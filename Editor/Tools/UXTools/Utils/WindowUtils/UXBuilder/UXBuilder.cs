@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilder
     {

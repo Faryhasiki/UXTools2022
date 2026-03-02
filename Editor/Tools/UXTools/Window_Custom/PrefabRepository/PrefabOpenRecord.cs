@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     [UXInitialize(100)]
     public class PrefabOpenRecord

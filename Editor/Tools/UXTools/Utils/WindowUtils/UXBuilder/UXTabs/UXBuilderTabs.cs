@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderTabsStruct
     {
@@ -76,7 +76,7 @@ namespace ThunderFireUITool
 
             _mUXTabs = new UXBuilderTabs();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXTabs.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXTabs.uss");
             _mUXTabs.styleSheets.Add(styleSheet);
 
             _mUXTabs.AddToClassList("ux-tabs");

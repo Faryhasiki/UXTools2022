@@ -6,7 +6,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderSelectStruct
     {
@@ -67,7 +67,7 @@ namespace ThunderFireUITool
 
             _mUXSelect = new UXBuilderSelect(component.options, component.defaultValue);
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXSelect.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXSelect.uss");
             _mUXSelect.styleSheets.Add(styleSheet);
 
             _mUXSelect.AddToClassList("ux-select");

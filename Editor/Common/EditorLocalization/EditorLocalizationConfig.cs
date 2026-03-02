@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-namespace ThunderFireUITool
+namespace UITool
 {
     //UXTools中用到的本地化配置和常量
     public class EditorLocalizationConfig
     {
-        public static readonly string UXCommonPath = $"{ThunderFireUIToolConfig.AssetsRootPath}UX-GUI-Editor-Common/";
+        public static readonly string UXCommonPath = $"{UIToolConfig.AssetsRootPath}UX-GUI-Editor-Common/";
 
         #region Editor Localization
         //编辑器本地化路径
         public static readonly string LocalizationAssetsPath = UXCommonPath + "Assets/Editor/EditorLocalization/";
-        public static readonly string LocalizationPath = $"{ThunderFireUIToolConfig.ToolsRootPath}Common/EditorLocalization/";
+        public static readonly string LocalizationPath = $"{UIToolConfig.ToolsRootPath}Common/EditorLocalization/";
         //编辑器本地化设置路径
         public static readonly string LocalizationSettingsPath = LocalizationAssetsPath + "Settings/";
         public static readonly string LocalizationSettingsFullPath = LocalizationSettingsPath + "EditorLocalizationSettings.json";
@@ -27,7 +27,7 @@ namespace ThunderFireUITool
         public static readonly string EditorLocalizationStorageCode =
 @"using System;
 using UnityEditor;
-namespace ThunderFireUITool
+namespace UITool
 {
     public class EditorLocalizationStorage
     {

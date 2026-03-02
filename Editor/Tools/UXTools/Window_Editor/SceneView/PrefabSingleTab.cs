@@ -5,23 +5,23 @@ using System.IO;
 using UnityEngine;
 using System;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class PrefabSingleTab : VisualElement
     {
         //private static int m_maxCharacters = 20;
         public Button visual;
         private string m_guid;
-        private static int m_maxwidth = ThunderFireUIToolConfig.m_maxWidth;
-        private static int m_minwidth = ThunderFireUIToolConfig.m_minWidth;
-        private static int m_maxcharacters = ThunderFireUIToolConfig.m_maxCharacters;
-        private static int m_mincharacters = ThunderFireUIToolConfig.m_minCharacters;
+        private static int m_maxwidth = UIToolConfig.m_maxWidth;
+        private static int m_minwidth = UIToolConfig.m_minWidth;
+        private static int m_maxcharacters = UIToolConfig.m_maxCharacters;
+        private static int m_mincharacters = UIToolConfig.m_minCharacters;
 
         public PrefabSingleTab(FileInfo info, string guid, int prefabcounts, bool isclose, int width)
         {
             SceneView sceneView = SceneView.lastActiveSceneView;
             int prewidth = (int)sceneView.position.width / prefabcounts;
-            VisualTreeAsset tabTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "PrefabSingleTab.uxml");
+            VisualTreeAsset tabTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "PrefabSingleTab.uxml");
             visual = tabTreeAsset.CloneTree().Q<Button>("Tab");
             Label label = visual.Q<Label>("Label");
             Button close = visual.Q<Button>("Close");

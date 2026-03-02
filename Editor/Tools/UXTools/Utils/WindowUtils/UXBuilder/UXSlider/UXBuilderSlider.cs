@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderSliderStruct
     {
@@ -54,7 +54,7 @@ namespace ThunderFireUITool
 
             _mUXSlider = new UXBuilderSlider(component.minValue, component.maxValue);
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXSlider.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXSlider.uss");
             _mUXSlider.styleSheets.Add(styleSheet);
 
 

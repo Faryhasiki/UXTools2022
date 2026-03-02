@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public enum WidgetInstantiateMode
     {
@@ -27,7 +27,7 @@ namespace ThunderFireUITool
         private static WidgetRepositoryWindow m_window;
         public static bool clickFlag = false;
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_WidgetLibrary, false, 51)]
+        [MenuItem(UIToolConfig.Menu_WidgetLibrary, false, 51)]
         public static void OpenWindow()
         {
             int width = 1272 + 13 + 12;
@@ -134,7 +134,7 @@ namespace ThunderFireUITool
 #endif
                 asstesItems.Add(item);
             }
-            visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "ComponentLeftButton.uxml");
+            visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "ComponentLeftButton.uxml");
         }
 
         #region UI
@@ -402,7 +402,7 @@ namespace ThunderFireUITool
             }
             widgetScroll.Clear();
 
-            if (filtration == ThunderFireUIToolConfig.WidgetLibraryDefaultLabel)
+            if (filtration == UIToolConfig.WidgetLibraryDefaultLabel)
             {
                 fliterItems = asstesItems;
             }

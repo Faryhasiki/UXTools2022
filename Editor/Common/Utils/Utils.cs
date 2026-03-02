@@ -16,7 +16,7 @@ using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
 using PrefabStageUtility = UnityEditor.Experimental.SceneManagement.PrefabStageUtility;
 #endif
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static partial class Utils
     {

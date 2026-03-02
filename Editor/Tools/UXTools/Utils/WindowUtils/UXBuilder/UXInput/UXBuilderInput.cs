@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderInputStruct
     {
@@ -52,7 +52,7 @@ namespace ThunderFireUITool
 
             _mUXInput = new UXBuilderInput();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXInput.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXInput.uss");
             _mUXInput.styleSheets.Add(styleSheet);
 
             _mUXInput.AddToClassList("ux-input");

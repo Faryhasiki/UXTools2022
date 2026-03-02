@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class PrefabLabelModifyWindow : EditorWindow
     {
@@ -51,7 +51,7 @@ namespace ThunderFireUITool
         {
             currentName = OriginalLabelName;
             VisualElement root = rootVisualElement;
-            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "Constant/labelModify_popup.uxml");
+            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "Constant/labelModify_popup.uxml");
             VisualElement labelFromUXML = visualTree.CloneTree();
             Label TextLabel = labelFromUXML.Q<Label>("textlabel");
             IMGUIContainer TextInput = labelFromUXML.Q<IMGUIContainer>("textinput");

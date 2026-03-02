@@ -3,20 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
-using ThunderFireUITool;
+using UITool;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class PrefabRecentWindow : EditorWindow
     {
         private static PrefabRecentWindow r_window;
         public static bool clickFlag = false;
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_RecentlyOpened, false, 153)]
+        [MenuItem(UIToolConfig.Menu_RecentlyOpened, false, 153)]
         public static void OpenWindow()
         {
             int width = 732 + 12 + 13;

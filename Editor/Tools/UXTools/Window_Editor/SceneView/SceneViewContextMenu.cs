@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.SceneManagement;
 
-namespace ThunderFireUITool
+namespace UITool
 {
 
     public static class SceneViewContextMenu

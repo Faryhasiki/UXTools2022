@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderCheckBoxStruct
     {
@@ -47,7 +47,7 @@ namespace ThunderFireUITool
 
             _mUXCheckBox = new UXBuilderCheckBox();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXCheckBox.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXCheckBox.uss");
             _mUXCheckBox.styleSheets.Add(styleSheet);
 
             _mUXCheckBoxField = _mUXCheckBox.Q<VisualElement>(null, "unity-toggle__input");

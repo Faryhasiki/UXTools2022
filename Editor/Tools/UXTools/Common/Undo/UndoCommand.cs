@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
-namespace ThunderFireUITool
+namespace UITool
 {
     //所有需要执行撤销的操作 在这里定义Commond,通过Execute执行Undo记录
     //目的是为了不让Undo. 代码乱飞
@@ -77,7 +77,7 @@ namespace ThunderFireUITool
         {
             m_LinesData = linesData;
             undoName = OperationName;
-            //m_datajson = AssetDatabase.LoadAssetAtPath<TextAsset>(ThunderFireUIToolConfig.LocationLinesDataPath);
+            //m_datajson = AssetDatabase.LoadAssetAtPath<TextAsset>(UIToolConfig.LocationLinesDataPath);
         }
         public override void Execute()
         {

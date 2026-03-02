@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public static class WidgetGenerator
     {

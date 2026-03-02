@@ -11,7 +11,7 @@ using System.IO;
 using UnityEngine.SceneManagement;
 using Cursor = UnityEngine.Cursor;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class PrefabCreateWindow : EditorWindow
     {
@@ -172,7 +172,7 @@ namespace ThunderFireUITool
         {
             selectObjList = selectObjs;
             currentName = "";
-            componentPath = ThunderFireUIToolConfig.RootPath;
+            componentPath = UIToolConfig.RootPath;
             isPrefab = false;
         }
 
@@ -199,7 +199,7 @@ namespace ThunderFireUITool
 
         protected virtual void InitWindowUI()
         {
-            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ThunderFireUIToolConfig.UIBuilderPath + "Constant/prefabModify_popup.uxml");
+            VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UIToolConfig.UIBuilderPath + "Constant/prefabModify_popup.uxml");
             VisualElement labelFromUXML = visualTree.CloneTree();
 
             Label widgetNameLabel = labelFromUXML.Q<Label>("widgetNameLabel");

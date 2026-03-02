@@ -6,7 +6,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //组件标签列表
     [Serializable]
@@ -14,10 +14,10 @@ namespace ThunderFireUITool
     {
         public List<string> labelList = new List<string>();
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.WidgetLibrary + "/WidgetLabelsSetting", false, -50)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.WidgetLibrary + "/WidgetLabelsSetting", false, -50)]
         public static void Create()
         {
-            JsonAssetManager.CreateAssets<WidgetLabelsSettings>(ThunderFireUIToolConfig.WidgetLabelsPath);
+            JsonAssetManager.CreateAssets<WidgetLabelsSettings>(UIToolConfig.WidgetLabelsPath);
         }
 
         public void AddNewLabel(string newLabel)

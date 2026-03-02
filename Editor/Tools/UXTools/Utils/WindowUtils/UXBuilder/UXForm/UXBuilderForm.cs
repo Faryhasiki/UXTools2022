@@ -1,4 +1,4 @@
-namespace ThunderFireUITool.UXForm
+namespace UITool.UXForm
 {
     public class UXBuilderColStruct
     {

@@ -6,7 +6,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     //设为组件的Prefab列表
     [Serializable]
@@ -14,12 +14,12 @@ namespace ThunderFireUITool
     {
         public List<string> List = new List<string>();
         private static int previewSize = 144;
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.WidgetLibrary + "/WidgetListSettings", false, -50)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.WidgetLibrary + "/WidgetListSettings", false, -50)]
         public static void Create()
         {
 
-            var setting = JsonAssetManager.CreateAssets<WidgetListSetting>(ThunderFireUIToolConfig.WidgetListPath);
-            var guids = AssetDatabase.FindAssets("t:Prefab", new string[] { ThunderFireUIToolConfig.AssetsRootPath + "UX-GUI-PresetWidget/UXToolPrefabs/" });
+            var setting = JsonAssetManager.CreateAssets<WidgetListSetting>(UIToolConfig.WidgetListPath);
+            var guids = AssetDatabase.FindAssets("t:Prefab", new string[] { UIToolConfig.AssetsRootPath + "UX-GUI-PresetWidget/UXToolPrefabs/" });
             foreach (var guid in guids)
             {
                 if (!setting.List.Contains(guid))

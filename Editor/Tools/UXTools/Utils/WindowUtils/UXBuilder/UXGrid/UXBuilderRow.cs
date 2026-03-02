@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderRowStruct
     {
@@ -43,7 +43,7 @@ namespace ThunderFireUITool
 
             _mUXRow = new UXBuilderRow();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXRow.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXRow.uss");
             _mUXRow.styleSheets.Add(styleSheet);
 
             _mUXRow.AddToClassList("ux-row");

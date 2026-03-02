@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderDivStruct
     {
@@ -41,7 +41,7 @@ namespace ThunderFireUITool
 
             _mUXDiv = new UXBuilderDiv();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXDiv.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXDiv.uss");
             _mUXDiv.styleSheets.Add(styleSheet);
 
             _mUXDiv.AddToClassList("ux-div");

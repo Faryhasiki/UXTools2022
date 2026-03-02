@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class PrefabTabsData
     {
@@ -16,7 +16,7 @@ namespace ThunderFireUITool
                 var instance = JsonAssetManager.GetAssets<PrefabTabsData>();
                 if (instance == null)
                 {
-                    instance = JsonAssetManager.CreateAssets<PrefabTabsData>(ThunderFireUIToolConfig.PrefabTabsPath);
+                    instance = JsonAssetManager.CreateAssets<PrefabTabsData>(UIToolConfig.PrefabTabsPath);
                     instance.m_tabs = new List<string>();
                 }
 
@@ -31,10 +31,10 @@ namespace ThunderFireUITool
             }
         }
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_CreateAssets + "/" + ThunderFireUIToolConfig.PrefabTabs + "/PrefabTabsData", false, -43)]
+        [MenuItem(UIToolConfig.Menu_CreateAssets + "/" + UIToolConfig.PrefabTabs + "/PrefabTabsData", false, -43)]
         public static void Create()
         {
-            JsonAssetManager.CreateAssets<PrefabTabsData>(ThunderFireUIToolConfig.PrefabTabsPath);
+            JsonAssetManager.CreateAssets<PrefabTabsData>(UIToolConfig.PrefabTabsPath);
         }
 
         public static void SyncTab(List<string> list)
@@ -42,7 +42,7 @@ namespace ThunderFireUITool
             var instance = JsonAssetManager.GetAssets<PrefabTabsData>();
             if (instance == null)
             {
-                instance = JsonAssetManager.CreateAssets<PrefabTabsData>(ThunderFireUIToolConfig.PrefabTabsPath);
+                instance = JsonAssetManager.CreateAssets<PrefabTabsData>(UIToolConfig.PrefabTabsPath);
             }
             if (instance.m_tabs == null)
             {

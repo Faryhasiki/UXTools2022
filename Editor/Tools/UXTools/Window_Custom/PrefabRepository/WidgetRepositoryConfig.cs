@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class WidgetRepositoryConfig
     {

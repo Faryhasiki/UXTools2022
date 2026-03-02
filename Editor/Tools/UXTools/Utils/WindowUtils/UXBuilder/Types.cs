@@ -1,4 +1,4 @@
-namespace ThunderFireUITool
+namespace UITool
 {
     public enum ButtonType
     {

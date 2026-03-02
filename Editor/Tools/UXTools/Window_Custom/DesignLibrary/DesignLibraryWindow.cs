@@ -7,7 +7,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class DesignLibraryWindow : EditorWindow
     {
@@ -36,7 +36,7 @@ namespace ThunderFireUITool
         static readonly Color TextWhite = new Color(0.85f, 0.85f, 0.85f);
         static readonly Color TextGray = new Color(0.55f, 0.55f, 0.55f);
 
-        [MenuItem(ThunderFireUIToolConfig.Menu_DesignLibrary, false, 50)]
+        [MenuItem(UIToolConfig.Menu_DesignLibrary, false, 50)]
         public static void OpenWindow()
         {
             s_window = GetWindow<DesignLibraryWindow>();
@@ -120,7 +120,7 @@ namespace ThunderFireUITool
             wrapper.style.flexGrow = 1;
             wrapper.style.alignItems = Align.Center;
             wrapper.style.justifyContent = Justify.Center;
-            var btn = new Button(() => EditorApplication.ExecuteMenuItem(ThunderFireUIToolConfig.Menu_WidgetLibrary));
+            var btn = new Button(() => EditorApplication.ExecuteMenuItem(UIToolConfig.Menu_WidgetLibrary));
             btn.text = "打开组件库窗口";
             btn.style.fontSize = 14;
             btn.style.width = 200;

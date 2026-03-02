@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ThunderFireUITool
+namespace UITool
 {
     public class UXBuilderColStruct
     {
@@ -48,7 +48,7 @@ namespace ThunderFireUITool
 
             _mUXCol = new UXBuilderCol();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ThunderFireUIToolConfig.UIBuilderPath + "USS/UXElements/UXCol.uss");
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(UIToolConfig.UIBuilderPath + "USS/UXElements/UXCol.uss");
             _mUXCol.styleSheets.Add(styleSheet);
 
             _mUXCol.AddToClassList("ux-col");
