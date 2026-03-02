@@ -354,9 +354,7 @@ namespace ThunderFireUITool
                     (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_最近选中面板记录), 8)
                 }},
                 { "其他", new List<(string , int)> {
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_Prefab多开), 5),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_自动将Texture转为Sprite), 6),
-                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_手柄引导开关), 7)
+                    (EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_Prefab多开), 5)
                 }}
             };
         }

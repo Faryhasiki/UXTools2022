@@ -18,9 +18,7 @@ namespace ThunderFireUITool
             QuickCopy,
             MovementShortcuts,
             PrefabMultiOpen,
-            AutoConvertTex,
-            EnableGamePadBeginnerGuide,
-            RecentlySelected,
+            RecentlySelected = 8,
         }
 
         private static SwitchSetting m_instance;
@@ -35,9 +33,6 @@ namespace ThunderFireUITool
             {
                 m_instance.m_values[i] = true;
             }
-            m_instance.m_values[(int)SwitchType.AutoConvertTex] = false;
-            m_instance.m_values[(int)SwitchType.EnableGamePadBeginnerGuide] = false;
-
             JsonAssetManager.SaveAssets(m_instance);
 
         }
@@ -55,16 +50,6 @@ namespace ThunderFireUITool
                 m_instance.m_values[i] = toggles[i].value;
             }
             JsonAssetManager.SaveAssets(m_instance);
-
-            if (m_instance.m_values[(int)SwitchType.EnableGamePadBeginnerGuide] == true)
-            {
-                ScriptingDefineSymbolUtils.EnableInputSystemDefineSymbol();
-            }
-            else
-            {
-                ScriptingDefineSymbolUtils.DisableInputSystemDefineSymbol();
-            }
-
 
             SceneViewToolBar.CloseFunction();
             SceneViewToolBar.InitFunction();
