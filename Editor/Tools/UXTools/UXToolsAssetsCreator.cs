@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
+using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace UITool
 {
@@ -30,10 +32,31 @@ namespace UITool
 
             SwitchSetting.Create();
 
+            UXToolsProjectSettings.CreateSettingsAsset();
+
             JsonAssetManager.CreateAssets<UXToolCommonData>(UIToolConfig.UXToolCommonDataPath);
-            JsonAssetManager.CreateAssets<TextPresetLibrary>(UIToolConfig.TextPresetLibraryPath);
             JsonAssetManager.CreateAssets<ColorPresetLibrary>(UIToolConfig.ColorPresetLibraryPath);
+
+#if TMP_PRESENT
+            CreateTextPresetAsset();
+#endif
         }
+
+#if TMP_PRESENT
+        private static void CreateTextPresetAsset()
+        {
+            string path = UIToolConfig.TextPresetAssetPath;
+            if (AssetDatabase.LoadAssetAtPath<TextPresetAsset>(path) != null) return;
+
+            string dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            var asset = ScriptableObject.CreateInstance<TextPresetAsset>();
+            AssetDatabase.CreateAsset(asset, path);
+            AssetDatabase.SaveAssets();
+        }
+#endif
     }
 }
 

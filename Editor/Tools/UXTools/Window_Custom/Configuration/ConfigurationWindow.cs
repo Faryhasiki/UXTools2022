@@ -130,6 +130,7 @@ namespace UITool
         private ConfigurationOption GeneralOption;
         private ConfigurationOption StorageOption;
         private ConfigurationOption SwitchOption;
+        private ConfigurationOption PathOption;
 
         private WidgetInstantiateMode PrefabDragMode;
         // private string prefabPath;
@@ -328,13 +329,13 @@ namespace UITool
             GeneralOption.style.top = 0;
             leftContainer.Add(GeneralOption);
 
-            //StorageOption = new ConfigurationOption(EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_组件), StorageOnClick);
-            //StorageOption.style.top = 40;
-            //leftContainer.Add(StorageOption);
-
             SwitchOption = new ConfigurationOption(EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_功能开关), SwitchOnClick);
             SwitchOption.style.top = 40;
             leftContainer.Add(SwitchOption);
+
+            PathOption = new ConfigurationOption("路径设置", PathOnClick);
+            PathOption.style.top = 80;
+            leftContainer.Add(PathOption);
         }
 
 
@@ -408,6 +409,87 @@ namespace UITool
             }
         }
 
+        private TextField runtimePathField;
+        private string originalRuntimePath;
+
+        private void PathOnClick()
+        {
+            leftContainerRefresh();
+            PathOption.isSelect();
+            rightContainer.Clear();
+
+            var settings = UXToolsProjectSettings.Instance;
+            originalRuntimePath = settings.runtimeAssetsPath;
+
+            VisualElement container = new VisualElement();
+            container.style.position = Position.Absolute;
+            container.style.top = 5;
+            container.style.bottom = 5;
+            container.style.left = 20;
+            container.style.right = 20;
+            rightContainer.Add(container);
+
+            var titleLabel = new Label("路径设置");
+            titleLabel.style.fontSize = 16;
+            titleLabel.style.color = Color.white;
+            titleLabel.style.marginBottom = 15;
+            container.Add(titleLabel);
+
+            var editorPathLabel = new Label("编辑器数据目录（固定）");
+            editorPathLabel.style.fontSize = 13;
+            editorPathLabel.style.color = Color.white;
+            editorPathLabel.style.marginTop = 10;
+            container.Add(editorPathLabel);
+
+            var editorPathField = new TextField();
+            editorPathField.value = UIToolConfig.ProjectDataPath;
+            editorPathField.SetEnabled(false);
+            editorPathField.style.marginBottom = 15;
+            container.Add(editorPathField);
+
+            var runtimePathLabel = new Label("运行时资源目录（可配置，用于 Bundle 管理）");
+            runtimePathLabel.style.fontSize = 13;
+            runtimePathLabel.style.color = Color.white;
+            runtimePathLabel.style.marginTop = 10;
+            container.Add(runtimePathLabel);
+
+            var runtimePathRow = new VisualElement();
+            runtimePathRow.style.flexDirection = FlexDirection.Row;
+            runtimePathRow.style.marginBottom = 10;
+            container.Add(runtimePathRow);
+
+            runtimePathField = new TextField();
+            runtimePathField.value = settings.runtimeAssetsPath;
+            runtimePathField.style.flexGrow = 1;
+            runtimePathRow.Add(runtimePathField);
+
+            var browseBtn = new Button(() =>
+            {
+                string selected = EditorUtility.OpenFolderPanel("选择运行时资源目录", "Assets", "");
+                if (!string.IsNullOrEmpty(selected))
+                {
+                    string dataPath = Application.dataPath.Replace("\\", "/");
+                    selected = selected.Replace("\\", "/");
+
+                    if (!selected.StartsWith(dataPath, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        EditorUtility.DisplayDialog("路径错误", "运行时资源目录必须在 Assets 目录下。", "确定");
+                        return;
+                    }
+                    runtimePathField.value = "Assets" + selected.Substring(dataPath.Length);
+                }
+            });
+            browseBtn.text = "浏览";
+            browseBtn.style.width = 50;
+            runtimePathRow.Add(browseBtn);
+
+            var hintLabel = new Label("提示：修改后点击「确定」保存，如果路径变更会提示迁移已有运行时资源。");
+            hintLabel.style.fontSize = 11;
+            hintLabel.style.color = new Color(0.6f, 0.6f, 0.6f, 1f);
+            hintLabel.style.whiteSpace = WhiteSpace.Normal;
+            container.Add(hintLabel);
+        }
+
         private void ConfirmOnClick()
         {
             Selection.activeGameObject = null;
@@ -444,7 +526,37 @@ namespace UITool
                 commonData.Save();
             }
 
+            SavePathSettings();
             CloseWindow();
+        }
+
+        private void SavePathSettings()
+        {
+            if (runtimePathField == null) return;
+
+            string newPath = runtimePathField.value;
+            if (string.IsNullOrEmpty(newPath)) return;
+
+            var settings = UXToolsProjectSettings.Instance;
+            string normalizedNew = settings.EnsureTrailingSlash(newPath);
+            string normalizedOld = settings.EnsureTrailingSlash(originalRuntimePath ?? settings.runtimeAssetsPath);
+
+            if (normalizedNew == normalizedOld) return;
+
+            settings.runtimeAssetsPath = newPath;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+
+            if (System.IO.Directory.Exists(normalizedOld))
+            {
+                bool migrate = EditorUtility.DisplayDialog(
+                    "迁移运行时资源",
+                    $"运行时资源目录已变更:\n\n{normalizedOld}\n→ {normalizedNew}\n\n是否将已有运行时资源迁移到新目录？",
+                    "迁移", "不迁移");
+
+                if (migrate)
+                    UXToolsProjectSettings.MigrateRuntimeAssets(normalizedOld, normalizedNew);
+            }
         }
     }
 }

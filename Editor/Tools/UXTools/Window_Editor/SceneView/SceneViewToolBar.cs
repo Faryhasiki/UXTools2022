@@ -467,7 +467,7 @@ namespace UITool
                         break;
                     case "Text":
 #if TMP_PRESENT || UNITY_2023_2_OR_NEWER || UNITY_6000_0_OR_NEWER
-                        Undo.AddComponent<TextMeshProUGUI>(obj);
+                        Undo.AddComponent<UXText>(obj);
 #else
                         Undo.AddComponent<UnityEngine.UI.Text>(obj);
 #endif

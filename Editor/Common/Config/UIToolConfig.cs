@@ -26,24 +26,38 @@ namespace UITool
         public static readonly string WidgetLibraryDefaultLabel = "All";
         #endregion
 
-        #region Project Data (Git同步，固定在Assets下，用户操作产生的所有配置)
+        #region Editor Data (Git同步，固定在Assets下，纯编辑器配置)
         public static readonly string ProjectDataPath = "Assets/UXToolsData/";
+
+        //编辑器设置
+        public static readonly string EditorSettingsPath = ProjectDataPath + "EditorSettings/";
         //通用设置
-        public static readonly string UXToolCommonDataPath = ProjectDataPath + "UXToolCommonData.json";
+        public static readonly string UXToolCommonDataPath = EditorSettingsPath + "UXToolCommonData.json";
         //辅助线数据
-        public static readonly string LocationLinesDataPath = ProjectDataPath + "LocationLinesData.json";
+        public static readonly string LocationLinesDataPath = EditorSettingsPath + "LocationLinesData.json";
         //Scene窗口Tab页签数据
-        public static readonly string PrefabTabsPath = ProjectDataPath + "PrefabTabsData.json";
+        public static readonly string PrefabTabsPath = EditorSettingsPath + "PrefabTabsData.json";
         //功能开关数据
-        public static readonly string SwitchSettingPath = ProjectDataPath + "SwitchSetting.json";
+        public static readonly string SwitchSettingPath = EditorSettingsPath + "SwitchSetting.json";
+
+        //组件库
+        public static readonly string WidgetLibraryPath = ProjectDataPath + "WidgetLibrary/";
         //组件库-组件类型数据
-        public static readonly string WidgetLabelsPath = ProjectDataPath + "WidgetLabels.json";
+        public static readonly string WidgetLabelsPath = WidgetLibraryPath + "WidgetLabels.json";
         //组件库-被认定为组件的Prefab信息
-        public static readonly string WidgetListPath = ProjectDataPath + "WidgetList.json";
-        //设计库-文字预设
-        public static readonly string TextPresetLibraryPath = ProjectDataPath + "TextPresetLibrary.json";
-        //设计库-颜色预设
-        public static readonly string ColorPresetLibraryPath = ProjectDataPath + "ColorPresetLibrary.json";
+        public static readonly string WidgetListPath = WidgetLibraryPath + "WidgetList.json";
+
+        //设计库-颜色预设 (Editor-only JSON)
+        public static readonly string ColorPresetLibraryPath = ProjectDataPath + "DesignLibrary/ColorPresetLibrary.json";
+        #endregion
+
+        #region Runtime Assets (可配置路径，用于 Bundle 管理)
+        //运行时资源根目录（从 UXToolsProjectSettings 读取）
+        public static string RuntimeAssetsPath => UXToolsProjectSettings.Instance.GetRuntimeAssetsPath();
+        //文字预设目录
+        public static string TextPresetPath => RuntimeAssetsPath + "TextPreset/";
+        //文字预设资产
+        public static string TextPresetAssetPath => TextPresetPath + "TextPresetAsset.asset";
         #endregion
 
         #region User Local Data (不入Git，存储在Library中)
@@ -74,7 +88,10 @@ namespace UITool
 
         public const string DesignLibrary = "设计库 (Design Library)";
         public const string Menu_DesignLibrary = MenuName + DesignLibrary;
-        public const string Menu_WidgetLibrary = MenuName + WidgetLibrary;  //51
+
+        public const string Menu_WidgetLibrary = Menu_DesignLibrary + "/" + WidgetLibrary;
+        public const string Menu_TextPresets = Menu_DesignLibrary + "/文字预设 (Text Presets)";
+        public const string Menu_ColorPresets = Menu_DesignLibrary + "/颜色预设 (Color Presets)";
         public const string Menu_Localization = MenuName + Localization;    //54
         public const string Menu_CreateBeginnerGuide = MenuName + CreateBeginnerGuide;  //55
 

@@ -36,7 +36,6 @@ public class JsonAssetManager
             { "WidgetListSetting",                      UIToolConfig.WidgetListPath },
             { "RecentFilesSetting",                     UIToolConfig.FilesRecentSelectedPath},
             { "UXToolCommonData",                       UIToolConfig.UXToolCommonDataPath},
-            { "TextPresetLibrary",                      UIToolConfig.TextPresetLibraryPath},
             { "ColorPresetLibrary",                     UIToolConfig.ColorPresetLibraryPath},
         };
     }
