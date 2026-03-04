@@ -13,6 +13,8 @@ namespace UITool
         [MenuItem(UIToolConfig.Menu_CreateAssets + "/Create All Assets", false, -99)]
         public static void CreateAllAssets()
         {
+            ValidateDirectories();
+
 #if UXTOOLS_DEV
             //UXTool Localization
             LocalizationDecode.Decode();
@@ -40,6 +42,28 @@ namespace UITool
 #if TMP_PRESENT
             CreateTextPresetAsset();
 #endif
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[UXTools] 配置文件创建/校验完成。");
+        }
+
+        private static void ValidateDirectories()
+        {
+            string[] requiredDirs = new[]
+            {
+                UIToolConfig.EditorSettingsPath,
+                UIToolConfig.WidgetLibraryPath,
+                UIToolConfig.ProjectDataPath + "DesignLibrary/",
+                UIToolConfig.RuntimeAssetsPath,
+                UIToolConfig.TextPresetPath,
+            };
+
+            foreach (string dir in requiredDirs)
+            {
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+            }
         }
 
 #if TMP_PRESENT
