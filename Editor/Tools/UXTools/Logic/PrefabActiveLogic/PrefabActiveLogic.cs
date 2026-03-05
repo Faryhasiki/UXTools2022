@@ -159,7 +159,9 @@ namespace UITool
 
             for (int i = 0; i < gos.Length; i++)
             {
+#pragma warning disable CS0618
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(gos[i].GetInstanceID(), out string guid, out long _);
+#pragma warning restore CS0618
 
                 activeRecordDic[guid] = gos[i].gameObject.activeSelf;
             }

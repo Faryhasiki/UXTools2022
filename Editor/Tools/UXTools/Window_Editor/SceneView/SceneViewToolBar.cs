@@ -444,18 +444,40 @@ namespace UITool
             InCreateDrag = false;
 
             Transform parent = FindContainerLogic.GetObjectParent(selection);
-            Vector3 startWorldPos = HandleUtility.GUIPointToWorldRay(mouseDownPos).GetPoint(0);
-            Vector3 endWorldPos = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
+
+            Vector3 startWorldPos = GUIPointToCanvasPlane(mouseDownPos, parent);
+            Vector3 endWorldPos = GUIPointToCanvasPlane(Event.current.mousePosition, parent);
             Vector2 startPos = parent.InverseTransformPoint(startWorldPos);
             Vector2 endPos = parent.InverseTransformPoint(endWorldPos);
 
-            Vector2 size = new Vector2(Mathf.Abs(startPos.x - endPos.x), Mathf.Abs(startPos.y - endPos.y));
-            if (size.x == 0 || size.y == 0)
-            {
-                size = QuickCreateType == "Text" ? new Vector2(200, 50) : new Vector2(100, 100);
-            }
+            Vector2 defaultSize = QuickCreateType == "Text" ? new Vector2(200, 50) : new Vector2(100, 100);
+            var canvasRect = parent.GetComponentInParent<Canvas>()?.GetComponent<RectTransform>();
+            Rect canvasBounds = canvasRect != null ? canvasRect.rect : new Rect(-960, -540, 1920, 1080);
 
-            Vector3 localPosition = new Vector3((startPos.x + endPos.x) / 2, (startPos.y + endPos.y) / 2, 0);
+            bool startInCanvas = canvasBounds.Contains(startPos);
+            bool endInCanvas = canvasBounds.Contains(endPos);
+
+            Vector2 size;
+            Vector3 localPosition;
+
+            if (!startInCanvas && !endInCanvas)
+            {
+                size = defaultSize;
+                localPosition = Vector3.zero;
+            }
+            else
+            {
+                startPos.x = Mathf.Clamp(startPos.x, canvasBounds.xMin, canvasBounds.xMax);
+                startPos.y = Mathf.Clamp(startPos.y, canvasBounds.yMin, canvasBounds.yMax);
+                endPos.x = Mathf.Clamp(endPos.x, canvasBounds.xMin, canvasBounds.xMax);
+                endPos.y = Mathf.Clamp(endPos.y, canvasBounds.yMin, canvasBounds.yMax);
+
+                size = new Vector2(Mathf.Abs(startPos.x - endPos.x), Mathf.Abs(startPos.y - endPos.y));
+                if (size.x < 1f || size.y < 1f)
+                    size = defaultSize;
+
+                localPosition = new Vector3((startPos.x + endPos.x) / 2, (startPos.y + endPos.y) / 2, 0);
+            }
 
             GameObject obj = WidgetGenerator.CreateUIObj(QuickCreateType, localPosition, size, selection);
             if (obj)
@@ -476,6 +498,18 @@ namespace UITool
             }
             Selection.activeObject = obj;
             StopQuickCreate();
+        }
+
+        /// <summary>
+        /// 将 GUI 坐标点投射到 Canvas 父级所在的平面上，正确处理透视/正交相机和 Canvas 缩放
+        /// </summary>
+        private static Vector3 GUIPointToCanvasPlane(Vector2 guiPoint, Transform parent)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(guiPoint);
+            Plane plane = new Plane(parent.forward, parent.position);
+            if (plane.Raycast(ray, out float distance))
+                return ray.GetPoint(distance);
+            return ray.GetPoint(0);
         }
 
         #endregion

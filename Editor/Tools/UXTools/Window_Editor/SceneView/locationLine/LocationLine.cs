@@ -84,15 +84,15 @@ namespace UITool
         {
             OnPointerEnterAction?.Invoke(e);
         }
-        private void OnPointerDown(PointerDownEvent e)
+        private new void OnPointerDown(PointerDownEvent e)
         {
             OnPointerDownAction?.Invoke(e);
         }
-        private void OnPointerMove(PointerMoveEvent e)
+        private new void OnPointerMove(PointerMoveEvent e)
         {
             OnPointerMoveAction?.Invoke(e);
         }
-        private void OnPointerUp(PointerUpEvent e)
+        private new void OnPointerUp(PointerUpEvent e)
         {
             OnPointerUpAction?.Invoke(e);
         }
@@ -218,11 +218,17 @@ namespace UITool
             RecoverCursor();
             SetCursor();
         }
+        /// <summary>
+        /// 拖拽开始时光标 Y 相对于元素 resolvedStyle.top 中心的偏移
+        /// </summary>
+        protected float m_DragOffsetY;
+
         public void OnMouseDown(PointerDownEvent evt)
         {
             if (evt.button == 0)
             {
                 m_Selected = true;
+                m_DragOffsetY = evt.position.y - resolvedStyle.top - style.height.value.value / 2;
                 ResetAll();
             }
             else if (evt.button == 1)
@@ -254,7 +260,7 @@ namespace UITool
         {
             if (m_Selected)
             {
-                OnDrag(Event.current.mousePosition);
+                OnDrag(evt.position, Event.current.mousePosition);
                 Event.current.Use();
             }
         }
@@ -262,7 +268,7 @@ namespace UITool
         {
             if (m_Selected)
             {
-                OnDrag(Event.current.mousePosition);
+                OnDrag(evt.position, Event.current.mousePosition);
             }
             else
             {
@@ -316,7 +322,7 @@ namespace UITool
             }
         }
 
-        protected virtual void OnDrag(Vector2 mousePosition)
+        protected virtual void OnDrag(Vector2 uiPosition, Vector2 imguiPosition)
         {
 
         }
@@ -337,7 +343,6 @@ namespace UITool
             m_Line.style.right = 0;
             m_Line.style.alignSelf = Align.Center;
             m_Line.style.backgroundColor = m_MyBlue;
-            style.flexDirection = FlexDirection.Row;
 
             style.position = Position.Absolute;
             style.flexDirection = FlexDirection.Row;
@@ -346,32 +351,37 @@ namespace UITool
             style.left = 0;
             Add(m_Line);
         }
-        protected override void OnDrag(Vector2 mousePosition)
+
+        protected override void OnDrag(Vector2 uiPosition, Vector2 imguiPosition)
         {
+            float halfH = style.height.value.value / 2;
             float ppp = EditorGUIUtility.pixelsPerPoint;
-            mousePosition.y = mousePosition.y - LocationLineLogic.sceneviewOffset;
+            var cam = SceneView.lastActiveSceneView.camera;
 
-            float y = SceneView.lastActiveSceneView.camera.pixelHeight - mousePosition.y * ppp;
+            // 光标实际位置（减去拖拽时的抓取偏移）
+            float correctedY = uiPosition.y - m_DragOffsetY;
+            style.top = correctedY - halfH;
 
-            style.bottom = y / ppp - style.height.value.value / 2;
+            // 世界坐标转换
+            float screenY = cam.pixelHeight - correctedY * ppp;
+            Vector3 mousePos = cam.ScreenToWorldPoint(new Vector3(0, screenY, 0));
 
-            Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(0, y, 0));
             float minDis = Mathf.Infinity;
             foreach (var rect in m_Rects)
             {
                 if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[0] - mousePos.y))
-                {
                     minDis = rect.pos[0] - mousePos.y;
-                }
                 if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[1] - mousePos.y))
-                {
                     minDis = rect.pos[1] - mousePos.y;
-                }
-            }
+            } 
+
             if (Mathf.Abs(minDis) < SnapLogic.SnapWorldDistance)
             {
                 worldPostion = mousePos + new Vector3(0, minDis, 0);
-                style.bottom = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(worldPostion).y / ppp - style.height.value.value / 2;
+                float snappedScreenY = cam.WorldToScreenPoint(worldPostion).y;
+                // 吸附偏移量（屏幕像素差）→ 本地坐标偏移
+                float deltaScreenPx = snappedScreenY - screenY;
+                style.top = correctedY - deltaScreenPx / ppp - halfH;
             }
             else
             {
@@ -379,12 +389,14 @@ namespace UITool
             }
             SceneView.lastActiveSceneView.Repaint();
         }
+
         public override void UpdateLineScreenViewPos(SceneView sceneView)
         {
             if (!m_Selected)
             {
                 float ppp = EditorGUIUtility.pixelsPerPoint;
-                style.bottom = sceneView.camera.WorldToScreenPoint(worldPostion).y / ppp - style.height.value.value / 2;
+                float screenY = sceneView.camera.WorldToScreenPoint(worldPostion).y;
+                style.top = (sceneView.camera.pixelHeight - screenY) / ppp - style.height.value.value / 2;
             }
         }
     }
@@ -411,12 +423,12 @@ namespace UITool
             this.Add(m_Line);
         }
 
-        protected override void OnDrag(Vector2 mousePosition)
+        protected override void OnDrag(Vector2 uiPosition, Vector2 imguiPosition)
         {
             float ppp = EditorGUIUtility.pixelsPerPoint;
-            style.left = mousePosition.x - style.width.value.value / 2;
+            style.left = uiPosition.x - style.width.value.value / 2;
 
-            Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(mousePosition.x * ppp, 0, 0));
+            Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(uiPosition.x * ppp, 0, 0));
 
             float minDis = Mathf.Infinity;
             foreach (var rect in m_Rects)

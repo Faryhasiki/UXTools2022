@@ -102,14 +102,18 @@ namespace UITool
             EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyWindowItemGUI;
             EditorApplication.delayCall += RefreshWindow;
 #if UNITY_2021_2_OR_NEWER
+#pragma warning disable CS0618
             DragAndDrop.AddDropHandler(OnHierarchyGUI);
+#pragma warning restore CS0618
 #endif
         }
         private void OnDisable()
         {
             EditorApplication.hierarchyWindowItemOnGUI -= OnHierarchyWindowItemGUI;
 #if UNITY_2021_2_OR_NEWER
+#pragma warning disable CS0618
             DragAndDrop.RemoveDropHandler(OnHierarchyGUI);
+#pragma warning restore CS0618
 #endif
         }
 
@@ -543,7 +547,9 @@ namespace UITool
                 if (RightContainerDrag && LoadPrefab != null)
                 {
 
+#pragma warning disable CS0618
                     GameObject obj = (GameObject)EditorUtility.InstanceIDToObject(dropTargetInstanceID);
+#pragma warning restore CS0618
                     //UXCustomSceneView.RemoveDelegate(DrawTexture);
                     GameObject currentPrefab = PrefabUtility.InstantiatePrefab(LoadPrefab) as GameObject;
                     bool isUnpack = AssetDatabase.GetLabels(LoadPrefab).Contains(WidgetRepositoryConfig.UnpackText);

@@ -51,7 +51,7 @@ namespace UITool
             _mUXMultiColumnTreeView.name = UXBuilderMultiColumnTreeViewStruct.ClassName;
             _mUXMultiColumnTreeView.showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly;
             _mUXMultiColumnTreeView.SetRootItems(itemDatas);
-            _mUXMultiColumnTreeView.sortingEnabled = true;
+            _mUXMultiColumnTreeView.sortingMode = ColumnSortingMode.Default;
             StyleCopy.IStyleToUXStyle(_mStyle, _mUXMultiColumnTreeView.style);
             InitComponent(component);
             
@@ -99,7 +99,7 @@ namespace UITool
 
         private static void InitSort(bool sortingEnabled, Action sortAction)
         {
-            _mUXMultiColumnTreeView.sortingEnabled = sortingEnabled;
+            _mUXMultiColumnTreeView.sortingMode = sortingEnabled ? ColumnSortingMode.Default : ColumnSortingMode.None;
             _mUXMultiColumnTreeView.columnSortingChanged += sortAction;
         }
     }

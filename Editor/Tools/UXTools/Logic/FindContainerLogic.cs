@@ -1,8 +1,7 @@
 #if UNITY_EDITOR
-using System.Collections;
-using System.Collections.Generic;
-
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UITool
@@ -19,7 +18,6 @@ namespace UITool
             var prefabStage = PrefabStageUtils.GetCurrentPrefabStage();
             if (prefabStage != null)
             {
-                //Prefab编辑模式下,需要额外区分是否是Canvas (Environment)
                 if (selection.Length == 1
                     && !selection[0].name.Equals("Canvas (Environment)")
                     && selection[0].transform != prefabStage.prefabContentsRoot.transform)
@@ -52,16 +50,37 @@ namespace UITool
                     var canvases = Object.FindObjectsOfType<Canvas>();
 #endif
                     if (canvases.Length == 0)
-                    {
-                        new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+                        CreateDefaultCanvas();
+
 #if UNITY_2023_1_OR_NEWER || UNITY_6000_0_OR_NEWER
-                        canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+                    canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
 #else
-                        canvases = Object.FindObjectsOfType<Canvas>();
+                    canvases = Object.FindObjectsOfType<Canvas>();
 #endif
-                    }
                     return canvases[0].transform;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 创建与 Unity 默认行为一致的 Canvas + EventSystem
+        /// </summary>
+        private static void CreateDefaultCanvas()
+        {
+            var canvasGo = new GameObject("Canvas");
+            canvasGo.layer = LayerMask.NameToLayer("UI");
+            var canvas = canvasGo.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasGo.AddComponent<CanvasScaler>();
+            canvasGo.AddComponent<GraphicRaycaster>();
+            Undo.RegisterCreatedObjectUndo(canvasGo, "Create Canvas");
+
+            if (Object.FindFirstObjectByType<EventSystem>() == null)
+            {
+                var esGo = new GameObject("EventSystem");
+                esGo.AddComponent<EventSystem>();
+                esGo.AddComponent<StandaloneInputModule>();
+                Undo.RegisterCreatedObjectUndo(esGo, "Create EventSystem");
             }
         }
     }
