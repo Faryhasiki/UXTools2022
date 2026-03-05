@@ -5,10 +5,18 @@ using UnityEngine;
 
 namespace UITool
 {
+    /// <summary>
+    /// 单条文字预设数据。实现 IUXTextStyleKey 接口，可直接作为文字预设键传递给组件。
+    /// </summary>
     [Serializable]
-    public class TextPresetEntry
+    public class TextPresetEntry : IUXTextStyleKey
     {
         public string id;
+
+        /// <summary>
+        /// IUXTextStyleKey 实现，返回预设 ID
+        /// </summary>
+        string IUXTextStyleKey.PresetId => id;
         public string presetName;
         public string description;
         public string category;
@@ -17,6 +25,11 @@ namespace UITool
         public int fontSize = 24;
         public float lineSpacing;
         public float characterSpacing;
+
+        /// <summary>
+        /// 是否为此预设生成代码常量（默认 false）
+        /// </summary>
+        public bool generateCode = false;
 
         public void ApplyTo(TMP_Text text)
         {

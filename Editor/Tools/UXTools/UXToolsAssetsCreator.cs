@@ -37,7 +37,8 @@ namespace UITool
             UXToolsProjectSettings.CreateSettingsAsset();
 
             JsonAssetManager.CreateAssets<UXToolCommonData>(UIToolConfig.UXToolCommonDataPath);
-            JsonAssetManager.CreateAssets<ColorPresetLibrary>(UIToolConfig.ColorPresetLibraryPath);
+
+            CreateColorPresetAsset();
 
 #if TMP_PRESENT
             CreateTextPresetAsset();
@@ -54,9 +55,9 @@ namespace UITool
             {
                 UIToolConfig.EditorSettingsPath,
                 UIToolConfig.WidgetLibraryPath,
-                UIToolConfig.ProjectDataPath + "DesignLibrary/",
-                UIToolConfig.RuntimeAssetsPath,
+                UIToolConfig.CustomConfigPath,
                 UIToolConfig.TextPresetPath,
+                UIToolConfig.ColorPresetPath,
             };
 
             foreach (string dir in requiredDirs)
@@ -64,6 +65,35 @@ namespace UITool
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
             }
+
+            UXToolsProjectSettings.Instance.EnsureOptionalDirectories();
+        }
+
+        /// <summary>
+        /// 创建颜色预设 ScriptableObject，若存在旧 JSON 数据则自动迁移
+        /// </summary>
+        private static void CreateColorPresetAsset()
+        {
+            string assetPath = UIToolConfig.ColorPresetAssetPath;
+            var existing = AssetDatabase.LoadAssetAtPath<ColorPresetAsset>(assetPath);
+            if (existing != null) return;
+
+            string dir = Path.GetDirectoryName(assetPath);
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            var asset = ScriptableObject.CreateInstance<ColorPresetAsset>();
+
+            string legacyJson = UIToolConfig.ColorPresetLegacyJsonPath;
+            if (File.Exists(legacyJson))
+            {
+                string json = File.ReadAllText(legacyJson);
+                JsonUtility.FromJsonOverwrite(json, asset);
+                Debug.Log($"[UXTools] 已从旧 JSON 迁移 {asset.presets.Count} 条颜色预设。");
+            }
+
+            AssetDatabase.CreateAsset(asset, assetPath);
+            AssetDatabase.SaveAssets();
         }
 
 #if TMP_PRESENT

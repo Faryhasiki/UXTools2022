@@ -409,8 +409,17 @@ namespace UITool
             }
         }
 
-        private TextField runtimePathField;
-        private string originalRuntimePath;
+        private TextField _configParentField;
+        private TextField _editorParentField;
+        private TextField _runtimeParentField;
+        private Toggle _enableEditorToggle;
+        private Toggle _enableRuntimeToggle;
+        private string _origConfigParent;
+        private string _origEditorParent;
+        private string _origRuntimeParent;
+        private Label _previewConfigLabel;
+        private Label _previewEditorLabel;
+        private Label _previewRuntimeLabel;
 
         private void PathOnClick()
         {
@@ -419,15 +428,20 @@ namespace UITool
             rightContainer.Clear();
 
             var settings = UXToolsProjectSettings.Instance;
-            originalRuntimePath = settings.runtimeAssetsPath;
+            _origConfigParent = settings.configParentPath;
+            _origEditorParent = settings.editorParentPath;
+            _origRuntimeParent = settings.runtimeParentPath;
 
-            VisualElement container = new VisualElement();
-            container.style.position = Position.Absolute;
-            container.style.top = 5;
-            container.style.bottom = 5;
-            container.style.left = 20;
-            container.style.right = 20;
-            rightContainer.Add(container);
+            var scroll = new ScrollView();
+            scroll.style.position = Position.Absolute;
+            scroll.style.top = 5;
+            scroll.style.bottom = 5;
+            scroll.style.left = 20;
+            scroll.style.right = 20;
+            rightContainer.Add(scroll);
+
+            var container = new VisualElement();
+            scroll.Add(container);
 
             var titleLabel = new Label("路径设置");
             titleLabel.style.fontSize = 16;
@@ -435,37 +449,131 @@ namespace UITool
             titleLabel.style.marginBottom = 15;
             container.Add(titleLabel);
 
-            var editorPathLabel = new Label("编辑器数据目录（固定）");
-            editorPathLabel.style.fontSize = 13;
-            editorPathLabel.style.color = Color.white;
-            editorPathLabel.style.marginTop = 10;
-            container.Add(editorPathLabel);
+            // 1. 固定目录
+            AddPathLabel(container, "编辑器数据目录（固定）");
+            var fixedField = new TextField();
+            fixedField.value = UIToolConfig.ProjectDataPath;
+            fixedField.SetEnabled(false);
+            fixedField.style.marginBottom = 12;
+            container.Add(fixedField);
 
-            var editorPathField = new TextField();
-            editorPathField.value = UIToolConfig.ProjectDataPath;
-            editorPathField.SetEnabled(false);
-            editorPathField.style.marginBottom = 15;
-            container.Add(editorPathField);
+            // 2. 配置目录
+            AddSectionHeader(container, $"配置目录 — {UXToolsProjectSettings.CONFIG_DIR_NAME}/");
+            AddHintLabel(container, "颜色预设、文字预设等配置资产存放于此，始终创建。修改父级路径后会自动移动文件夹。");
+            AddPathLabel(container, "父级路径");
+            _configParentField = AddBrowsablePathField(container, settings.configParentPath, "选择配置目录父级路径");
+            _previewConfigLabel = AddPreviewLabel(container, "");
+            _configParentField.RegisterValueChangedCallback(e => RefreshPathPreview());
 
-            var runtimePathLabel = new Label("运行时资源目录（可配置，用于 Bundle 管理）");
-            runtimePathLabel.style.fontSize = 13;
-            runtimePathLabel.style.color = Color.white;
-            runtimePathLabel.style.marginTop = 10;
-            container.Add(runtimePathLabel);
+            // 3. Editor 扩展目录
+            AddSectionHeader(container, $"Editor 扩展目录 — {UXToolsProjectSettings.EDITOR_DIR_NAME}/");
+            AddHintLabel(container, "启用后自动创建目录，程序集关系由用户自行管理。");
 
-            var runtimePathRow = new VisualElement();
-            runtimePathRow.style.flexDirection = FlexDirection.Row;
-            runtimePathRow.style.marginBottom = 10;
-            container.Add(runtimePathRow);
+            var editorRow = new VisualElement();
+            editorRow.style.flexDirection = FlexDirection.Row;
+            editorRow.style.alignItems = Align.Center;
+            editorRow.style.marginBottom = 4;
+            container.Add(editorRow);
 
-            runtimePathField = new TextField();
-            runtimePathField.value = settings.runtimeAssetsPath;
-            runtimePathField.style.flexGrow = 1;
-            runtimePathRow.Add(runtimePathField);
+            _enableEditorToggle = new Toggle("启用");
+            _enableEditorToggle.value = settings.enableCustomEditor;
+            _enableEditorToggle.style.marginRight = 12;
+            _enableEditorToggle.RegisterValueChangedCallback(e => RefreshPathPreview());
+            editorRow.Add(_enableEditorToggle);
+
+            AddPathLabel(container, "父级路径");
+            _editorParentField = AddBrowsablePathField(container, settings.editorParentPath, "选择 Editor 扩展目录父级路径");
+            _previewEditorLabel = AddPreviewLabel(container, "");
+            _editorParentField.RegisterValueChangedCallback(e => RefreshPathPreview());
+
+            // 4. Runtime 扩展目录
+            AddSectionHeader(container, $"Runtime 扩展目录 — {UXToolsProjectSettings.RUNTIME_DIR_NAME}/");
+            AddHintLabel(container, "启用后自动创建目录，程序集关系由用户自行管理。");
+
+            var runtimeRow = new VisualElement();
+            runtimeRow.style.flexDirection = FlexDirection.Row;
+            runtimeRow.style.alignItems = Align.Center;
+            runtimeRow.style.marginBottom = 4;
+            container.Add(runtimeRow);
+
+            _enableRuntimeToggle = new Toggle("启用");
+            _enableRuntimeToggle.value = settings.enableCustomRuntime;
+            _enableRuntimeToggle.style.marginRight = 12;
+            _enableRuntimeToggle.RegisterValueChangedCallback(e => RefreshPathPreview());
+            runtimeRow.Add(_enableRuntimeToggle);
+
+            AddPathLabel(container, "父级路径");
+            _runtimeParentField = AddBrowsablePathField(container, settings.runtimeParentPath, "选择 Runtime 扩展目录父级路径");
+            _previewRuntimeLabel = AddPreviewLabel(container, "");
+            _runtimeParentField.RegisterValueChangedCallback(e => RefreshPathPreview());
+
+            RefreshPathPreview();
+        }
+
+        private void RefreshPathPreview()
+        {
+            string configParent = UXToolsProjectSettings.EnsureTrailingSlash(_configParentField?.value ?? "Assets/");
+            _previewConfigLabel.text = configParent + UXToolsProjectSettings.CONFIG_DIR_NAME + "/";
+
+            if (_enableEditorToggle.value)
+            {
+                string editorParent = UXToolsProjectSettings.EnsureTrailingSlash(_editorParentField?.value ?? "Assets/");
+                _previewEditorLabel.text = editorParent + UXToolsProjectSettings.EDITOR_DIR_NAME + "/";
+                _previewEditorLabel.style.color = new Color(0.45f, 0.75f, 1f, 1f);
+            }
+            else
+            {
+                _previewEditorLabel.text = "（未启用）";
+                _previewEditorLabel.style.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+
+            if (_enableRuntimeToggle.value)
+            {
+                string runtimeParent = UXToolsProjectSettings.EnsureTrailingSlash(_runtimeParentField?.value ?? "Assets/");
+                _previewRuntimeLabel.text = runtimeParent + UXToolsProjectSettings.RUNTIME_DIR_NAME + "/";
+                _previewRuntimeLabel.style.color = new Color(0.45f, 0.75f, 1f, 1f);
+            }
+            else
+            {
+                _previewRuntimeLabel.text = "（未启用）";
+                _previewRuntimeLabel.style.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+        }
+
+        private void AddPathLabel(VisualElement container, string text)
+        {
+            var label = new Label(text);
+            label.style.fontSize = 13;
+            label.style.color = Color.white;
+            label.style.marginTop = 6;
+            container.Add(label);
+        }
+
+        private void AddSectionHeader(VisualElement container, string text)
+        {
+            var label = new Label(text);
+            label.style.fontSize = 13;
+            label.style.color = Color.white;
+            label.style.marginTop = 14;
+            label.style.unityFontStyleAndWeight = FontStyle.Bold;
+            container.Add(label);
+        }
+
+        private TextField AddBrowsablePathField(VisualElement container, string value, string dialogTitle)
+        {
+            var row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.marginBottom = 2;
+            container.Add(row);
+
+            var field = new TextField();
+            field.value = value ?? "Assets/";
+            field.style.flexGrow = 1;
+            row.Add(field);
 
             var browseBtn = new Button(() =>
             {
-                string selected = EditorUtility.OpenFolderPanel("选择运行时资源目录", "Assets", "");
+                string selected = EditorUtility.OpenFolderPanel(dialogTitle, "Assets", "");
                 if (!string.IsNullOrEmpty(selected))
                 {
                     string dataPath = Application.dataPath.Replace("\\", "/");
@@ -473,21 +581,38 @@ namespace UITool
 
                     if (!selected.StartsWith(dataPath, System.StringComparison.OrdinalIgnoreCase))
                     {
-                        EditorUtility.DisplayDialog("路径错误", "运行时资源目录必须在 Assets 目录下。", "确定");
+                        EditorUtility.DisplayDialog("路径错误", "目录必须在 Assets 目录下。", "确定");
                         return;
                     }
-                    runtimePathField.value = "Assets" + selected.Substring(dataPath.Length);
+                    field.value = "Assets" + selected.Substring(dataPath.Length);
                 }
             });
             browseBtn.text = "浏览";
             browseBtn.style.width = 50;
-            runtimePathRow.Add(browseBtn);
+            row.Add(browseBtn);
 
-            var hintLabel = new Label("提示：修改后点击「确定」保存，如果路径变更会提示迁移已有运行时资源。");
-            hintLabel.style.fontSize = 11;
-            hintLabel.style.color = new Color(0.6f, 0.6f, 0.6f, 1f);
-            hintLabel.style.whiteSpace = WhiteSpace.Normal;
-            container.Add(hintLabel);
+            return field;
+        }
+
+        private Label AddPreviewLabel(VisualElement container, string text)
+        {
+            var label = new Label(text);
+            label.style.fontSize = 12;
+            label.style.color = new Color(0.45f, 0.75f, 1f, 1f);
+            label.style.marginLeft = 4;
+            label.style.marginBottom = 2;
+            container.Add(label);
+            return label;
+        }
+
+        private void AddHintLabel(VisualElement container, string text)
+        {
+            var hint = new Label(text);
+            hint.style.fontSize = 11;
+            hint.style.color = new Color(0.6f, 0.6f, 0.6f, 1f);
+            hint.style.whiteSpace = WhiteSpace.Normal;
+            hint.style.marginBottom = 6;
+            container.Add(hint);
         }
 
         private void ConfirmOnClick()
@@ -530,32 +655,73 @@ namespace UITool
             CloseWindow();
         }
 
+        /// <summary>
+        /// 尝试移动指定的固定名称目录到新父级路径下
+        /// </summary>
+        private static void TryMoveDir(string dirName, string oldParent, string newParent)
+        {
+            string normalizedOld = UXToolsProjectSettings.EnsureTrailingSlash(oldParent);
+            string normalizedNew = UXToolsProjectSettings.EnsureTrailingSlash(newParent);
+
+            if (normalizedOld == normalizedNew) return;
+
+            UXToolsProjectSettings.MoveDirectory(dirName, normalizedOld, normalizedNew);
+        }
+
         private void SavePathSettings()
         {
-            if (runtimePathField == null) return;
-
-            string newPath = runtimePathField.value;
-            if (string.IsNullOrEmpty(newPath)) return;
+            if (_configParentField == null) return;
 
             var settings = UXToolsProjectSettings.Instance;
-            string normalizedNew = settings.EnsureTrailingSlash(newPath);
-            string normalizedOld = settings.EnsureTrailingSlash(originalRuntimePath ?? settings.runtimeAssetsPath);
+            bool dirty = false;
 
-            if (normalizedNew == normalizedOld) return;
-
-            settings.runtimeAssetsPath = newPath;
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
-
-            if (System.IO.Directory.Exists(normalizedOld))
+            // 配置目录父级路径变更
+            string newConfigParent = _configParentField.value;
+            if (string.IsNullOrEmpty(newConfigParent)) newConfigParent = "Assets/";
+            if (newConfigParent != (_origConfigParent ?? settings.configParentPath))
             {
-                bool migrate = EditorUtility.DisplayDialog(
-                    "迁移运行时资源",
-                    $"运行时资源目录已变更:\n\n{normalizedOld}\n→ {normalizedNew}\n\n是否将已有运行时资源迁移到新目录？",
-                    "迁移", "不迁移");
+                TryMoveDir(UXToolsProjectSettings.CONFIG_DIR_NAME, _origConfigParent, newConfigParent);
+                settings.configParentPath = newConfigParent;
+                dirty = true;
+            }
 
-                if (migrate)
-                    UXToolsProjectSettings.MigrateRuntimeAssets(normalizedOld, normalizedNew);
+            // Editor 扩展目录
+            if (_enableEditorToggle.value != settings.enableCustomEditor)
+            {
+                settings.enableCustomEditor = _enableEditorToggle.value;
+                dirty = true;
+            }
+            string newEditorParent = _editorParentField.value;
+            if (string.IsNullOrEmpty(newEditorParent)) newEditorParent = "Assets/";
+            if (newEditorParent != (_origEditorParent ?? settings.editorParentPath))
+            {
+                if (settings.enableCustomEditor)
+                    TryMoveDir(UXToolsProjectSettings.EDITOR_DIR_NAME, _origEditorParent, newEditorParent);
+                settings.editorParentPath = newEditorParent;
+                dirty = true;
+            }
+
+            // Runtime 扩展目录
+            if (_enableRuntimeToggle.value != settings.enableCustomRuntime)
+            {
+                settings.enableCustomRuntime = _enableRuntimeToggle.value;
+                dirty = true;
+            }
+            string newRuntimeParent = _runtimeParentField.value;
+            if (string.IsNullOrEmpty(newRuntimeParent)) newRuntimeParent = "Assets/";
+            if (newRuntimeParent != (_origRuntimeParent ?? settings.runtimeParentPath))
+            {
+                if (settings.enableCustomRuntime)
+                    TryMoveDir(UXToolsProjectSettings.RUNTIME_DIR_NAME, _origRuntimeParent, newRuntimeParent);
+                settings.runtimeParentPath = newRuntimeParent;
+                dirty = true;
+            }
+
+            if (dirty)
+            {
+                EditorUtility.SetDirty(settings);
+                AssetDatabase.SaveAssets();
+                settings.EnsureOptionalDirectories();
             }
         }
     }

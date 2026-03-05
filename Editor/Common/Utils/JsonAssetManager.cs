@@ -36,7 +36,6 @@ public class JsonAssetManager
             { "WidgetListSetting",                      UIToolConfig.WidgetListPath },
             { "RecentFilesSetting",                     UIToolConfig.FilesRecentSelectedPath},
             { "UXToolCommonData",                       UIToolConfig.UXToolCommonDataPath},
-            { "ColorPresetLibrary",                     UIToolConfig.ColorPresetLibraryPath},
         };
     }
 
@@ -133,7 +132,9 @@ public class JsonAssetManager
     }
     public static object CreateAssets(string path, Type type)
     {
-        object newObject = Activator.CreateInstance(type);
+        object newObject = typeof(ScriptableObject).IsAssignableFrom(type)
+            ? ScriptableObject.CreateInstance(type)
+            : Activator.CreateInstance(type);
 
         string folder = Path.GetDirectoryName(path);
         if (!Directory.Exists(folder))

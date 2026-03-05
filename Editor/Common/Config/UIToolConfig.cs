@@ -47,17 +47,26 @@ namespace UITool
         //组件库-被认定为组件的Prefab信息
         public static readonly string WidgetListPath = WidgetLibraryPath + "WidgetList.json";
 
-        //设计库-颜色预设 (Editor-only JSON)
-        public static readonly string ColorPresetLibraryPath = ProjectDataPath + "DesignLibrary/ColorPresetLibrary.json";
+        //设计库-颜色预设旧 JSON 路径（仅用于数据迁移）
+        public static readonly string ColorPresetLegacyJsonPath = ProjectDataPath + "DesignLibrary/ColorPresetLibrary.json";
         #endregion
 
-        #region Runtime Assets (可配置路径，用于 Bundle 管理)
-        //运行时资源根目录（从 UXToolsProjectSettings 读取）
-        public static string RuntimeAssetsPath => UXToolsProjectSettings.Instance.GetRuntimeAssetsPath();
+        #region Custom Directories (用户配置父级目录，子目录名称由包规定)
+        //自定义配置目录：{customRootPath}/UXToolCustomConfig/
+        public static string CustomConfigPath => UXToolsProjectSettings.Instance.GetCustomConfigPath();
         //文字预设目录
-        public static string TextPresetPath => RuntimeAssetsPath + "TextPreset/";
+        public static string TextPresetPath => CustomConfigPath + "TextPreset/";
         //文字预设资产
         public static string TextPresetAssetPath => TextPresetPath + "TextPresetAsset.asset";
+        //颜色预设目录
+        public static string ColorPresetPath => CustomConfigPath + "ColorPreset/";
+        //颜色预设资产
+        public static string ColorPresetAssetPath => ColorPresetPath + "ColorPresetAsset.asset";
+
+        //Editor 扩展目录（可选）：{customRootPath}/UXToolCustomEditor/
+        public static string CustomEditorPath => UXToolsProjectSettings.Instance.GetCustomEditorPath();
+        //Runtime 扩展目录（可选）：{customRootPath}/UXToolCustomRuntime/
+        public static string CustomRuntimePath => UXToolsProjectSettings.Instance.GetCustomRuntimePath();
         #endregion
 
         #region User Local Data (不入Git，存储在Library中)

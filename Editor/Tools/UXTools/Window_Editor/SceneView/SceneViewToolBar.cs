@@ -463,7 +463,7 @@ namespace UITool
                 switch (QuickCreateType)
                 {
                     case "Image":
-                        Undo.AddComponent<UnityEngine.UI.Image>(obj);
+                        Undo.AddComponent<UXImage>(obj);
                         break;
                     case "Text":
 #if TMP_PRESENT || UNITY_2023_2_OR_NEWER || UNITY_6000_0_OR_NEWER

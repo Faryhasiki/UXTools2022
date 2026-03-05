@@ -1,9 +1,9 @@
 {
   "name": "com.ys4fun.uxtools",
   "displayName": "UXTools",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "unity": "6000.0",
-  "description": "UX Tools - Unity 编辑器扩展工具集，包含组件库、设计库（文字预设 / 颜色预设）、UXText 运行时组件、辅助线、快捷创建等功能。支持可配置的运行时资源路径，便于 Bundle 管理。",
+  "description": "UX Tools - Unity 编辑器扩展工具集。包含组件库、设计库（文字预设 / 颜色预设）、UXText / UXImage 运行时组件、颜色预设代码生成、IUXColorKey / IUXTextStyleKey 类型安全接口、可配置的三级外部目录体系（CustomConfig / CustomEditor / CustomRuntime）、辅助线、快捷创建等功能。",
   "keywords": [
     "ux",
     "ui",
@@ -11,7 +11,10 @@
     "tools",
     "design",
     "text-preset",
+    "color-preset",
     "uxtext",
+    "uximage",
+    "codegen",
     "tmp"
   ],
   "license": "",

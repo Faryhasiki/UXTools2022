@@ -185,10 +185,20 @@ namespace UITool
             return field;
         }
 
-        protected void ShowPresetContextMenu(Action deleteAction)
+        protected void ShowPresetContextMenu(string presetId, Action deleteAction)
         {
             var menu = new GenericMenu();
-            menu.AddItem(new GUIContent("删除"), false, () => deleteAction?.Invoke());
+            menu.AddItem(new GUIContent("复制 ID"), false, () =>
+            {
+                GUIUtility.systemCopyBuffer = presetId;
+                Debug.Log($"[UXTools] 已复制预设 ID: {presetId}");
+            });
+            menu.AddSeparator("");
+            menu.AddItem(new GUIContent("删除"), false, () =>
+            {
+                if (EditorUtility.DisplayDialog("确认删除", "删除后不可恢复，确定要删除此预设吗？", "删除", "取消"))
+                    deleteAction?.Invoke();
+            });
             menu.ShowAsContext();
         }
 

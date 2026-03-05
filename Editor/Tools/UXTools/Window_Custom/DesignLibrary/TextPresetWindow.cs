@@ -13,10 +13,10 @@ namespace UITool
 {
     public class TextPresetWindow : DesignLibraryWindowBase
     {
-        private TextPresetAsset asset;
-        private string filterCat = "全部";
-        private TextPresetEntry selected;
-        private Vector2 dragStartPos;
+        [System.NonSerialized] private TextPresetAsset asset;
+        [System.NonSerialized] private string filterCat = "全部";
+        [System.NonSerialized] private TextPresetEntry selected;
+        [System.NonSerialized] private Vector2 dragStartPos;
 
         [MenuItem(UIToolConfig.Menu_TextPresets, false, 50)]
         public static void OpenWindow()
@@ -61,6 +61,12 @@ namespace UITool
             trackInfo.style.fontSize = 11;
             trackInfo.style.flexGrow = 1;
             toolbar.Add(trackInfo);
+
+            var codeGenBtn = new Button(() => PresetCodeGenerator.GenerateTextStyleDef(asset));
+            codeGenBtn.text = "生成代码";
+            codeGenBtn.style.height = 22;
+            codeGenBtn.style.marginRight = 4;
+            toolbar.Add(codeGenBtn);
 
             var rebuildBtn = new Button(() =>
             {
@@ -414,7 +420,7 @@ namespace UITool
                 row.RegisterCallback<MouseDownEvent>(e =>
                 {
                     if (e.button == 0) { selected = it; RebuildContent(); }
-                    else if (e.button == 1) ShowPresetContextMenu(() =>
+                    else if (e.button == 1) ShowPresetContextMenu(it.id, () =>
                     {
                         asset.RemovePreset(it.id);
                         SaveAsset();
@@ -590,12 +596,34 @@ namespace UITool
             right.Add(previewBox);
 
             right.Add(DetailLabel("名称"));
-            right.Add(DetailTextField(selected.presetName, v =>
+            var nameRow = new VisualElement();
+            nameRow.style.flexDirection = FlexDirection.Row;
+            nameRow.style.marginTop = 2;
+
+            var nameField = new TextField();
+            nameField.value = selected.presetName ?? "";
+            nameField.style.flexGrow = 1;
+            nameField.style.height = 22;
+            nameField.SetEnabled(false);
+            nameRow.Add(nameField);
+
+            var nameEditBtn = new Button();
+            nameEditBtn.text = "编辑";
+            nameEditBtn.style.width = 42;
+            nameEditBtn.clicked += () =>
             {
-                selected.presetName = v;
-                SaveAsset();
-                RebuildContent();
-            }));
+                bool editing = !nameField.enabledSelf;
+                nameField.SetEnabled(editing);
+                nameEditBtn.text = editing ? "确定" : "编辑";
+                if (!editing && nameField.value != selected.presetName)
+                {
+                    selected.presetName = nameField.value;
+                    SaveAsset();
+                    RebuildContent();
+                }
+            };
+            nameRow.Add(nameEditBtn);
+            right.Add(nameRow);
 
             right.Add(DetailLabel("描述"));
             right.Add(DetailTextField(selected.description, v =>
@@ -710,6 +738,16 @@ namespace UITool
             spacingRow.Add(csContainer);
 
             right.Add(spacingRow);
+
+            var codeToggle = new UnityEngine.UIElements.Toggle("生成代码");
+            codeToggle.value = selected.generateCode;
+            codeToggle.style.marginTop = 12;
+            codeToggle.RegisterValueChangedCallback(e =>
+            {
+                selected.generateCode = e.newValue;
+                SaveAsset();
+            });
+            right.Add(codeToggle);
         }
 
         #endregion

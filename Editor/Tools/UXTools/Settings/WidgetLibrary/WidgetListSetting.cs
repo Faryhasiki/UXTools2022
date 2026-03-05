@@ -19,11 +19,15 @@ namespace UITool
         {
 
             var setting = JsonAssetManager.CreateAssets<WidgetListSetting>(UIToolConfig.WidgetListPath);
-            var guids = AssetDatabase.FindAssets("t:Prefab", new string[] { UIToolConfig.AssetsRootPath + "UX-GUI-PresetWidget/UXToolPrefabs/" });
-            foreach (var guid in guids)
+            string prefabDir = UIToolConfig.AssetsRootPath + "UX-GUI-PresetWidget/UXToolPrefabs/";
+            if (Directory.Exists(prefabDir))
             {
-                if (!setting.List.Contains(guid))
-                    setting.List.Add(guid);
+                var guids = AssetDatabase.FindAssets("t:Prefab", new string[] { prefabDir });
+                foreach (var guid in guids)
+                {
+                    if (!setting.List.Contains(guid))
+                        setting.List.Add(guid);
+                }
             }
             JsonAssetManager.SaveAssets(setting);
         }

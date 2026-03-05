@@ -1,10 +1,8 @@
-#if UNITY_EDITOR && TMP_PRESENT
-using System.Linq;
-using TMPro;
-using TMPro.EditorUtilities;
+#if UNITY_EDITOR
 using UITool;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,29 +10,17 @@ using UnityEngine.UI;
 namespace UITool
 {
     /// <summary>
-    /// UXText 自定义 Inspector，在 TMP 默认面板之上增加文字预设和颜色预设选择功能
+    /// UXImage 自定义 Inspector，在 Image 默认面板之上增加颜色预设选择功能
     /// </summary>
-    [CustomEditor(typeof(UXText), true)]
+    [CustomEditor(typeof(UXImage), true)]
     [CanEditMultipleObjects]
-    public class UXTextEditor : TMP_EditorPanelUI
+    public class UXImageEditor : ImageEditor
     {
-        #region 文字预设序列化属性
-
-        private SerializedProperty _presetAssetProp;
-        private SerializedProperty _presetIdProp;
-        private SerializedProperty _applyOnAwakeProp;
-
-        private string[] _presetNames;
-        private string[] _presetIds;
-        private bool _showPresetDetails;
-
-        #endregion
-
         #region 颜色预设序列化属性
 
         private SerializedProperty _colorPresetAssetProp;
         private SerializedProperty _colorPresetIdProp;
-        private SerializedProperty _applyColorOnAwakeProp;
+        private SerializedProperty _applyOnAwakeProp;
 
         private string[] _colorPresetNames;
         private string[] _colorPresetIds;
@@ -46,22 +32,15 @@ namespace UITool
         {
             base.OnEnable();
 
-            _presetAssetProp = serializedObject.FindProperty("_presetAsset");
-            _presetIdProp = serializedObject.FindProperty("_presetId");
-            _applyOnAwakeProp = serializedObject.FindProperty("_applyOnAwake");
-            RefreshPresetList();
-
             _colorPresetAssetProp = serializedObject.FindProperty("_colorPresetAsset");
             _colorPresetIdProp = serializedObject.FindProperty("_colorPresetId");
-            _applyColorOnAwakeProp = serializedObject.FindProperty("_applyColorOnAwake");
+            _applyOnAwakeProp = serializedObject.FindProperty("_applyOnAwake");
             RefreshColorPresetList();
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            DrawPresetSection();
-            EditorGUILayout.Space(4);
             DrawColorPresetSection();
             EditorGUILayout.Space(6);
             serializedObject.ApplyModifiedProperties();
@@ -70,98 +49,6 @@ namespace UITool
 
             HandleInspectorDrop();
         }
-
-        #region 文字预设区域
-
-        private void DrawPresetSection()
-        {
-            EditorGUILayout.LabelField("文字预设", EditorStyles.boldLabel);
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                EditorGUILayout.PropertyField(_presetAssetProp, new GUIContent("预设库"));
-                if (GUILayout.Button("刷新", GUILayout.Width(42)))
-                    RefreshPresetList();
-            }
-
-            var asset = _presetAssetProp.objectReferenceValue as TextPresetAsset;
-            if (asset == null)
-            {
-                AutoFindPresetAsset();
-                asset = _presetAssetProp.objectReferenceValue as TextPresetAsset;
-            }
-
-            if (asset == null || _presetNames == null || _presetNames.Length == 0)
-            {
-                EditorGUILayout.HelpBox("未找到预设库资产。请先在设计库中创建文字预设并确保已同步。", MessageType.Info);
-                return;
-            }
-
-            var displayNames = new string[_presetNames.Length + 1];
-            var displayIds = new string[_presetIds.Length + 1];
-            displayNames[0] = "None";
-            displayIds[0] = "";
-            System.Array.Copy(_presetNames, 0, displayNames, 1, _presetNames.Length);
-            System.Array.Copy(_presetIds, 0, displayIds, 1, _presetIds.Length);
-
-            string currentId = _presetIdProp.stringValue;
-            int selectedIdx = string.IsNullOrEmpty(currentId) ? 0 : System.Array.IndexOf(displayIds, currentId);
-            if (selectedIdx < 0) selectedIdx = 0;
-
-            int newIdx = EditorGUILayout.Popup("预设类型", selectedIdx, displayNames);
-            if (newIdx != selectedIdx)
-            {
-                _presetIdProp.stringValue = displayIds[newIdx];
-                serializedObject.ApplyModifiedProperties();
-                foreach (var t in targets)
-                {
-                    var uxText = t as UXText;
-                    if (uxText != null)
-                    {
-                        uxText.ApplyPreset();
-                        if (newIdx > 0)
-                            TryRegisterTextAssetGUID(asset, uxText);
-                    }
-                }
-            }
-
-            var entry = asset.FindById(_presetIdProp.stringValue);
-            if (entry != null)
-            {
-                _showPresetDetails = EditorGUILayout.Foldout(_showPresetDetails, "预设参数", true);
-                if (_showPresetDetails)
-                {
-                    EditorGUI.indentLevel++;
-                    using (new EditorGUI.DisabledScope(true))
-                    {
-                        EditorGUILayout.ObjectField("字体资产", entry.fontAsset, typeof(TMP_FontAsset), false);
-                        EditorGUILayout.EnumFlagsField("字体样式", entry.fontStyle);
-                        EditorGUILayout.IntField("字号", entry.fontSize);
-                        EditorGUILayout.FloatField("行间距", entry.lineSpacing);
-                        EditorGUILayout.FloatField("字符间距", entry.characterSpacing);
-                    }
-                    EditorGUI.indentLevel--;
-                }
-            }
-
-            EditorGUILayout.PropertyField(_applyOnAwakeProp, new GUIContent("启动时应用预设"));
-
-            if (entry != null && GUILayout.Button("应用预设"))
-            {
-                foreach (var t in targets)
-                {
-                    var uxText = t as UXText;
-                    if (uxText != null)
-                    {
-                        Undo.RecordObject(uxText, "Apply Text Preset");
-                        uxText.ApplyPreset();
-                        EditorUtility.SetDirty(uxText);
-                    }
-                }
-            }
-        }
-
-        #endregion
 
         #region 颜色预设区域
 
@@ -207,12 +94,12 @@ namespace UITool
                 serializedObject.ApplyModifiedProperties();
                 foreach (var t in targets)
                 {
-                    var uxText = t as UXText;
-                    if (uxText != null)
+                    var uxImage = t as UXImage;
+                    if (uxImage != null)
                     {
-                        uxText.ApplyColorPreset();
+                        uxImage.ApplyColorPreset();
                         if (newIdx > 0)
-                            TryRegisterColorAssetGUID(colorAsset, uxText);
+                            TryRegisterColorAssetGUID(colorAsset, uxImage);
                     }
                 }
             }
@@ -234,18 +121,18 @@ namespace UITool
                 }
             }
 
-            EditorGUILayout.PropertyField(_applyColorOnAwakeProp, new GUIContent("启动时应用颜色"));
+            EditorGUILayout.PropertyField(_applyOnAwakeProp, new GUIContent("启动时应用颜色"));
 
             if (colorEntry != null && GUILayout.Button("应用颜色预设"))
             {
                 foreach (var t in targets)
                 {
-                    var uxText = t as UXText;
-                    if (uxText != null)
+                    var uxImage = t as UXImage;
+                    if (uxImage != null)
                     {
-                        Undo.RecordObject(uxText, "Apply Color Preset");
-                        uxText.ApplyColorPreset();
-                        EditorUtility.SetDirty(uxText);
+                        Undo.RecordObject(uxImage, "Apply Color Preset");
+                        uxImage.ApplyColorPreset();
+                        EditorUtility.SetDirty(uxImage);
                     }
                 }
             }
@@ -260,10 +147,8 @@ namespace UITool
             var evt = Event.current;
             if (evt.type != EventType.DragUpdated && evt.type != EventType.DragPerform)
                 return;
-
-            bool isTextDrag = TextPresetDragHandler.HasPresetDragData();
-            bool isColorDrag = !isTextDrag && ColorPresetDragHandler.HasPresetDragData();
-            if (!isTextDrag && !isColorDrag) return;
+            if (!ColorPresetDragHandler.HasPresetDragData())
+                return;
 
             if (evt.type == EventType.DragUpdated)
             {
@@ -273,23 +158,13 @@ namespace UITool
             else if (evt.type == EventType.DragPerform)
             {
                 DragAndDrop.AcceptDrag();
-                if (isTextDrag && TextPresetDragHandler.TryGetPresetDragData(out var dragAsset, out var presetId))
+                if (ColorPresetDragHandler.TryGetPresetDragData(out var colorAsset, out var colorId))
                 {
                     foreach (var t in targets)
                     {
-                        var uxText = t as UXText;
-                        if (uxText != null)
-                            TextPresetDragHandler.ApplyPresetTo(uxText, dragAsset, presetId);
-                    }
-                    RefreshPresetList();
-                }
-                else if (isColorDrag && ColorPresetDragHandler.TryGetPresetDragData(out var colorDragAsset, out var colorId))
-                {
-                    foreach (var t in targets)
-                    {
-                        var uxText = t as UXText;
-                        if (uxText != null)
-                            ColorPresetDragHandler.ApplyColorPresetTo(uxText, colorDragAsset, colorId);
+                        var uxImage = t as UXImage;
+                        if (uxImage != null)
+                            ColorPresetDragHandler.ApplyColorPresetTo(uxImage, colorAsset, colorId);
                     }
                     RefreshColorPresetList();
                 }
@@ -300,38 +175,6 @@ namespace UITool
         #endregion
 
         #region 刷新与自动查找
-
-        private void RefreshPresetList()
-        {
-            var asset = _presetAssetProp.objectReferenceValue as TextPresetAsset;
-            if (asset == null)
-            {
-                AutoFindPresetAsset();
-                asset = _presetAssetProp.objectReferenceValue as TextPresetAsset;
-            }
-
-            if (asset != null && asset.presets.Count > 0)
-            {
-                _presetNames = asset.GetPresetNames();
-                _presetIds = asset.GetPresetIds();
-            }
-            else
-            {
-                _presetNames = new string[0];
-                _presetIds = new string[0];
-            }
-        }
-
-        private void AutoFindPresetAsset()
-        {
-            var asset = AssetDatabase.LoadAssetAtPath<TextPresetAsset>(UIToolConfig.TextPresetAssetPath);
-            if (asset != null)
-            {
-                _presetAssetProp.objectReferenceValue = asset;
-                serializedObject.ApplyModifiedProperties();
-                RefreshPresetList();
-            }
-        }
 
         private void RefreshColorPresetList()
         {
@@ -367,38 +210,22 @@ namespace UITool
 
         #endregion
 
-        #region Hierarchy 右键菜单创建 UXText
+        #region Hierarchy 右键菜单创建 UXImage
 
-        [MenuItem("GameObject/UI (Canvas)/UXUI/UXText", false, 2000)]
-        private static void CreateUXText(MenuCommand menuCommand)
+        [MenuItem("GameObject/UI (Canvas)/UXUI/UXImage", false, 2001)]
+        private static void CreateUXImage(MenuCommand menuCommand)
         {
-            var go = new GameObject("UXText");
+            var go = new GameObject("UXImage");
             go.layer = LayerMask.NameToLayer("UI");
 
-            var uxText = go.AddComponent<UXText>();
-            uxText.text = "New UXText";
-            uxText.fontSize = TMP_Settings.defaultFontSize;
-            uxText.color = Color.white;
-            uxText.alignment = TextAlignmentOptions.Center;
-            uxText.raycastTarget = false;
-
-            if (TMP_Settings.autoSizeTextContainer)
-            {
-                var size = uxText.GetPreferredValues(TMP_Math.FLOAT_MAX, TMP_Math.FLOAT_MAX);
-                uxText.rectTransform.sizeDelta = size;
-            }
-            else
-            {
-                uxText.rectTransform.sizeDelta = TMP_Settings.defaultTextMeshProUITextContainerSize;
-            }
-
-            var presetAsset = AssetDatabase.LoadAssetAtPath<TextPresetAsset>(UIToolConfig.TextPresetAssetPath);
-            if (presetAsset != null)
-                uxText.PresetAsset = presetAsset;
+            var uxImage = go.AddComponent<UXImage>();
+            uxImage.color = Color.white;
+            uxImage.raycastTarget = true;
+            uxImage.rectTransform.sizeDelta = new Vector2(100, 100);
 
             var colorAsset = AssetDatabase.LoadAssetAtPath<ColorPresetAsset>(UIToolConfig.ColorPresetAssetPath);
             if (colorAsset != null)
-                uxText.ColorPresetAsset = colorAsset;
+                uxImage.ColorPresetAsset = colorAsset;
 
             PlaceUIElement(go, menuCommand);
         }
@@ -503,18 +330,9 @@ namespace UITool
                 SetLayerRecursive(child.gameObject, layer);
         }
 
-        private static void TryRegisterTextAssetGUID(TextPresetAsset asset, UXText uxText)
-        {
-            if (asset == null || uxText == null) return;
+        #endregion
 
-            string assetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(uxText);
-            if (string.IsNullOrEmpty(assetPath) && uxText.gameObject.scene.IsValid())
-                assetPath = uxText.gameObject.scene.path;
-            if (string.IsNullOrEmpty(assetPath)) return;
-
-            string guid = AssetDatabase.AssetPathToGUID(assetPath);
-            asset.RegisterAssetGUID(guid);
-        }
+        #region 资产追踪
 
         private static void TryRegisterColorAssetGUID(ColorPresetAsset asset, Component comp)
         {
@@ -530,6 +348,70 @@ namespace UITool
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// 拦截普通 Image 的 Inspector，增加转换为 UXImage 的按钮和颜色预设拖拽接收
+    /// </summary>
+    [CustomEditor(typeof(Image), true)]
+    [CanEditMultipleObjects]
+    public class ImagePresetDropEditor : ImageEditor
+    {
+        public override void OnInspectorGUI()
+        {
+            if (!(target is UXImage) && DrawConvertButton())
+                return;
+
+            base.OnInspectorGUI();
+
+            if (!(target is UXImage))
+                HandlePresetDrop();
+        }
+
+        private bool DrawConvertButton()
+        {
+            if (GUILayout.Button("点击转换为 UXImage", GUILayout.Height(24)))
+            {
+                foreach (var t in targets)
+                {
+                    var img = t as Image;
+                    if (img != null && !(img is UXImage))
+                        ColorPresetDragHandler.ReplaceWithUXImage(img.gameObject, null, null);
+                }
+                return true;
+            }
+            EditorGUILayout.Space(2);
+            return false;
+        }
+
+        private void HandlePresetDrop()
+        {
+            var evt = Event.current;
+            if (evt.type != EventType.DragUpdated && evt.type != EventType.DragPerform)
+                return;
+            if (!ColorPresetDragHandler.HasPresetDragData())
+                return;
+
+            if (evt.type == EventType.DragUpdated)
+            {
+                DragAndDrop.visualMode = DragAndDropVisualMode.Link;
+                evt.Use();
+            }
+            else if (evt.type == EventType.DragPerform)
+            {
+                DragAndDrop.AcceptDrag();
+                if (ColorPresetDragHandler.TryGetPresetDragData(out var asset, out var colorId))
+                {
+                    foreach (var t in targets)
+                    {
+                        var img = t as Image;
+                        if (img != null)
+                            ColorPresetDragHandler.ReplaceWithUXImage(img.gameObject, asset, colorId);
+                    }
+                }
+                evt.Use();
+            }
+        }
     }
 }
 #endif
