@@ -420,7 +420,7 @@ namespace UITool
                 row.RegisterCallback<MouseDownEvent>(e =>
                 {
                     if (e.button == 0) { selected = it; RebuildContent(); }
-                    else if (e.button == 1) ShowPresetContextMenu(it.id, () =>
+                    else if (e.button == 1) ShowPresetContextMenu(it.id, it.generateCode, () =>
                     {
                         asset.RemovePreset(it.id);
                         SaveAsset();
@@ -742,12 +742,32 @@ namespace UITool
             var codeToggle = new UnityEngine.UIElements.Toggle("生成代码");
             codeToggle.value = selected.generateCode;
             codeToggle.style.marginTop = 12;
+            right.Add(codeToggle);
+
+            var aliasLabel = DetailLabel("代码别名");
+            aliasLabel.style.display = selected.generateCode ? DisplayStyle.Flex : DisplayStyle.None;
+
+            var aliasField = new TextField();
+            aliasField.value = selected.codeAlias ?? "";
+            aliasField.style.height = 22;
+            aliasField.style.marginTop = 2;
+            aliasField.style.display = selected.generateCode ? DisplayStyle.Flex : DisplayStyle.None;
+            aliasField.RegisterCallback<FocusOutEvent>(e =>
+            {
+                selected.codeAlias = aliasField.value;
+                SaveAsset();
+            });
+
             codeToggle.RegisterValueChangedCallback(e =>
             {
                 selected.generateCode = e.newValue;
+                aliasLabel.style.display = e.newValue ? DisplayStyle.Flex : DisplayStyle.None;
+                aliasField.style.display = e.newValue ? DisplayStyle.Flex : DisplayStyle.None;
                 SaveAsset();
             });
-            right.Add(codeToggle);
+
+            right.Add(aliasLabel);
+            right.Add(aliasField);
         }
 
         #endregion

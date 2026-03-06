@@ -53,6 +53,12 @@ namespace UITool
         public bool generateCode = false;
 
         /// <summary>
+        /// 代码生成别名，用于生成更符合程序命名风格的常量名。
+        /// 非空时优先使用别名作为生成的字段名，否则使用 presetName。
+        /// </summary>
+        public string codeAlias = "";
+
+        /// <summary>
         /// 将 hex + opacity 转换为 Unity Color
         /// </summary>
         public Color GetColor()

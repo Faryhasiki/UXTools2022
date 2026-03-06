@@ -219,6 +219,7 @@ public interface IUXTextStyleKey { string PresetId { get; } }
 - `PresetCodeGenerator.GenerateColorDef(ColorPresetAsset)` — 从窗口传入资产实例
 - `PresetCodeGenerator.GenerateTextStyleDef(TextPresetAsset)` — 同上
 - 只生成 `entry.generateCode == true` 的条目
+- 字段名优先使用 `entry.codeAlias`（代码别名），为空时回退到 `entry.presetName`
 - 生成前自动启用 `enableCustomRuntime` 并创建 asmdef
 - 生成的文件需要 `using UITool;`
 

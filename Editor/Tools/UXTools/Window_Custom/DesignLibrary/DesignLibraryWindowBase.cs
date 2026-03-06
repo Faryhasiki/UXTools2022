@@ -185,7 +185,7 @@ namespace UITool
             return field;
         }
 
-        protected void ShowPresetContextMenu(string presetId, Action deleteAction)
+        protected void ShowPresetContextMenu(string presetId, bool hasCodeGen, Action deleteAction)
         {
             var menu = new GenericMenu();
             menu.AddItem(new GUIContent("复制 ID"), false, () =>
@@ -196,7 +196,11 @@ namespace UITool
             menu.AddSeparator("");
             menu.AddItem(new GUIContent("删除"), false, () =>
             {
-                if (EditorUtility.DisplayDialog("确认删除", "删除后不可恢复，确定要删除此预设吗？", "删除", "取消"))
+                string title = hasCodeGen ? "谨慎删除" : "确认删除";
+                string msg = hasCodeGen
+                    ? "此预设已启用「生成代码」，可能在代码中被引用（如 UXColorDef / UXTextStyleDef）。\n删除后相关代码将编译失败，且不可恢复。\n\n确定要删除吗？"
+                    : "删除后不可恢复，确定要删除此预设吗？";
+                if (EditorUtility.DisplayDialog(title, msg, "删除", "取消"))
                     deleteAction?.Invoke();
             });
             menu.ShowAsContext();

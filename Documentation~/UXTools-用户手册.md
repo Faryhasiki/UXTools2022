@@ -73,12 +73,6 @@ Scene 面板上方显示当前打开的所有 Prefab 页签，点击可快速切
 | 重建索引 | 扫描项目中所有引用此预设库的预制体和场景 |
 | 强制同步全部 | 对所有追踪资产重新应用预设值 |
 
-#### 防误触设计
-
-- 名称字段默认锁定，点击「编辑」按钮才能修改
-- 删除预设需要二次确认
-- 右键菜单支持复制预设 ID
-
 ### 2.2 文字预设
 
 菜单路径：**UXTool → 设计库 → 文字预设 (Text Presets)**
@@ -96,15 +90,23 @@ Scene 面板上方显示当前打开的所有 Prefab 页签，点击可快速切
 颜色和文字预设都支持代码生成功能：
 
 1. 在预设详情面板勾选「生成代码」
-2. 点击窗口工具栏的「生成代码」按钮
-3. 生成的 C# 文件位于 `UXToolsCustomRuntime/Generated/` 目录下
+2. （可选）填写「代码别名」，用于生成更符合程序命名风格的常量名
+3. 点击窗口工具栏的「生成代码」按钮
+4. 生成的 C# 文件位于 `UXToolsCustomRuntime/Generated/` 目录下
+
+代码别名说明：
+- 预设名称由 UE/美术定义，如 `渐变蓝-悬浮态`
+- 代码别名由程序定义，如 `HoverBlue`
+- 填写别名后，生成的字段名使用别名，不填则使用预设名称
+- 别名输入框仅在勾选「生成代码」时显示
 
 生成的代码示例：
 ```csharp
 // UXColorDef.cs
 public static class UXColorDef
 {
-    public static readonly UXColorKey 主按钮色 = new UXColorKey("guid", "主按钮色");
+    /// <summary>渐变蓝-悬浮态 (#4488FF, 100%)</summary>
+    public static readonly UXColorKey HoverBlue = new UXColorKey("guid", "渐变蓝-悬浮态");
 }
 ```
 

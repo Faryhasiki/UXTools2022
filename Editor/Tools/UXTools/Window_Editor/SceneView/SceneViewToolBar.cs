@@ -43,6 +43,7 @@ namespace UITool
         {
             SceneView sceneView = SceneView.lastActiveSceneView;
             if (sceneView == null) return;
+            TryOpenToolbar();
             editorLogic = new EditorLogic();
             editorLogic.Init();
             PrefabTabs.InitPrefabTabs();
@@ -412,17 +413,32 @@ namespace UITool
 
         public static void OnQuickCreate(SceneView sceneView)
         {
-            if (Event.current.type == EventType.MouseDown)
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
                 StartCreateDarg(sceneView);
 
             if (InCreateDrag)
             {
                 Handles.BeginGUI();
-                GUI.Box(new Rect(mouseDownPos.x, mouseDownPos.y,
-                    Event.current.mousePosition.x - mouseDownPos.x,
-                    Event.current.mousePosition.y - mouseDownPos.y), "");
+                Vector2 cur = Event.current.mousePosition;
+                Rect dragRect = new Rect(
+                    Mathf.Min(mouseDownPos.x, cur.x),
+                    Mathf.Min(mouseDownPos.y, cur.y),
+                    Mathf.Abs(cur.x - mouseDownPos.x),
+                    Mathf.Abs(cur.y - mouseDownPos.y));
+                EditorGUI.DrawRect(dragRect, new Color(0.3f, 0.6f, 1f, 0.15f));
+                Handles.DrawSolidRectangleWithOutline(
+                    new Vector3[] {
+                        new Vector3(dragRect.xMin, dragRect.yMin, 0),
+                        new Vector3(dragRect.xMax, dragRect.yMin, 0),
+                        new Vector3(dragRect.xMax, dragRect.yMax, 0),
+                        new Vector3(dragRect.xMin, dragRect.yMax, 0)
+                    },
+                    Color.clear,
+                    new Color(0.3f, 0.6f, 1f, 0.8f));
                 Handles.EndGUI();
-                if (Event.current.type == EventType.MouseUp || OutSceneViewBounds(sceneView))
+                if (Event.current.type == EventType.MouseUp)
+                    EndCreateDarg(sceneView);
+                else if (Event.current.isMouse && OutSceneViewBounds(sceneView))
                     EndCreateDarg(sceneView);
             }
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -444,39 +460,52 @@ namespace UITool
             InCreateDrag = false;
 
             Transform parent = FindContainerLogic.GetObjectParent(selection);
-
-            Vector3 startWorldPos = GUIPointToCanvasPlane(mouseDownPos, parent);
-            Vector3 endWorldPos = GUIPointToCanvasPlane(Event.current.mousePosition, parent);
-            Vector2 startPos = parent.InverseTransformPoint(startWorldPos);
-            Vector2 endPos = parent.InverseTransformPoint(endWorldPos);
-
             Vector2 defaultSize = QuickCreateType == "Text" ? new Vector2(200, 50) : new Vector2(100, 100);
-            var canvasRect = parent.GetComponentInParent<Canvas>()?.GetComponent<RectTransform>();
-            Rect canvasBounds = canvasRect != null ? canvasRect.rect : new Rect(-960, -540, 1920, 1080);
 
-            bool startInCanvas = canvasBounds.Contains(startPos);
-            bool endInCanvas = canvasBounds.Contains(endPos);
+            Vector2 guiStart = mouseDownPos;
+            Vector2 guiEnd = Event.current.mousePosition;
+            float guiW = Mathf.Abs(guiEnd.x - guiStart.x);
+            float guiH = Mathf.Abs(guiEnd.y - guiStart.y);
 
             Vector2 size;
             Vector3 localPosition;
 
-            if (!startInCanvas && !endInCanvas)
+            // GUI 像素拖拽距离太小时使用默认尺寸
+            if (guiW < 5f || guiH < 5f)
             {
                 size = defaultSize;
-                localPosition = Vector3.zero;
+                Vector3 centerWorld = GUIPointToCanvasPlane((guiStart + guiEnd) / 2, parent);
+                localPosition = parent.InverseTransformPoint(centerWorld);
+                localPosition.z = 0;
             }
             else
             {
-                startPos.x = Mathf.Clamp(startPos.x, canvasBounds.xMin, canvasBounds.xMax);
-                startPos.y = Mathf.Clamp(startPos.y, canvasBounds.yMin, canvasBounds.yMax);
-                endPos.x = Mathf.Clamp(endPos.x, canvasBounds.xMin, canvasBounds.xMax);
-                endPos.y = Mathf.Clamp(endPos.y, canvasBounds.yMin, canvasBounds.yMax);
+                Vector3 startWorldPos = GUIPointToCanvasPlane(guiStart, parent);
+                Vector3 endWorldPos = GUIPointToCanvasPlane(guiEnd, parent);
+                Vector2 startLocal = parent.InverseTransformPoint(startWorldPos);
+                Vector2 endLocal = parent.InverseTransformPoint(endWorldPos);
 
-                size = new Vector2(Mathf.Abs(startPos.x - endPos.x), Mathf.Abs(startPos.y - endPos.y));
-                if (size.x < 1f || size.y < 1f)
+                var canvasRect = parent.GetComponentInParent<Canvas>()?.GetComponent<RectTransform>();
+                Rect bounds = canvasRect != null ? canvasRect.rect : new Rect(-960, -540, 1920, 1080);
+
+                startLocal.x = Mathf.Clamp(startLocal.x, bounds.xMin, bounds.xMax);
+                startLocal.y = Mathf.Clamp(startLocal.y, bounds.yMin, bounds.yMax);
+                endLocal.x = Mathf.Clamp(endLocal.x, bounds.xMin, bounds.xMax);
+                endLocal.y = Mathf.Clamp(endLocal.y, bounds.yMin, bounds.yMax);
+
+                size = new Vector2(Mathf.Abs(startLocal.x - endLocal.x), Mathf.Abs(startLocal.y - endLocal.y));
+
+                // 尺寸合理性检查：不超过 Canvas 的 80%
+                float maxW = bounds.width * 0.8f;
+                float maxH = bounds.height * 0.8f;
+                if (size.x > maxW || size.y > maxH)
+                    size = defaultSize;
+                else if (size.x < 1f || size.y < 1f)
                     size = defaultSize;
 
-                localPosition = new Vector3((startPos.x + endPos.x) / 2, (startPos.y + endPos.y) / 2, 0);
+                localPosition = new Vector3(
+                    (startLocal.x + endLocal.x) / 2,
+                    (startLocal.y + endLocal.y) / 2, 0);
             }
 
             GameObject obj = WidgetGenerator.CreateUIObj(QuickCreateType, localPosition, size, selection);

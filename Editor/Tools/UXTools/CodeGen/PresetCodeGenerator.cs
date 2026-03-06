@@ -165,7 +165,8 @@ namespace UITool
                     lastCategory = entry.category;
                 }
 
-                string fieldName = SanitizeIdentifier(entry.presetName);
+                string rawName = !string.IsNullOrEmpty(entry.codeAlias) ? entry.codeAlias : entry.presetName;
+                string fieldName = SanitizeIdentifier(rawName);
                 string colorHex = $"#{entry.hex}";
                 sb.AppendLine($"        /// <summary>{EscapeXml(entry.presetName)} ({colorHex}, {entry.opacity}%)</summary>");
                 sb.AppendLine($"        public static readonly UXColorKey {fieldName} = new UXColorKey(\"{entry.id}\", \"{EscapeCSharpString(entry.presetName)}\");");
@@ -213,7 +214,8 @@ namespace UITool
                     lastCategory = entry.category;
                 }
 
-                string fieldName = SanitizeIdentifier(entry.presetName);
+                string rawName = !string.IsNullOrEmpty(entry.codeAlias) ? entry.codeAlias : entry.presetName;
+                string fieldName = SanitizeIdentifier(rawName);
                 sb.AppendLine($"        /// <summary>{EscapeXml(entry.presetName)} (字号:{entry.fontSize})</summary>");
                 sb.AppendLine($"        public static readonly UXTextStyleKey {fieldName} = new UXTextStyleKey(\"{entry.id}\", \"{EscapeCSharpString(entry.presetName)}\");");
 
