@@ -35,6 +35,12 @@ namespace UITool
             InitRootUI();
         }
 
+        private void OnDisable()
+        {
+            if (_asset != null)
+                SaveAsset();
+        }
+
         protected override void BuildContent()
         {
             BuildToolbar();
@@ -611,12 +617,6 @@ namespace UITool
             colorField.showAlpha = true;
             colorField.style.flexGrow = 1;
             colorField.style.height = 24;
-            colorField.RegisterValueChangedCallback(e =>
-            {
-                _selected.SetColor(e.newValue);
-                SaveAsset();
-                RebuildContent();
-            });
             colorRow.Add(colorField);
 
             var opLabel = new Label(_selected.GetOpacityDisplay());
@@ -625,6 +625,18 @@ namespace UITool
             opLabel.style.color = TextGray;
             opLabel.style.marginLeft = 8;
             colorRow.Add(opLabel);
+
+            colorField.RegisterValueChangedCallback(e =>
+            {
+                _selected.SetColor(e.newValue);
+                preview.style.backgroundColor = e.newValue;
+                opLabel.text = _selected.GetOpacityDisplay();
+            });
+            colorField.RegisterCallback<FocusOutEvent>(e =>
+            {
+                SaveAsset();
+                RebuildContent();
+            });
 
             right.Add(colorRow);
 

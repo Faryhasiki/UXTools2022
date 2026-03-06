@@ -171,10 +171,11 @@ ConfigurationWindow (EditorWindow)
 
 ### 新增编辑器窗口
 
-- 继承 `EditorWindow`，在 `OnEnable` 中初始化 UI
+- 继承 `EditorWindow`，在 `OnEnable` 中初始化 UI，`OnDisable` 中保存脏数据
 - EditorWindow 中所有运行时数据字段标记 `[NonSerialized]` 防止域重载残留
 - 使用 UIElements 构建 UI（非 IMGUI）
 - 菜单注册在 `UIToolConfig` 中定义常量
+- ColorField 等高频变更控件：ValueChanged 只更新内存和 UI 预览，FocusOut 时保存落盘 + RebuildContent
 
 ### 修改路径体系
 
@@ -234,3 +235,7 @@ public interface IUXTextStyleKey { string PresetId { get; } }
 5. **辅助线坐标系**：横线使用 `style.top` 定位 + `m_DragOffsetY` 补偿 `evt.position` 与 `style.top` 的偏移
 6. **快捷创建尺寸**：使用 `GUIPointToCanvasPlane` 投射到 Canvas 平面，尺寸限制在 Canvas 范围内
 7. **废弃 API**：`TryGetGUIDAndLocalFileIdentifier(int)`、`AddDropHandler`、`InstanceIDToObject` 使用 `#pragma warning disable CS0618` 抑制
+8. **生成代码**必须包含 `using UITool;`，字段名优先使用 `codeAlias`（代码别名），为空时回退到 `presetName`
+9. **UXColorBinding 冲突**：如果 Graphic 本身是 IColorPresetTarget（UXText/UXImage），UXColorBinding 的 ApplyColorPreset 会跳过，Inspector 显示警告
+10. **工具栏域重载**：`SceneViewToolBar.InitFunction` 中调用 `TryOpenToolbar()` 确保重编译后工具栏恢复
+11. **ColorField 性能**：ValueChanged 只更新内存/UI，FocusOut 时落盘 + 刷新列表，OnDisable 兜底保存

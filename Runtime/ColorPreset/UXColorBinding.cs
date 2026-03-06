@@ -7,6 +7,8 @@ namespace UITool
     /// 通用颜色预设绑定组件。
     /// 可挂载到任何含有 Graphic 组件的 GameObject 上（RawImage、第三方组件等），
     /// 实现颜色预设的绑定与自动应用。
+    /// 注意：如果 Graphic 本身已实现 IColorPresetTarget（如 UXText、UXImage），
+    /// 此组件会自动跳过以避免冲突。
     /// </summary>
     [ExecuteAlways]
     [RequireComponent(typeof(Graphic))]
@@ -48,6 +50,19 @@ namespace UITool
 
         #endregion
 
+        #region 冲突检测
+
+        /// <summary>
+        /// 检查同 GameObject 上的 Graphic 是否已自带颜色预设功能（UXText、UXImage 等）
+        /// </summary>
+        public bool HasConflict()
+        {
+            if (!TryGetComponent<Graphic>(out var graphic)) return false;
+            return graphic is IColorPresetTarget;
+        }
+
+        #endregion
+
         #region Unity 生命周期
 
         private void Awake()
@@ -68,11 +83,13 @@ namespace UITool
         #region IColorPresetTarget 实现
 
         /// <summary>
-        /// 将当前绑定的颜色预设应用到同 GameObject 上的 Graphic 组件
+        /// 将当前绑定的颜色预设应用到同 GameObject 上的 Graphic 组件。
+        /// 如果 Graphic 已自带 IColorPresetTarget（如 UXText/UXImage），则跳过以避免覆盖。
         /// </summary>
         public void ApplyColorPreset()
         {
             if (_colorPresetAsset == null || string.IsNullOrEmpty(_colorPresetId)) return;
+            if (HasConflict()) return;
 
             var entry = _colorPresetAsset.FindById(_colorPresetId);
             if (entry == null) return;
