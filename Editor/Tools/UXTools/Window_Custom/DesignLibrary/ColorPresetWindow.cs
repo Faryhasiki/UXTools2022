@@ -100,6 +100,16 @@ namespace UITool
                 }
             }
 
+            var allBindings = Object.FindObjectsByType<UXColorBinding>(FindObjectsSortMode.None);
+            foreach (var ux in allBindings)
+            {
+                if (ux.ColorPresetAsset == _asset)
+                {
+                    ux.ApplyColorPreset();
+                    EditorUtility.SetDirty(ux);
+                }
+            }
+
 #if TMP_PRESENT
             var allTexts = Object.FindObjectsByType<UXText>(FindObjectsSortMode.None);
             foreach (var ux in allTexts)
@@ -244,6 +254,17 @@ namespace UITool
                 }
             }
 
+            var bindings = Object.FindObjectsByType<UXColorBinding>(FindObjectsSortMode.None);
+            foreach (var ux in bindings)
+            {
+                if (ux.ColorPresetAsset == _asset)
+                {
+                    ux.ApplyColorPreset();
+                    EditorUtility.SetDirty(ux);
+                    count++;
+                }
+            }
+
 #if TMP_PRESENT
             var texts = Object.FindObjectsByType<UXText>(FindObjectsSortMode.None);
             foreach (var ux in texts)
@@ -267,6 +288,16 @@ namespace UITool
             int count = 0;
             var images = root.GetComponentsInChildren<UXImage>(true);
             foreach (var ux in images)
+            {
+                if (ux.ColorPresetAsset == _asset)
+                {
+                    ux.ApplyColorPreset();
+                    count++;
+                }
+            }
+
+            var bindings = root.GetComponentsInChildren<UXColorBinding>(true);
+            foreach (var ux in bindings)
             {
                 if (ux.ColorPresetAsset == _asset)
                 {
@@ -303,6 +334,17 @@ namespace UITool
             {
                 var images = go.GetComponentsInChildren<UXImage>(true);
                 foreach (var ux in images)
+                {
+                    if (ux.ColorPresetAsset == _asset)
+                    {
+                        ux.ApplyColorPreset();
+                        EditorUtility.SetDirty(ux);
+                        count++;
+                    }
+                }
+
+                var bindings = go.GetComponentsInChildren<UXColorBinding>(true);
+                foreach (var ux in bindings)
                 {
                     if (ux.ColorPresetAsset == _asset)
                     {

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -153,6 +154,7 @@ namespace UITool
             sb.AppendLine("    {");
 
             var filtered = asset.presets.FindAll(e => e.generateCode);
+            var usedNames = new HashSet<string>();
 
             string lastCategory = null;
             foreach (var entry in filtered)
@@ -166,7 +168,7 @@ namespace UITool
                 }
 
                 string rawName = !string.IsNullOrEmpty(entry.codeAlias) ? entry.codeAlias : entry.presetName;
-                string fieldName = SanitizeIdentifier(rawName);
+                string fieldName = UniqueIdentifier(SanitizeIdentifier(rawName), usedNames);
                 string colorHex = $"#{entry.hex}";
                 sb.AppendLine($"        /// <summary>{EscapeXml(entry.presetName)} ({colorHex}, {entry.opacity}%)</summary>");
                 sb.AppendLine($"        public static readonly UXColorKey {fieldName} = new UXColorKey(\"{entry.id}\", \"{EscapeCSharpString(entry.presetName)}\");");
@@ -202,6 +204,7 @@ namespace UITool
             sb.AppendLine("    {");
 
             var filtered = asset.presets.FindAll(e => e.generateCode);
+            var usedNames = new HashSet<string>();
 
             string lastCategory = null;
             foreach (var entry in filtered)
@@ -215,7 +218,7 @@ namespace UITool
                 }
 
                 string rawName = !string.IsNullOrEmpty(entry.codeAlias) ? entry.codeAlias : entry.presetName;
-                string fieldName = SanitizeIdentifier(rawName);
+                string fieldName = UniqueIdentifier(SanitizeIdentifier(rawName), usedNames);
                 sb.AppendLine($"        /// <summary>{EscapeXml(entry.presetName)} (字号:{entry.fontSize})</summary>");
                 sb.AppendLine($"        public static readonly UXTextStyleKey {fieldName} = new UXTextStyleKey(\"{entry.id}\", \"{EscapeCSharpString(entry.presetName)}\");");
 
@@ -255,6 +258,18 @@ namespace UITool
                 sanitized = "_Unnamed";
 
             return sanitized;
+        }
+
+        /// <summary>
+        /// 确保标识符在集合中唯一，重复时追加 _2、_3 等后缀
+        /// </summary>
+        private static string UniqueIdentifier(string name, HashSet<string> used)
+        {
+            string result = name;
+            int suffix = 2;
+            while (!used.Add(result))
+                result = $"{name}_{suffix++}";
+            return result;
         }
 
         private static string EscapeCSharpString(string s)

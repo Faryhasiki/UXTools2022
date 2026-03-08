@@ -96,7 +96,11 @@ namespace UITool
                 {
                     var cb = t as UXColorBinding;
                     if (cb != null)
+                    {
                         cb.ApplyColorPreset();
+                        if (newIdx > 0)
+                            TryRegisterColorAssetGUID(colorAsset, cb);
+                    }
                 }
             }
 
@@ -202,6 +206,23 @@ namespace UITool
                 serializedObject.ApplyModifiedProperties();
                 RefreshColorPresetList();
             }
+        }
+
+        #endregion
+
+        #region 资产追踪
+
+        private static void TryRegisterColorAssetGUID(ColorPresetAsset asset, Component comp)
+        {
+            if (asset == null || comp == null) return;
+
+            string assetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(comp);
+            if (string.IsNullOrEmpty(assetPath) && comp.gameObject.scene.IsValid())
+                assetPath = comp.gameObject.scene.path;
+            if (string.IsNullOrEmpty(assetPath)) return;
+
+            string guid = AssetDatabase.AssetPathToGUID(assetPath);
+            asset.RegisterAssetGUID(guid);
         }
 
         #endregion

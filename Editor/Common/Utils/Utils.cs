@@ -724,7 +724,9 @@ namespace UITool
 
         public static void DrawGreenRect(int instanceID, Rect selectionRect, string text)
         {
+#pragma warning disable CS0618
             GameObject go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+#pragma warning restore CS0618
             Rect rect = new Rect(selectionRect)
             {
                 width = selectionRect.width + (PrefabUtility.IsAnyPrefabInstanceRoot(go) ? 0 : 20)

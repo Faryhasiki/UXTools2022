@@ -173,7 +173,7 @@ ConfigurationWindow (EditorWindow)
 
 - 继承 `EditorWindow`，在 `OnEnable` 中初始化 UI，`OnDisable` 中保存脏数据
 - EditorWindow 中所有运行时数据字段标记 `[NonSerialized]` 防止域重载残留
-- 使用 UIElements 构建 UI（非 IMGUI）
+- **禁止使用 UIToolkit/UIElements 构建新的编辑器界面**，统一使用 IMGUI（`OnGUI`、`EditorGUILayout`、`GUILayout`）。原因：UIToolkit 代码冗长、对 AI Agent 不友好、样式难以维护、视觉效果不理想。已有 UIToolkit 窗口保持现状不做迁移，但新增功能一律用 IMGUI
 - 菜单注册在 `UIToolConfig` 中定义常量
 - ColorField 等高频变更控件：ValueChanged 只更新内存和 UI 预览，FocusOut 时保存落盘 + RebuildContent
 

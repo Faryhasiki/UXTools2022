@@ -32,6 +32,12 @@ namespace UITool
             InitRootUI();
         }
 
+        private void OnDisable()
+        {
+            if (asset != null)
+                SaveAsset();
+        }
+
         protected override void BuildContent()
         {
             BuildToolbar();
