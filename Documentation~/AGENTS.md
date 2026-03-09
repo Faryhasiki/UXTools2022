@@ -232,7 +232,7 @@ public interface IUXTextStyleKey { string PresetId { get; } }
 2. **颜色预设存储迁移**：旧版 JSON 路径为 `ProjectDataPath + "DesignLibrary/ColorPresetLibrary.json"`，新版为 ScriptableObject
 3. **序列化字段兼容**：`UXToolsProjectSettings` 使用多个 `[FormerlySerializedAs]` 确保旧版数据迁移
 4. **EditorWindow 域重载**：所有 `[Serializable]` 类型的窗口字段必须标记 `[NonSerialized]`
-5. **辅助线坐标系**：横线使用 `style.top` 定位 + `m_DragOffsetY` 补偿 `evt.position` 与 `style.top` 的偏移
+5. **辅助线坐标系**：横线用 `style.top` + `m_DragOffsetY`，竖线用 `style.left` + `m_DragOffsetX`，均在 `OnMouseDown` 时记录光标到元素中心的偏移量，拖拽中用 `correctedX/Y` 消除抓取偏差
 6. **快捷创建尺寸**：使用 `GUIPointToCanvasPlane` 投射到 Canvas 平面，尺寸限制在 Canvas 范围内
 7. **废弃 API**：`TryGetGUIDAndLocalFileIdentifier(int)`、`AddDropHandler`、`InstanceIDToObject` 使用 `#pragma warning disable CS0618` 抑制
 8. **生成代码**必须包含 `using UITool;`，字段名优先使用 `codeAlias`（代码别名），为空时回退到 `presetName`

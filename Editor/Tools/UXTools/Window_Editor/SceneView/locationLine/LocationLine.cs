@@ -219,8 +219,9 @@ namespace UITool
             SetCursor();
         }
         /// <summary>
-        /// 拖拽开始时光标 Y 相对于元素 resolvedStyle.top 中心的偏移
+        /// 拖拽开始时光标相对于元素中心的偏移
         /// </summary>
+        protected float m_DragOffsetX;
         protected float m_DragOffsetY;
 
         public void OnMouseDown(PointerDownEvent evt)
@@ -228,6 +229,7 @@ namespace UITool
             if (evt.button == 0)
             {
                 m_Selected = true;
+                m_DragOffsetX = evt.position.x - resolvedStyle.left - style.width.value.value / 2;
                 m_DragOffsetY = evt.position.y - resolvedStyle.top - style.height.value.value / 2;
                 ResetAll();
             }
@@ -425,27 +427,30 @@ namespace UITool
 
         protected override void OnDrag(Vector2 uiPosition, Vector2 imguiPosition)
         {
+            float halfW = style.width.value.value / 2;
             float ppp = EditorGUIUtility.pixelsPerPoint;
-            style.left = uiPosition.x - style.width.value.value / 2;
+            var cam = SceneView.lastActiveSceneView.camera;
 
-            Vector3 mousePos = SceneView.lastActiveSceneView.camera.ScreenToWorldPoint(new Vector3(uiPosition.x * ppp, 0, 0));
+            float correctedX = uiPosition.x - m_DragOffsetX;
+            style.left = correctedX - halfW;
+
+            Vector3 mousePos = cam.ScreenToWorldPoint(new Vector3(correctedX * ppp, 0, 0));
 
             float minDis = Mathf.Infinity;
             foreach (var rect in m_Rects)
             {
                 if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[2] - mousePos.x))
-                {
                     minDis = rect.pos[2] - mousePos.x;
-                }
                 if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[3] - mousePos.x))
-                {
                     minDis = rect.pos[3] - mousePos.x;
-                }
             }
+
             if (Mathf.Abs(minDis) < SnapLogic.SnapWorldDistance)
             {
                 worldPostion = mousePos + new Vector3(minDis, 0, 0);
-                style.left = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(worldPostion).x / ppp - style.width.value.value / 2;
+                float snappedScreenX = cam.WorldToScreenPoint(worldPostion).x;
+                float deltaScreenPx = snappedScreenX - correctedX * ppp;
+                style.left = correctedX + deltaScreenPx / ppp - halfW;
             }
             else
             {
