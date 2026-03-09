@@ -15,14 +15,18 @@ namespace UITool
         /// </summary>
         public static Transform GetObjectParent(GameObject[] selection)
         {
+            // 过滤掉已被销毁但仍残留在 Selection 中的空引用
+            var validSelection = System.Array.FindAll(selection, go => go != null);
+
             var prefabStage = PrefabStageUtils.GetCurrentPrefabStage();
             if (prefabStage != null)
             {
-                if (selection.Length == 1
-                    && !selection[0].name.Equals("Canvas (Environment)")
-                    && selection[0].transform != prefabStage.prefabContentsRoot.transform)
+                if (validSelection.Length == 1
+                    && !validSelection[0].name.Equals("Canvas (Environment)")
+                    && validSelection[0].transform != prefabStage.prefabContentsRoot.transform
+                    && validSelection[0].transform.parent != null)
                 {
-                    return selection[0].transform.parent.transform;
+                    return validSelection[0].transform.parent;
                 }
                 else
                 {
@@ -31,15 +35,15 @@ namespace UITool
             }
             else
             {
-                if (selection.Length == 1)
+                if (validSelection.Length == 1)
                 {
-                    if (selection[0].transform == selection[0].transform.root)
+                    if (validSelection[0].transform == validSelection[0].transform.root)
                     {
-                        return selection[0].transform.root;
+                        return validSelection[0].transform.root;
                     }
                     else
                     {
-                        return selection[0].transform.parent.transform;
+                        return validSelection[0].transform.parent;
                     }
                 }
                 else

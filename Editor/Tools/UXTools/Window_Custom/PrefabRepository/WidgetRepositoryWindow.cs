@@ -559,7 +559,8 @@ namespace UITool
                     {
                         if (dropTargetInstanceID != UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle)
                         {
-                            currentPrefab.transform.SetParent(obj.transform);
+                            // worldPositionStays=false：保留 Prefab 保存的本地坐标，避免全拉伸 RectTransform 产生偏移
+                            currentPrefab.transform.SetParent(obj.transform, false);
                         }
                         UnpackPrefab(isUnpack, currentPrefab);
                     }
@@ -567,7 +568,7 @@ namespace UITool
                     {
                         if (dropTargetInstanceID != UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle)
                         {
-                            currentPrefab.transform.SetParent(obj.transform.parent);
+                            currentPrefab.transform.SetParent(obj.transform.parent, false);
                         }
                         currentPrefab.transform.SetAsFirstSibling();
                         UnpackPrefab(isUnpack, currentPrefab);
@@ -576,7 +577,7 @@ namespace UITool
                     {
                         if (dropTargetInstanceID != UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle)
                         {
-                            currentPrefab.transform.SetParent(obj.transform.parent);
+                            currentPrefab.transform.SetParent(obj.transform.parent, false);
                             currentPrefab.transform.SetSiblingIndex(obj.transform.GetSiblingIndex() + 1);
                         }
                         UnpackPrefab(isUnpack, currentPrefab);
@@ -585,7 +586,7 @@ namespace UITool
                     {
                         if (dropTargetInstanceID != UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle)
                         {
-                            currentPrefab.transform.SetParent(obj.transform);
+                            currentPrefab.transform.SetParent(obj.transform, false);
                         }
                         UnpackPrefab(isUnpack, currentPrefab);
                     }
@@ -619,8 +620,12 @@ namespace UITool
 
                     if (container != null)
                     {
-                        Vector3 WorldPos = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition).GetPoint(0);
-                        Vector3 localPos = container.InverseTransformPoint(new Vector3(WorldPos.x, WorldPos.y, 0));
+                        // 用射线与 container 所在平面求交点，而非直接取相机近裁面上的点（GetPoint(0) 会带来错误的 Z 值和尺寸）
+                        Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+                        Plane containerPlane = new Plane(-sceneView.camera.transform.forward, container.position);
+                        if (!containerPlane.Raycast(ray, out float enter)) enter = 10f;
+                        Vector3 WorldPos = ray.GetPoint(enter);
+                        Vector3 localPos = container.InverseTransformPoint(WorldPos);
                         bool unpack = AssetDatabase.GetLabels(LoadPrefab).Contains(WidgetRepositoryConfig.UnpackText);
                         if (unpack)
                         {
@@ -643,7 +648,7 @@ namespace UITool
         private void DragPerformAsPrefab(Transform container, Vector3 localPos)
         {
             GameObject currentPrefab = PrefabUtility.InstantiatePrefab(LoadPrefab) as GameObject;
-            currentPrefab.transform.SetParent(container);
+            currentPrefab.transform.SetParent(container, false);
             currentPrefab.transform.localPosition = localPos;
             Selection.activeObject = currentPrefab;
         }
@@ -651,7 +656,7 @@ namespace UITool
         private void DragPerformAsUnPack(Transform container, Vector3 localPos)
         {
             GameObject currentPrefab = PrefabUtility.InstantiatePrefab(LoadPrefab) as GameObject;
-            currentPrefab.transform.SetParent(container);
+            currentPrefab.transform.SetParent(container, false);
             currentPrefab.transform.localPosition = localPos;
             Selection.activeObject = currentPrefab;
             PrefabUtility.UnpackPrefabInstance(currentPrefab, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
