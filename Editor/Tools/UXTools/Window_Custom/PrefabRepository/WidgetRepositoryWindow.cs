@@ -620,12 +620,20 @@ namespace UITool
 
                     if (container != null)
                     {
-                        // 用射线与 container 所在平面求交点，而非直接取相机近裁面上的点（GetPoint(0) 会带来错误的 Z 值和尺寸）
+                        // 以 Canvas 自身的 forward 作为平面法线，确保在任意 SceneView 视角（包括 PrefabStage）下都能
+                        // 正确与 Canvas 平面求交；InverseTransformPoint 之后强制 z=0，消除浮点误差和相机距离带来的 z 偏移。
                         Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                        Plane containerPlane = new Plane(-sceneView.camera.transform.forward, container.position);
-                        if (!containerPlane.Raycast(ray, out float enter)) enter = 10f;
+                        Canvas canvas = container.GetComponentInParent<Canvas>();
+                        Transform planeRoot = canvas != null ? canvas.transform : container;
+                        Plane canvasPlane = new Plane(planeRoot.forward, planeRoot.position);
+                        if (!canvasPlane.Raycast(ray, out float enter))
+                        {
+                            // 射线与 Canvas 平面平行（极端侧视角），回退到使用屏幕中心深度
+                            enter = Vector3.Distance(sceneView.camera.transform.position, planeRoot.position);
+                        }
                         Vector3 WorldPos = ray.GetPoint(enter);
                         Vector3 localPos = container.InverseTransformPoint(WorldPos);
+                        localPos.z = 0f; // UI 元素始终平铺在 Canvas 平面，消除相机深度带来的 z 残差
                         bool unpack = AssetDatabase.GetLabels(LoadPrefab).Contains(WidgetRepositoryConfig.UnpackText);
                         if (unpack)
                         {
@@ -649,6 +657,7 @@ namespace UITool
         {
             GameObject currentPrefab = PrefabUtility.InstantiatePrefab(LoadPrefab) as GameObject;
             currentPrefab.transform.SetParent(container, false);
+            localPos.z = 0f;
             currentPrefab.transform.localPosition = localPos;
             Selection.activeObject = currentPrefab;
         }
@@ -657,6 +666,7 @@ namespace UITool
         {
             GameObject currentPrefab = PrefabUtility.InstantiatePrefab(LoadPrefab) as GameObject;
             currentPrefab.transform.SetParent(container, false);
+            localPos.z = 0f;
             currentPrefab.transform.localPosition = localPos;
             Selection.activeObject = currentPrefab;
             PrefabUtility.UnpackPrefabInstance(currentPrefab, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
