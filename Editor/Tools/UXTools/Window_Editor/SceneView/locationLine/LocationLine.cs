@@ -127,10 +127,10 @@ namespace UITool
             public RectEx(RectTransform trans)
             {
                 pos = new float[4];
-                pos[0] = (float)Math.Round((double)trans.GetTopWorldPosition(), 1);
-                pos[1] = (float)Math.Round((double)trans.GetBottomWorldPosition(), 1);
-                pos[2] = (float)Math.Round((double)trans.GetLeftWorldPosition(), 1);
-                pos[3] = (float)Math.Round((double)trans.GetRightWorldPosition(), 1);
+                pos[0] = trans.GetTopWorldPosition();
+                pos[1] = trans.GetBottomWorldPosition();
+                pos[2] = trans.GetLeftWorldPosition();
+                pos[3] = trans.GetRightWorldPosition();
             }
         }
 
@@ -364,30 +364,34 @@ namespace UITool
             float correctedY = uiPosition.y - m_DragOffsetY;
             style.top = correctedY - halfH;
 
-            // 世界坐标转换
-            float screenY = cam.pixelHeight - correctedY * ppp;
-            Vector3 mousePos = cam.ScreenToWorldPoint(new Vector3(0, screenY, 0));
+            // 当前拖拽位置对应的相机屏幕像素（从视口底部起算）
+            float dragScreenY = cam.pixelHeight - correctedY * ppp;
 
-            float minDis = Mathf.Infinity;
+            // 在屏幕像素空间做吸附判断，与 Canvas 模式和 SceneView 缩放无关
+            float minDisPx = Mathf.Infinity;
+            float snapTargetWorldY = 0f;
+            bool hasSnap = false;
+
             foreach (var rect in m_Rects)
             {
-                if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[0] - mousePos.y))
-                    minDis = rect.pos[0] - mousePos.y;
-                if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[1] - mousePos.y))
-                    minDis = rect.pos[1] - mousePos.y;
-            } 
+                float topPx = cam.WorldToScreenPoint(new Vector3(0f, rect.pos[0], 0f)).y;
+                float botPx = cam.WorldToScreenPoint(new Vector3(0f, rect.pos[1], 0f)).y;
+                float d0 = topPx - dragScreenY;
+                float d1 = botPx - dragScreenY;
+                if (Mathf.Abs(d0) < Mathf.Abs(minDisPx)) { minDisPx = d0; snapTargetWorldY = rect.pos[0]; hasSnap = true; }
+                if (Mathf.Abs(d1) < Mathf.Abs(minDisPx)) { minDisPx = d1; snapTargetWorldY = rect.pos[1]; hasSnap = true; }
+            }
 
-            if (Mathf.Abs(minDis) < SnapLogic.SnapWorldDistance)
+            if (hasSnap && Mathf.Abs(minDisPx) < SnapLogic.SnapSceneDistance)
             {
-                worldPostion = mousePos + new Vector3(0, minDis, 0);
+                // 吸附到目标边缘的世界坐标，并精确定位辅助线 UI 位置
+                worldPostion = new Vector3(0f, snapTargetWorldY, 0f);
                 float snappedScreenY = cam.WorldToScreenPoint(worldPostion).y;
-                // 吸附偏移量（屏幕像素差）→ 本地坐标偏移
-                float deltaScreenPx = snappedScreenY - screenY;
-                style.top = correctedY - deltaScreenPx / ppp - halfH;
+                style.top = (cam.pixelHeight - snappedScreenY) / ppp - halfH;
             }
             else
             {
-                worldPostion = mousePos;
+                worldPostion = cam.ScreenToWorldPoint(new Vector3(0f, dragScreenY, 0f));
             }
             SceneView.lastActiveSceneView.Repaint();
         }
@@ -434,27 +438,34 @@ namespace UITool
             float correctedX = uiPosition.x - m_DragOffsetX;
             style.left = correctedX - halfW;
 
-            Vector3 mousePos = cam.ScreenToWorldPoint(new Vector3(correctedX * ppp, 0, 0));
+            // 当前拖拽位置对应的相机屏幕像素（从视口左侧起算）
+            float dragScreenX = correctedX * ppp;
 
-            float minDis = Mathf.Infinity;
+            // 在屏幕像素空间做吸附判断，与 Canvas 模式和 SceneView 缩放无关
+            float minDisPx = Mathf.Infinity;
+            float snapTargetWorldX = 0f;
+            bool hasSnap = false;
+
             foreach (var rect in m_Rects)
             {
-                if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[2] - mousePos.x))
-                    minDis = rect.pos[2] - mousePos.x;
-                if (Mathf.Abs(minDis) > Mathf.Abs(rect.pos[3] - mousePos.x))
-                    minDis = rect.pos[3] - mousePos.x;
+                float leftPx = cam.WorldToScreenPoint(new Vector3(rect.pos[2], 0f, 0f)).x;
+                float rightPx = cam.WorldToScreenPoint(new Vector3(rect.pos[3], 0f, 0f)).x;
+                float d0 = leftPx - dragScreenX;
+                float d1 = rightPx - dragScreenX;
+                if (Mathf.Abs(d0) < Mathf.Abs(minDisPx)) { minDisPx = d0; snapTargetWorldX = rect.pos[2]; hasSnap = true; }
+                if (Mathf.Abs(d1) < Mathf.Abs(minDisPx)) { minDisPx = d1; snapTargetWorldX = rect.pos[3]; hasSnap = true; }
             }
 
-            if (Mathf.Abs(minDis) < SnapLogic.SnapWorldDistance)
+            if (hasSnap && Mathf.Abs(minDisPx) < SnapLogic.SnapSceneDistance)
             {
-                worldPostion = mousePos + new Vector3(minDis, 0, 0);
+                // 吸附到目标边缘的世界坐标，并精确定位辅助线 UI 位置
+                worldPostion = new Vector3(snapTargetWorldX, 0f, 0f);
                 float snappedScreenX = cam.WorldToScreenPoint(worldPostion).x;
-                float deltaScreenPx = snappedScreenX - correctedX * ppp;
-                style.left = correctedX + deltaScreenPx / ppp - halfW;
+                style.left = snappedScreenX / ppp - halfW;
             }
             else
             {
-                worldPostion = mousePos;
+                worldPostion = cam.ScreenToWorldPoint(new Vector3(dragScreenX, 0f, 0f));
             }
             SceneView.lastActiveSceneView.Repaint();
         }

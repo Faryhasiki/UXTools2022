@@ -21,7 +21,9 @@ namespace UITool
         [MenuItem(UIToolConfig.Menu_TextPresets, false, 50)]
         public static void OpenWindow()
         {
-            var win = GetWindow<TextPresetWindow>();
+            var win = GetWindow<TextPresetWindow>(
+                typeof(ColorPresetWindow),
+                typeof(WidgetRepositoryWindow));
             win.titleContent = new GUIContent("文字预设");
             win.minSize = new Vector2(720, 400);
         }

@@ -85,6 +85,47 @@ namespace UITool
     {
         private static ConfigurationWindow c_window;
 
+        /// <summary>
+        /// 打开文档：若在设置中配置了 URL 则打开 URL，否则打开本包内 md 文档。
+        /// </summary>
+        [MenuItem(UIToolConfig.Menu_OpenDocumentation, false, 200)]
+        public static void OpenDocumentation()
+        {
+            var data = JsonAssetManager.GetAssets<UXToolCommonData>();
+            string url = data?.DocumentationUrl?.Trim();
+            if (!string.IsNullOrEmpty(url))
+            {
+                Application.OpenURL(url);
+                return;
+            }
+
+            string localPath = FindLocalDocPath();
+            if (!string.IsNullOrEmpty(localPath))
+            {
+                EditorUtility.OpenWithDefaultApp(localPath);
+            }
+            else
+            {
+                Debug.LogWarning("[UXTools] 未找到本地文档文件，请在 UXTool → 设置 → 通用 中配置文档链接。");
+            }
+        }
+
+        /// <summary>
+        /// 在 Assets/UXTools 和 Packages/com.ys4fun.uxtools 两处查找文档文件。
+        /// </summary>
+        private static string FindLocalDocPath()
+        {
+            string docFileName = "UXTools-用户手册.md";
+            // 开发模式：Assets/UXTools/Documentation~/
+            string inAssets = Path.Combine(Application.dataPath, "UXTools", "Documentation~", docFileName);
+            if (File.Exists(inAssets)) return inAssets;
+            // 安装包模式：Packages/com.ys4fun.uxtools/Documentation~/
+            string projRoot = Path.GetDirectoryName(Application.dataPath);
+            string inPackage = Path.Combine(projRoot, "Packages", "com.ys4fun.uxtools", "Documentation~", docFileName);
+            if (File.Exists(inPackage)) return inPackage;
+            return string.Empty;
+        }
+
         [MenuItem(UIToolConfig.Menu_Setting, false, -148)]
         public static void OpenWindow()
         {
@@ -126,6 +167,7 @@ namespace UITool
         private IntegerField maxPrefabsField;
         private TextElement errorLabel;
         private TextElement errorPrefabLabel;
+        private TextField _docUrlField;
 
         private ConfigurationOption GeneralOption;
         private ConfigurationOption StorageOption;
@@ -202,7 +244,7 @@ namespace UITool
 
         private void AddGeneralSetting(VisualElement container)
         {
-            TextElement generalTitleLabel = UXBuilder.Text(container, new UXBuilderTextStruct()
+            UXBuilder.Text(container, new UXBuilderTextStruct()
             {
                 text = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_通用),
                 style = new UXStyle()
@@ -212,6 +254,42 @@ namespace UITool
                     fontSize = 16,
                     top = 0,
                     color = Color.white,
+                }
+            });
+
+            // 文档链接配置
+            UXBuilder.Text(container, new UXBuilderTextStruct()
+            {
+                text = "文档链接 URL",
+                style = new UXStyle()
+                {
+                    position = Position.Absolute,
+                    left = 0,
+                    fontSize = 13,
+                    top = 30,
+                    color = Color.white,
+                }
+            });
+
+            _docUrlField = new TextField();
+            _docUrlField.style.position = Position.Absolute;
+            _docUrlField.style.top = 52;
+            _docUrlField.style.left = 0;
+            _docUrlField.style.right = 0;
+            _docUrlField.style.height = 22;
+            _docUrlField.value = commonData?.DocumentationUrl ?? string.Empty;
+            container.Add(_docUrlField);
+
+            UXBuilder.Text(container, new UXBuilderTextStruct()
+            {
+                text = "留空时点击「文档」菜单将打开本地 md 文档",
+                style = new UXStyle()
+                {
+                    position = Position.Absolute,
+                    left = 0,
+                    fontSize = 11,
+                    top = 77,
+                    color = new Color(0.6f, 0.6f, 0.6f, 1f),
                 }
             });
         }
@@ -227,7 +305,7 @@ namespace UITool
                     position = Position.Absolute,
                     left = -40,
                     fontSize = 16,
-                    top = 40,
+                    top = 100,
                     color = Color.white,
                 }
             });
@@ -240,7 +318,7 @@ namespace UITool
                     position = Position.Absolute,
                     left = 0,
                     fontSize = 13,
-                    top = 80,
+                    top = 140,
                     color = Color.white,
                     maxWidth = 270,
                 }
@@ -250,7 +328,7 @@ namespace UITool
             maxPrefabsField.style.position = Position.Absolute;
             maxPrefabsField.style.width = 137;
             maxPrefabsField.style.height = 25;
-            maxPrefabsField.style.top = 80;
+            maxPrefabsField.style.top = 140;
             maxPrefabsField.style.right = 0;
             if (commonData != null)
             {
@@ -269,7 +347,7 @@ namespace UITool
                     display = DisplayStyle.None,
                     fontSize = 13,
                     unityFontStyleAndWeight = FontStyle.Bold,
-                    top = 105,
+                    top = 165,
                     right = 1,
 
                 }
@@ -284,7 +362,7 @@ namespace UITool
                     position = Position.Absolute,
                     left = 0,
                     fontSize = 13,
-                    top = 135,
+                    top = 195,
                     color = Color.white,
                     maxWidth = 250,
                 }
@@ -294,7 +372,7 @@ namespace UITool
             maxFilesField.style.position = Position.Absolute;
             maxFilesField.style.width = 137;
             maxFilesField.style.height = 25;
-            maxFilesField.style.top = 135;
+            maxFilesField.style.top = 195;
             maxFilesField.style.right = 0;
             if (commonData != null)
             {
@@ -314,7 +392,7 @@ namespace UITool
                     display = DisplayStyle.None,
                     fontSize = 13,
                     unityFontStyleAndWeight = FontStyle.Bold,
-                    top = 160,
+                    top = 220,
                     right = 1,
 
                 }
@@ -648,6 +726,7 @@ namespace UITool
                     return;
                 }
 
+                commonData.DocumentationUrl = _docUrlField?.value?.Trim() ?? string.Empty;
                 commonData.Save();
             }
 

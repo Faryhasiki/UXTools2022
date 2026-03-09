@@ -164,6 +164,19 @@ namespace UITool
             m_LinesList.Clear();
         }
 
+        /// <summary>
+        /// 清除所有辅助线（UI + 持久化数据）
+        /// </summary>
+        public void RemoveAllLines()
+        {
+            LocationLineCommand cmd = new LocationLineCommand(m_LinesData, "Remove All LocationLines");
+            cmd.Execute();
+
+            ClearAllLine();
+            m_LinesData.Clear();
+            m_LinesData.Save();
+        }
+
         public void UpdateLinesSize()
         {
             float top = Utils.GetSceneViewToolbarHeight();
@@ -244,61 +257,82 @@ namespace UITool
         }
 
         /// <summary>
-        ///辅助线吸附逻辑
+        /// 辅助线吸附逻辑。在屏幕像素空间做距离判断，兼容所有 Canvas 渲染模式（Overlay / Camera / WorldSpace），
+        /// 且不受 SceneView 缩放级别影响。
+        /// </summary>
         private void SnapToLocationLine()
         {
-            if (m_SelectedObject != null && m_SelectedObject.GetComponent<RectTransform>().position != SnapLogic.ObjFinalPos && EnableSnap)
+            if (m_SelectedObject == null || !EnableSnap) return;
+            RectTransform rectTransform = m_SelectedObject.GetComponent<RectTransform>();
+            if (rectTransform == null) return;
+            if (rectTransform.position == SnapLogic.ObjFinalPos) return;
+
+            var cam = SceneView.lastActiveSceneView?.camera;
+            if (cam == null) return;
+
+            SnapLogic.SnapLineDisVert = SnapLogic.SnapLineDisHoriz = Mathf.Infinity;
+
+            float leftEdgeWorld   = rectTransform.GetLeftWorldPosition();
+            float rightEdgeWorld  = rectTransform.GetRightWorldPosition();
+            float bottomEdgeWorld = rectTransform.GetBottomWorldPosition();
+            float topEdgeWorld    = rectTransform.GetTopWorldPosition();
+
+            // 将元素四条边转换到 SceneView 屏幕像素空间
+            float leftPx   = cam.WorldToScreenPoint(new Vector3(leftEdgeWorld,   0f, 0f)).x;
+            float rightPx  = cam.WorldToScreenPoint(new Vector3(rightEdgeWorld,  0f, 0f)).x;
+            float bottomPx = cam.WorldToScreenPoint(new Vector3(0f, bottomEdgeWorld, 0f)).y;
+            float topPx    = cam.WorldToScreenPoint(new Vector3(0f, topEdgeWorld,    0f)).y;
+
+            // 记录最近的屏幕像素距离及对应的世界坐标偏移
+            Vector2 minDisPx = new Vector2(Mathf.Infinity, Mathf.Infinity);
+            Vector2 bestWorldDis = new Vector2(Mathf.Infinity, Mathf.Infinity);
+
+            foreach (var line in m_LinesList)
             {
-                SnapLogic.SnapLineDisVert = SnapLogic.SnapLineDisHoriz = Mathf.Infinity;
-                RectTransform rectTransform = m_SelectedObject.GetComponent<RectTransform>();
-                if (rectTransform != null)
+                // 竖直辅助线 → 对齐左/右边
+                if (line.direction == LocationLineDirection.Vertical)
                 {
-                    float leftEdgePos = rectTransform.GetLeftWorldPosition();
-                    float rightEdgePos = rectTransform.GetRightWorldPosition();
-                    float bottomEdgePos = rectTransform.GetBottomWorldPosition();
-                    float topEdgePos = rectTransform.GetTopWorldPosition();
+                    float linePx = cam.WorldToScreenPoint(new Vector3(line.worldPostion.x, 0f, 0f)).x;
+                    float d1Px = linePx - leftPx;
+                    float d2Px = linePx - rightPx;
+                    bool useLeft = Mathf.Abs(d1Px) < Mathf.Abs(d2Px);
+                    float minPx = useLeft ? d1Px : d2Px;
+                    float worldDis = useLeft
+                        ? (line.worldPostion.x - leftEdgeWorld)
+                        : (line.worldPostion.x - rightEdgeWorld);
 
-                    Vector2 distance = new Vector2(Mathf.Infinity, Mathf.Infinity);
-
-                    foreach (var line in m_LinesList)
+                    if (Mathf.Abs(minPx) < Mathf.Abs(minDisPx.x))
                     {
-                        //查找竖直方向最近的辅助线距离
-                        if (line.direction == LocationLineDirection.Vertical)
-                        {
-                            float dis1 = line.worldPostion.x - leftEdgePos;
-                            float dis2 = line.worldPostion.x - rightEdgePos;
-                            float min = Mathf.Abs(dis1) < Mathf.Abs(dis2) ? dis1 : dis2;
-
-                            distance.x = Mathf.Abs(distance.x) < Mathf.Abs(min) ? distance.x : min;
-                        }
-
-                        //查找水平方向最近的辅助线距离
-                        if (line.direction == LocationLineDirection.Horizontal)
-                        {
-                            float dis1 = line.worldPostion.y - bottomEdgePos;
-                            float dis2 = line.worldPostion.y - topEdgePos;
-                            float min = Mathf.Abs(dis1) < Mathf.Abs(dis2) ? dis1 : dis2;
-
-                            distance.y = Mathf.Abs(distance.y) < Mathf.Abs(min) ? distance.y : min;
-                        }
+                        minDisPx.x = minPx;
+                        bestWorldDis.x = worldDis;
                     }
+                }
 
-                    if (Mathf.Abs(distance.x) < SnapLogic.SnapWorldDistance)
+                // 水平辅助线 → 对齐上/下边
+                if (line.direction == LocationLineDirection.Horizontal)
+                {
+                    float linePx = cam.WorldToScreenPoint(new Vector3(0f, line.worldPostion.y, 0f)).y;
+                    float d1Px = linePx - bottomPx;
+                    float d2Px = linePx - topPx;
+                    bool useBottom = Mathf.Abs(d1Px) < Mathf.Abs(d2Px);
+                    float minPx = useBottom ? d1Px : d2Px;
+                    float worldDis = useBottom
+                        ? (line.worldPostion.y - bottomEdgeWorld)
+                        : (line.worldPostion.y - topEdgeWorld);
+
+                    if (Mathf.Abs(minPx) < Mathf.Abs(minDisPx.y))
                     {
-                        SnapLogic.SnapLineDisHoriz = distance.x;
+                        minDisPx.y = minPx;
+                        bestWorldDis.y = worldDis;
                     }
-                    if (Mathf.Abs(distance.y) < SnapLogic.SnapWorldDistance)
-                    {
-                        SnapLogic.SnapLineDisVert = distance.y;
-                    }
-                    /*
-                    if(needSnap == true)
-                    {
-                        rectTransform.transform.position = m_FinalPos;
-                    }
-                    */
                 }
             }
+
+            // 阈值统一用屏幕像素（SnapSceneDistance），与 Canvas 模式和缩放无关
+            if (Mathf.Abs(minDisPx.x) < SnapLogic.SnapSceneDistance)
+                SnapLogic.SnapLineDisHoriz = bestWorldDis.x;
+            if (Mathf.Abs(minDisPx.y) < SnapLogic.SnapSceneDistance)
+                SnapLogic.SnapLineDisVert = bestWorldDis.y;
         }
 
         /// <summary>

@@ -1,8 +1,8 @@
 #if UNITY_EDITOR
-using UnityEditor;
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 using UnityEx;
 
 namespace UITool
@@ -26,13 +26,24 @@ namespace UITool
             public Rect(RectTransform trans)
             {
                 pos = new float[6];
-                pos[0] = (float)Math.Round((double)trans.GetTopWorldPosition(), 1);
-                pos[2] = (float)Math.Round((double)trans.GetBottomWorldPosition(), 1);
-                pos[3] = (float)Math.Round((double)trans.GetLeftWorldPosition(), 1);
-                pos[5] = (float)Math.Round((double)trans.GetRightWorldPosition(), 1);
-                pos[4] = (float)Math.Round((double)trans.position.x, 1);
-                pos[1] = (float)Math.Round((double)trans.position.y, 1);
+                pos[0] = trans.GetTopWorldPosition();
+                pos[2] = trans.GetBottomWorldPosition();
+                pos[3] = trans.GetLeftWorldPosition();
+                pos[5] = trans.GetRightWorldPosition();
+                pos[4] = trans.position.x;
+                pos[1] = trans.position.y;
             }
+        }
+
+        /// <summary>
+        /// 判断两个世界坐标是否近似相等，避免浮点误差导致提示线丢失。
+        /// </summary>
+        /// <param name="a">坐标A。</param>
+        /// <param name="b">坐标B。</param>
+        /// <returns>在允许误差内返回 true。</returns>
+        private static bool IsNearlyEqual(float a, float b)
+        {
+            return Mathf.Abs(a - b) <= SnapLogic.SnapEpsDistance;
         }
 
         public override void Init()
@@ -106,50 +117,81 @@ namespace UITool
         }
 
         /// <summary>
-        /// 核心逻辑
+        /// 核心逻辑。
         /// </summary>
-        /// <param name="eps">eps=0表示吸附最终位置（需要画提示线）</param>
+        /// <param name="eps">eps=0 表示吸附最终位置（需要画提示线）；非 0 表示检测阶段。</param>
         private void FindEdges(float eps)
         {
             if (eps == 0)
             {
                 m_VisualManager.RemoveAll();
             }
+
+            var cam = SceneView.lastActiveSceneView?.camera;
             Rect objRect = new Rect(m_SelectedObject.GetComponent<RectTransform>());
 
             foreach (Rect rect in m_Rects)
             {
                 if (eps != 0)
                 {
-                    float dis = Mathf.Infinity;
+                    // 垂直方向（上/中/下 Y 轴对齐）：在屏幕像素空间比较，兼容所有 Canvas 模式
+                    float bestWorldDisVert = Mathf.Infinity;
+                    float bestScreenDisVert = Mathf.Infinity;
                     for (int i = 0; i < 3; i++)
                     {
                         for (int j = 0; j < 3; j++)
                         {
-                            if (Mathf.Abs(dis) > Mathf.Abs(rect.pos[i] - objRect.pos[j]))
+                            float wd = rect.pos[i] - objRect.pos[j];
+                            if (Mathf.Abs(wd) < Mathf.Abs(bestWorldDisVert))
                             {
-                                dis = rect.pos[i] - objRect.pos[j];
+                                bestWorldDisVert = wd;
+                                if (cam != null)
+                                {
+                                    float py1 = cam.WorldToScreenPoint(new Vector3(0f, rect.pos[i], 0f)).y;
+                                    float py2 = cam.WorldToScreenPoint(new Vector3(0f, objRect.pos[j], 0f)).y;
+                                    bestScreenDisVert = py1 - py2;
+                                }
+                                else
+                                {
+                                    bestScreenDisVert = wd;
+                                }
                             }
                         }
                     }
-                    if (Mathf.Abs(dis) < eps && Mathf.Abs(dis) < Mathf.Abs(SnapLogic.SnapEdgeDisVert))
+                    float threshVert = cam != null ? SnapLogic.SnapSceneDistance : eps;
+                    if (Mathf.Abs(bestScreenDisVert) < threshVert && Mathf.Abs(bestWorldDisVert) < Mathf.Abs(SnapLogic.SnapEdgeDisVert))
                     {
-                        SnapLogic.SnapEdgeDisVert = dis;
+                        SnapLogic.SnapEdgeDisVert = bestWorldDisVert;
                     }
-                    dis = Mathf.Infinity;
+
+                    // 水平方向（左/中/右 X 轴对齐）：同上
+                    float bestWorldDisHoriz = Mathf.Infinity;
+                    float bestScreenDisHoriz = Mathf.Infinity;
                     for (int i = 3; i < 6; i++)
                     {
                         for (int j = 3; j < 6; j++)
                         {
-                            if (Mathf.Abs(dis) > Mathf.Abs(rect.pos[i] - objRect.pos[j]))
+                            float wd = rect.pos[i] - objRect.pos[j];
+                            if (Mathf.Abs(wd) < Mathf.Abs(bestWorldDisHoriz))
                             {
-                                dis = rect.pos[i] - objRect.pos[j];
+                                bestWorldDisHoriz = wd;
+                                if (cam != null)
+                                {
+                                    float px1 = cam.WorldToScreenPoint(new Vector3(rect.pos[i], 0f, 0f)).x;
+                                    float px2 = cam.WorldToScreenPoint(new Vector3(objRect.pos[j], 0f, 0f)).x;
+                                    bestScreenDisHoriz = px1 - px2;
+                                }
+                                else
+                                {
+                                    bestScreenDisHoriz = wd;
+                                }
                             }
                         }
                     }
-                    if (Mathf.Abs(dis) < eps && Mathf.Abs(dis) < Mathf.Abs(SnapLogic.SnapEdgeDisHoriz))
+                    float threshHoriz = cam != null ? SnapLogic.SnapSceneDistance : eps;
+                    if (Mathf.Abs(bestScreenDisHoriz) < threshHoriz && Mathf.Abs(bestWorldDisHoriz) < Mathf.Abs(SnapLogic.SnapEdgeDisHoriz))
                     {
-                        SnapLogic.SnapEdgeDisHoriz = dis;
+                        SnapLogic.SnapEdgeDisHoriz = bestWorldDisHoriz;
                     }
                 }
                 else
@@ -160,7 +202,7 @@ namespace UITool
                     {
                         for (int j = 0; j < 3; j++)
                         {
-                            if (rect.pos[i] == objRect.pos[j])
+                            if (IsNearlyEqual(rect.pos[i], objRect.pos[j]))
                             {
                                 m_VisualManager.AddHorizLine(minX, maxX, rect.pos[i], false);
                             }
@@ -172,7 +214,7 @@ namespace UITool
                     {
                         for (int j = 3; j < 6; j++)
                         {
-                            if (rect.pos[i] == objRect.pos[j])
+                            if (IsNearlyEqual(rect.pos[i], objRect.pos[j]))
                             {
                                 m_VisualManager.AddVertLine(rect.pos[i], minY, maxY, false);
                             }
@@ -215,4 +257,5 @@ namespace UITool
         }
     }
 }
+
 #endif

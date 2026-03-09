@@ -39,12 +39,17 @@
 
 操作：
 - **拖拽**辅助线可移动位置
-- 靠近 UI 元素边缘时会**自动吸附**
+- 靠近 UI 元素边缘时会**自动吸附**（支持 ScreenSpaceOverlay / ScreenSpace-Camera / WorldSpace 三种 Canvas 模式）
 - **右键**辅助线可删除
+- 工具栏「辅助线」下拉菜单可一键**清除所有辅助线**
+
+> 辅助线布局数据保存在本机 `Library/UXTools/LocationLinesData.json`，不会提交到版本控制。
 
 ### 1.4 Prefab 页签
 
 Scene 面板上方显示当前打开的所有 Prefab 页签，点击可快速切换，点击 × 关闭。
+
+> 页签记录保存在本机 `Library/UXTools/PrefabTabsData.json`，不会提交到版本控制。
 
 ---
 
@@ -155,10 +160,11 @@ Inspector 面板：
 
 ## 四、设置
 
-菜单路径：**UXTool → 设置 (Setting)**
+菜单路径：**UXTool → 设置 (Setting)**，文档可通过 **UXTool → 文档 (Documentation)** 直接打开。
 
 ### 4.1 通用
 
+- **文档链接 URL**：自定义文档地址。留空时点击菜单「文档」打开本地 md 文档；填写 URL 后将直接在浏览器中打开对应链接。
 - 最近打开模板数上限
 - 最近选中文件数上限
 

@@ -215,7 +215,7 @@ namespace UITool
             widgetRepoBtn.tooltip = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_组件库);
             widgetRepoBtn.RegisterCallback((MouseDownEvent e) =>
             {
-                WidgetRepositoryWindow.OpenWindow();
+                DesignLibraryLauncher.OpenAll();
                 StopQuickCreate();
             });
             RegisterMouseHover(widgetRepoBtn);
@@ -329,9 +329,21 @@ namespace UITool
                 iconPath = "ToolBar/referenceline_vertical",
                 action = () => { LocationLineLogic.Instance.CreateLocationLine(CreateLineType.Vertical); }
             };
+            ToolbarPopupOption clearAllOption = new ToolbarPopupOption()
+            {
+                text = "清除所有辅助线",
+                iconPath = "",
+                action = () =>
+                {
+                    if (EditorUtility.DisplayDialog("清除所有辅助线", "将删除场景中的所有辅助线，此操作不可恢复。\n确定继续？", "清除", "取消"))
+                        LocationLineLogic.Instance.RemoveAllLines();
+                }
+            };
+
             list.Add(bothGuideLineOption);
             list.Add(vertGuideLineOption);
             list.Add(horzGuideLineOption);
+            list.Add(clearAllOption);
             popup.Init(pos, list, 200);
         }
 

@@ -32,7 +32,9 @@ namespace UITool
         {
             int width = 1272 + 13 + 12;
             int height = 636;
-            m_window = GetWindow<WidgetRepositoryWindow>();
+            m_window = GetWindow<WidgetRepositoryWindow>(
+                typeof(ColorPresetWindow),
+                typeof(TextPresetWindow));
             m_window.minSize = new Vector2(width, height);
             m_window.titleContent.text = EditorLocalization.GetLocalization(EditorLocalizationStorage.Def_组件库);
             m_window.titleContent.image = ToolUtils.GetIcon("component_w");

@@ -33,10 +33,7 @@ namespace UITool
         public static readonly string EditorSettingsPath = ProjectDataPath + "EditorSettings/";
         //通用设置
         public static readonly string UXToolCommonDataPath = EditorSettingsPath + "UXToolCommonData.json";
-        //辅助线数据
-        public static readonly string LocationLinesDataPath = EditorSettingsPath + "LocationLinesData.json";
-        //Scene窗口Tab页签数据
-        public static readonly string PrefabTabsPath = EditorSettingsPath + "PrefabTabsData.json";
+        //辅助线数据（已移至 Library，见 User Local Data 区块）
         //功能开关数据
         public static readonly string SwitchSettingPath = EditorSettingsPath + "SwitchSetting.json";
 
@@ -71,8 +68,14 @@ namespace UITool
 
         #region User Local Data (不入Git，存储在Library中)
         public static readonly string LibraryDataPath = "Library/UXTools/";
+        /// <summary>最近打开的 Prefab 列表，仅本地使用。</summary>
         public static readonly string PrefabRecentOpenedPath = LibraryDataPath + "PrefabRecentlyOpenedData.json";
+        /// <summary>最近选中的文件列表，仅本地使用。</summary>
         public static readonly string FilesRecentSelectedPath = LibraryDataPath + "FilesRecentlySelectedData.json";
+        /// <summary>Scene 窗口 Prefab 多开页签记录，仅本地使用，不应提交至版本控制。</summary>
+        public static readonly string PrefabTabsPath = LibraryDataPath + "PrefabTabsData.json";
+        /// <summary>SceneView 辅助线布局数据，仅本地使用，不应提交至版本控制。</summary>
+        public static readonly string LocationLinesDataPath = LibraryDataPath + "LocationLinesData.json";
         #endregion
 
         #region MenuItem Name
@@ -108,6 +111,8 @@ namespace UITool
 
         public const string Menu_RecentlyOpened = MenuName + RecentlyOpened;    //153
         public const string Menu_RecentlySelected = MenuName + RecentlySelected; // 154
+
+        public const string Menu_OpenDocumentation = MenuName + "文档 (Documentation)";  // 200
 
         public const string Menu_UXToolLocalization = "UXToolLocalization";
         public const string Menu_ReferenceLine = "辅助线 (Reference Line)";

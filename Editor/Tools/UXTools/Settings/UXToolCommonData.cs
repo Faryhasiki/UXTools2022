@@ -9,6 +9,11 @@ namespace UITool
     {
         public int MaxRecentSelectedFiles = 15;
         public int MaxRecentOpenedPrefabs = 15;
+        /// <summary>
+        /// 自定义文档 URL。非空时点击「文档」菜单将打开此链接；
+        /// 为空时打开包内 Documentation~/UXTools-用户手册.md。
+        /// </summary>
+        public string DocumentationUrl = "";
 
         public void Save()
         {

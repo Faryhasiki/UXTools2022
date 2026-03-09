@@ -24,7 +24,9 @@ namespace UITool
         [MenuItem(UIToolConfig.Menu_ColorPresets, false, 51)]
         public static void OpenWindow()
         {
-            var win = GetWindow<ColorPresetWindow>();
+            var win = GetWindow<ColorPresetWindow>(
+                typeof(TextPresetWindow),
+                typeof(WidgetRepositoryWindow));
             win.titleContent = new GUIContent("颜色预设");
             win.minSize = new Vector2(720, 400);
         }

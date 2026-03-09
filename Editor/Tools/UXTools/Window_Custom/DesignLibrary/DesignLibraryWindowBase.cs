@@ -270,5 +270,21 @@ namespace UITool
     }
 
     #endregion
+
+    /// <summary>
+    /// 统一打开所有设计库窗口（组件库 + 颜色预设 + 文字预设），合并为 Tab 页签
+    /// </summary>
+    public static class DesignLibraryLauncher
+    {
+        [MenuItem(UIToolConfig.Menu_DesignLibrary, false, 49)]
+        public static void OpenAll()
+        {
+            WidgetRepositoryWindow.OpenWindow();
+            ColorPresetWindow.OpenWindow();
+#if TMP_PRESENT
+            TextPresetWindow.OpenWindow();
+#endif
+        }
+    }
 }
 #endif
