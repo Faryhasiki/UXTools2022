@@ -104,7 +104,7 @@ namespace UITool
                     for (int i = 0; i < rects.Count; i++)
                     {
                         RectTransform trans = rects[i];
-                        float th = trans.sizeDelta.y * trans.localScale.y;
+                        float th = trans.sizeDelta.y * trans.lossyScale.y;
                         Vector3 pos = trans.position;
                         pos.y = maxY - th + trans.pivot.y * th;
                         trans.position = pos;
@@ -137,7 +137,7 @@ namespace UITool
                     for (int i = 0; i < rects.Count; i++)
                     {
                         RectTransform trans = rects[i];
-                        float th = trans.sizeDelta.y * trans.localScale.y;
+                        float th = trans.sizeDelta.y * trans.lossyScale.y;
                         Vector3 pos = trans.position;
                         pos.y = minY + th * trans.pivot.y;
                         trans.position = pos;
@@ -282,7 +282,7 @@ namespace UITool
                     float top = GetMaxY(rects);
 
                     float middleX = left + (right - left) / 2;
-                    float middleY = left + (top - bottom) / 2;
+                    float middleY = bottom + (top - bottom) / 2;
 
                     float r = (right - left) / 2;
                     float angle = 360 / count;
@@ -312,7 +312,7 @@ namespace UITool
         //获取一个对象的真实中心坐标Y(去掉缩放和pivot的影响)
         static float GetRealPostionY(RectTransform rect)
         {
-            float h = rect.sizeDelta.y * rect.localScale.y;//计算实际高度
+            float h = rect.sizeDelta.y * rect.lossyScale.y;//计算实际高度（世界空间，需用 lossyScale）
             float y = rect.position.y + (0.5f - rect.pivot.y) * h; //消除中心点并非pivot非（0.5，0.5）影响
             return y;
         }
@@ -338,7 +338,7 @@ namespace UITool
         //上边y
         static float GetTopWithoutScaleAndPivot(RectTransform rect)
         {
-            float h = rect.sizeDelta.y * rect.localScale.y;//计算实际高度
+            float h = rect.sizeDelta.y * rect.lossyScale.y;//计算实际高度（世界空间，需用 lossyScale）
             float y = rect.position.y + (1 - rect.pivot.y) * h; //消除中心点并非pivot非（0.5，0.5）影响
             return y;
         }
@@ -346,7 +346,7 @@ namespace UITool
         //下边y
         static float GetBottomWithoutScaleAndPivot(RectTransform rect)
         {
-            float h = rect.sizeDelta.y * rect.localScale.y;//计算实际宽度
+            float h = rect.sizeDelta.y * rect.lossyScale.y;//计算实际高度（世界空间，需用 lossyScale）
             float y = rect.position.y - rect.pivot.y * h; //消除中心点并非pivot非（0.5，0.5）影响
             return y;
         }
