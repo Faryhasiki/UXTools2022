@@ -193,6 +193,56 @@ Inspector 面板：
 
 添加方式：**Add Component → UI → UXColorBinding**
 
+### 3.4 UIAnimation 动画触发系统
+
+适用场景：
+- 动画师先制作 Prefab，并预先配置好 UI 之间的动画联动
+- 程序后续再补业务事件脚本，不需要重新手动连一遍动画绑定
+
+核心组件：
+
+| 组件 | 作用 |
+|------|------|
+| `AnimationTriggerAuthoring` | 作者组件。挂在触发源对象上，维护“触发时机”和“触发绑定” |
+| `IAnimationTriggerable` 实现组件 | 被触发的目标组件，提供“有哪些动画可以播放”以及“如何播放动画” |
+
+#### 作者工作流（动画师）
+
+1. 在触发源对象上添加 `AnimationTriggerAuthoring`
+2. 在「触发时机」列表中添加条目，只填写**显示名**
+3. 在「触发绑定」列表中，为每个触发时机指定：
+   - 目标组件
+   - 动画名称
+   - 延迟时间
+4. 使用列表中的「触发」按钮预览效果
+
+> 提示：绑定列表折叠态会直接显示摘要：`触发时机 -> 目标 -> 动画名 (delay s)`，便于快速检查。
+
+#### 程序工作流（生成桥接脚本）
+
+1. 在 `AnimationTriggerAuthoring` Inspector 右上角点击「程序员工具」
+2. 填写：
+   - 命名空间
+   - 类名
+   - 基类脚本
+   - 每个触发时机对应的方法名
+3. 选择：
+   - **生成代码**：只生成桥接脚本
+   - **生成并挂载**：生成脚本后，等待 Unity 编译完成后自动挂到当前对象上
+
+生成的桥接脚本会通过组合引用 `AnimationTriggerAuthoring`，而不是继承作者组件。
+
+#### 两种使用模式
+
+- **Code-First**：程序直接实现 `IAnimationTriggerSource`，在代码里使用 `[TriggerPoint("标签")] + nameof(Method)`。
+- **Authoring-First**：动画师先配置 `AnimationTriggerAuthoring`，程序后面再生成桥接脚本。
+
+#### 延迟触发说明
+
+- 延迟触发当前使用协程实现
+- 相同延迟值会复用缓存的 `WaitForSeconds`
+- 同一条延迟绑定如果被重复触发，旧的待执行延迟会被取消，只保留最后一次，避免堆积
+
 ---
 
 ## 四、设置
